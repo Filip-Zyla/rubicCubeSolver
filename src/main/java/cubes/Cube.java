@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import static cubes.Cube_2x2.getString;
+
 
 @Data
 public class Cube {
@@ -38,47 +40,12 @@ public class Cube {
     }
 
     void paintCube() {
-        for (int i=0; i<height; i++){
-            for (int j=0; j<width; j++){
-                if ((i<dimension || i>=dimension*2) && (j<dimension || j>=dimension*2)){
-                    cube[i][j]=9;
-                }
-                else if (i<dimension){
-                    cube[i][j]=4;
-                }
-                else if (i>=dimension*2){
-                    cube[i][j]=1;
-                }
-                else {
-                    if (j<dimension){
-                        cube[i][j]=3;
-                    }
-                    else if(j<dimension*2){
-                        cube[i][j]=0;
-                    }
-                    else if(j<dimension*3){
-                        cube[i][j]=2;
-                    }
-                    else {
-                        cube[i][j]=5;
-                    }
-                }
-            }
-        }
+        Cube_2x2.paint(height, width, dimension, cube);
     }
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder=new StringBuilder();
-        for (int i = 0; i<height; i++){
-            for (int j=0; j<width; j++){
-                stringBuilder.append(cube[i][j]);
-                stringBuilder.append(" ");
-            }
-            stringBuilder.append("\n");
-        }
-
-        return stringBuilder.toString();
+        return getString(height, width, cube);
     }
 
     public void setCube(int i, int j) {
