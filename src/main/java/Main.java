@@ -3,7 +3,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        consoleMenu(new Cube_2x2());
+        //consoleMenu(new Cube_2x2());
+        Cube_2x2 cube_2x2 = new Cube_2x2();
+        cube_2x2.moveCube("RUR'U'RUR'U'RUR'U'RUR'U'RUR'U'RUR'U'");
+        cube_2x2.paint2D();
     }
 
     public static void consoleMenu(Cube_2x2 cube){

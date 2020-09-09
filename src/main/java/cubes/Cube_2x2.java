@@ -277,22 +277,43 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         this.move_B(-rotate);
     }
 
-    /** private void moveOneWall(int rotate, Pair main){
-        // passing left upper element = main
-    }*/
-
 
     public void moveCube(String alg){
+        /**
+        Assuming alg is correct
+         */
         char[] array = alg.toCharArray();
         int index = 0;
         while (index < array.length){
 
             if (Character.isDigit(array[index])){
-
+                moveGivenAlg(array[index+1], 2);
+                index+=2;
             }
-            else if(array[index]==39){
-
+            else { // is letter
+                if(array[index+1]==39){
+                    moveGivenAlg(array[index], -1);
+                    index+=2;
+                }
+                else{
+                    moveGivenAlg(array[index], 1);
+                    index+=1;
+                }
             }
+        }
+    }
+
+    private void moveGivenAlg(char wall, int rotate){
+        switch (wall) {
+            case 'R' -> this.move_R(rotate);
+            case 'L' -> this.move_L(rotate);
+            case 'U' -> this.move_U(rotate);
+            case 'D' -> this.move_D(rotate);
+            case 'F' -> this.move_F(rotate);
+            case 'B' -> this.move_B(rotate);
+            case 'x' -> this.rotate_x(rotate);
+            case 'y' -> this.rotate_y(rotate);
+            case 'z' -> this.rotate_z(rotate);
         }
     }
 
