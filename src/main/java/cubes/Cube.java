@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import static cubes.Cube_2x2.getString;
 
-
 @Data
 public class Cube {
     private final int NUMBER_OF_COLORS=6; /** walls also */
@@ -56,10 +55,11 @@ public class Cube {
         return cube[i][j];
     }
 
-    public int[][] getCube_asMatrices(){
+    public int[][] getCubeAsMatrices(){
         return cube;
     }
-    public void setCube_asMatrices(int[][] cube){
+
+    public void setCubeAsMatrices(int[][] cube){
         this.cube=cube;
     }
 }

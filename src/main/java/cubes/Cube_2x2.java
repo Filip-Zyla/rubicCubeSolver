@@ -1,14 +1,15 @@
 package cubes;
 
 import lombok.*;
-import moveInterfaces.moveOneWallInterface;
+import moveInterfaces.moveOneWallInterfaceTwoCube;
+import moveInterfaces.rotateInterface;
 
 import javax.swing.*;
 import java.awt.*;
 
 
 @Data
-public class Cube_2x2 implements moveOneWallInterface {
+public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
     private final int NUMBER_OF_WALLS = 6; /** colors */
     private final int DEGREE_OF_CUBE = 2;
     private final int HEIGHT = DEGREE_OF_CUBE * 3;
@@ -32,7 +33,6 @@ public class Cube_2x2 implements moveOneWallInterface {
     public Cube_2x2(){
         cube=new int[HEIGHT][WIDTH];
         paintCube();
-        System.out.println(this.toString());
     }
 
     private void paintCube() {
@@ -145,10 +145,6 @@ public class Cube_2x2 implements moveOneWallInterface {
             }
         }
     }
-    @Override
-    public void move_E(int rotate) {
-        // no move
-    }
 
     @Override
     public void move_R(int rotate) {
@@ -205,10 +201,6 @@ public class Cube_2x2 implements moveOneWallInterface {
 
             }
         }
-    }
-    @Override
-    public void move_M(int rotate) {
-        // no move
     }
 
     @Override
@@ -268,13 +260,21 @@ public class Cube_2x2 implements moveOneWallInterface {
             }
         }
     }
-    @Override
-    public void move_S(int rotate) {
-        // no move
-    }
 
-    public void show() {
-        this.paint2D();
+    @Override
+    public void rotate_x(int rotate) {
+        this.move_R(rotate);
+        this.move_L(-rotate);
+    }
+    @Override
+    public void rotate_y(int rotate) {
+        this.move_U(rotate);
+        this.move_D(-rotate);
+    }
+    @Override
+    public void rotate_z(int rotate) {
+        this.move_F(rotate);
+        this.move_B(-rotate);
     }
 
     /** private void moveOneWall(int rotate, Pair main){
@@ -282,8 +282,25 @@ public class Cube_2x2 implements moveOneWallInterface {
     }*/
 
 
+    public void moveCube(String alg){
+        char[] array = alg.toCharArray();
+        int index = 0;
+        while (index < array.length){
+
+            if (Character.isDigit(array[index])){
+
+            }
+            else if(array[index]==39){
+
+            }
+        }
+    }
 
 
+
+    public void show() {
+        this.paint2D();
+    }
    /*****************************************************************************
    GRAPHICS 2D ******************************************************************
     *****************************************************************************/
@@ -318,7 +335,7 @@ public class Cube_2x2 implements moveOneWallInterface {
    public void paint2D() {
        JFrame window = new JFrame();
        window.setSize(850,650);
-       window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
        window.getContentPane().add(new Grid());
        window.setVisible(true);
    }
