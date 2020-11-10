@@ -3,10 +3,9 @@ package cubes;
 import lombok.*;
 import moveInterfaces.moveOneWallInterfaceTwoCube;
 import moveInterfaces.rotateInterface;
-
 import javax.swing.*;
 import java.awt.*;
-
+import java.util.Random;
 
 @Data
 public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
@@ -15,6 +14,10 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
     private final int HEIGHT = DEGREE_OF_CUBE * 3;
     private final int WIDTH = DEGREE_OF_CUBE * 4;
     private int[][] cube;
+
+    // alg scrambles
+    private final String SEXY_MOVE_ON_RIGHT = "U'R'UR";
+    private final String SEXY_MOVE_ON_LEFT = "ULU'L'";
 
     /**
      * colors id's:
@@ -39,7 +42,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         paint(HEIGHT, WIDTH, DEGREE_OF_CUBE, cube);
     }
 
-    static void paint(int height, int width, int degree_of_cube, int[][] cube) {
+    private static void paint(int height, int width, int degree_of_cube, int[][] cube) {
         for (int i = 0; i< height; i++){
             for (int j = 0; j< width; j++){
                 if ((i< degree_of_cube || i>= degree_of_cube *2) && (j< degree_of_cube || j>= degree_of_cube *2)){
@@ -74,7 +77,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         return getString(HEIGHT, WIDTH, cube);
     }
 
-    static String getString(int height, int width, int[][] cube) {
+    private static String getString(int height, int width, int[][] cube) {
         StringBuilder stringBuilder=new StringBuilder();
         for (int i = 0; i< height; i++){
             for (int j = 0; j< width; j++){
@@ -87,177 +90,174 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         return stringBuilder.toString();
     }
 
-
+    /**
+     * Moving methods
+     */
     @Override
     public void move_U(int rotate) {
-        if (rotate<0)
-            move_U(4+rotate);
-        else {
-            int temp;
-           for (int i=0; i<rotate; i++){
-               temp = cube[2][2];
-               cube[2][2] = cube[3][2];
-               cube[3][2] = cube[3][3];
-               cube[3][3] = cube[2][3];
-               cube[2][3] = temp;
+        if (rotate < 0)
+            rotate = rotate + 4;
 
-               temp = cube[2][1];
-               cube[2][1] = cube[4][2];
-               cube[4][2] = cube[3][4];
-               cube[3][4] = cube[1][3];
-               cube[1][3] = temp;
+        int temp;
+        for (int i = 0; i < rotate; i++) {
+            temp = cube[2][2];
+            cube[2][2] = cube[3][2];
+            cube[3][2] = cube[3][3];
+            cube[3][3] = cube[2][3];
+            cube[2][3] = temp;
 
-               temp = cube[1][2];
-               cube[1][2] = cube[3][1];
-               cube[3][1] = cube[4][3];
-               cube[4][3] = cube[2][4];
-               cube[2][4] = temp;
+            temp = cube[2][1];
+            cube[2][1] = cube[4][2];
+            cube[4][2] = cube[3][4];
+            cube[3][4] = cube[1][3];
+            cube[1][3] = temp;
 
+            temp = cube[1][2];
+            cube[1][2] = cube[3][1];
+            cube[3][1] = cube[4][3];
+            cube[4][3] = cube[2][4];
+            cube[2][4] = temp;
 
-           }
         }
     }
     @Override
     public void move_D(int rotate) {
         if (rotate < 0)
-            move_D(4 + rotate);
-        else {
-            int temp;
-            for (int i = 0; i < rotate; i++) {
-                temp = cube[2][6];
-                cube[2][6] = cube[3][6];
-                cube[3][6] = cube[3][7];
-                cube[3][7] = cube[2][7];
-                cube[2][7] = temp;
+            rotate = rotate + 4;
 
-                temp = cube[2][5];
-                cube[2][5] = cube[5][3];
-                cube[5][3] = cube[3][0];
-                cube[3][0] = cube[0][2];
-                cube[0][2] = temp;
+        int temp;
+        for (int i = 0; i < rotate; i++) {
+            temp = cube[2][6];
+            cube[2][6] = cube[3][6];
+            cube[3][6] = cube[3][7];
+            cube[3][7] = cube[2][7];
+            cube[2][7] = temp;
 
-                temp = cube[0][3];
-                cube[0][3] = cube[3][5];
-                cube[3][5] = cube[5][2];
-                cube[5][2] = cube[2][0];
-                cube[2][0] =  temp;
+            temp = cube[2][5];
+            cube[2][5] = cube[5][3];
+            cube[5][3] = cube[3][0];
+            cube[3][0] = cube[0][2];
+            cube[0][2] = temp;
 
-            }
+            temp = cube[0][3];
+            cube[0][3] = cube[3][5];
+            cube[3][5] = cube[5][2];
+            cube[5][2] = cube[2][0];
+            cube[2][0] = temp;
         }
     }
 
     @Override
     public void move_R(int rotate) {
         if (rotate < 0)
-            move_R(4 + rotate);
-        else {
-            int temp;
-            for (int i = 0; i < rotate; i++) {
-                temp = cube[3][4];
-                cube[3][4] = cube[3][5];
-                cube[3][5] = cube[2][5];
-                cube[2][5] = cube[2][4];
-                cube[2][4] = temp;
+            rotate = rotate + 4;
 
-                temp = cube[4][3];
-                cube[4][3] = cube[3][6];
-                cube[3][6] = cube[0][3];
-                cube[0][3] = cube[2][3];
-                cube[2][3] = temp;
+        int temp;
+        for (int i = 0; i < rotate; i++) {
+            temp = cube[3][4];
+            cube[3][4] = cube[3][5];
+            cube[3][5] = cube[2][5];
+            cube[2][5] = cube[2][4];
+            cube[2][4] = temp;
 
-                temp = cube[3][3];
-                cube[3][3] = cube[5][3];
-                cube[5][3] = cube[2][6];
-                cube[2][6] = cube[1][3];
-                cube[1][3] = temp;
+            temp = cube[4][3];
+            cube[4][3] = cube[3][6];
+            cube[3][6] = cube[0][3];
+            cube[0][3] = cube[2][3];
+            cube[2][3] = temp;
 
-            }
+            temp = cube[3][3];
+            cube[3][3] = cube[5][3];
+            cube[5][3] = cube[2][6];
+            cube[2][6] = cube[1][3];
+            cube[1][3] = temp;
+
+
         }
     }
     @Override
     public void move_L(int rotate) {
         if (rotate < 0)
-            move_L(4 + rotate);
-        else {
-            int temp;
-            for (int i = 0; i < rotate; i++) {
-                temp = cube[2][1];
-                cube[2][1] = cube[2][0];
-                cube[2][0] = cube[3][0];
-                cube[3][0] = cube[3][1];
-                cube[3][1] = temp;
+            rotate = rotate + 4;
 
-                temp = cube[1][2];
-                cube[1][2] = cube[2][7];
-                cube[2][7] = cube[5][2];
-                cube[5][2] = cube[3][2];
-                cube[3][2] = temp;
+        int temp;
+        for (int i = 0; i < rotate; i++) {
+            temp = cube[2][1];
+            cube[2][1] = cube[2][0];
+            cube[2][0] = cube[3][0];
+            cube[3][0] = cube[3][1];
+            cube[3][1] = temp;
 
-                temp = cube[2][2];
-                cube[2][2] = cube[0][2];
-                cube[0][2] = cube[3][7];
-                cube[3][7] = cube[4][2];
-                cube[4][2] = temp;
+            temp = cube[1][2];
+            cube[1][2] = cube[2][7];
+            cube[2][7] = cube[5][2];
+            cube[5][2] = cube[3][2];
+            cube[3][2] = temp;
 
-            }
+            temp = cube[2][2];
+            cube[2][2] = cube[0][2];
+            cube[0][2] = cube[3][7];
+            cube[3][7] = cube[4][2];
+            cube[4][2] = temp;
+
+
         }
     }
 
     @Override
     public void move_F(int rotate) {
         if (rotate < 0)
-            move_F(4 + rotate);
-        else {
-            int temp;
-            for (int i = 0; i < rotate; i++) {
-                temp = cube[4][2];
-                cube[4][2] = cube[5][2];
-                cube[5][2] = cube[5][3];
-                cube[5][3] = cube[4][3];
-                cube[4][3] = temp;
+            rotate = rotate + 4;
 
-                temp = cube[3][1];
-                cube[3][1] = cube[3][7];
-                cube[3][7] = cube[3][5];
-                cube[3][5] = cube[3][3];
-                cube[3][3] = temp;
+        int temp;
+        for (int i = 0; i < rotate; i++) {
+            temp = cube[4][2];
+            cube[4][2] = cube[5][2];
+            cube[5][2] = cube[5][3];
+            cube[5][3] = cube[4][3];
+            cube[4][3] = temp;
 
-                temp = cube[3][2];
-                cube[3][2] = cube[3][0];
-                cube[3][0] = cube[3][6];
-                cube[3][6] = cube[3][4];
-                cube[3][4] = temp;
+            temp = cube[3][1];
+            cube[3][1] = cube[3][7];
+            cube[3][7] = cube[3][5];
+            cube[3][5] = cube[3][3];
+            cube[3][3] = temp;
 
-            }
+            temp = cube[3][2];
+            cube[3][2] = cube[3][0];
+            cube[3][0] = cube[3][6];
+            cube[3][6] = cube[3][4];
+            cube[3][4] = temp;
+
+
         }
     }
     @Override
     public void move_B(int rotate) {
-        // !!!!!!!!!!!!!!! clokwise switched !!!!!!!!!!!!!!!!!!!!!
         if (rotate > 0)
-            move_B(-4 + rotate);
-        else {
-            int temp;
-            for (int i = 0; i > rotate; i--) {
-                temp = cube[1][3];
-                cube[1][3] = cube[0][3];
-                cube[0][3] = cube[0][2];
-                cube[0][2] = cube[1][2];
-                cube[1][2] = temp;
+            rotate = rotate + 4;
 
-                temp = cube[2][4];
-                cube[2][4] = cube[2][6];
-                cube[2][6] = cube[2][0];
-                cube[2][0] = cube[2][2];
-                cube[2][2] = temp;
+        int temp;
+        for (int i = 0; i > rotate; i--) {
+            temp = cube[1][3];
+            cube[1][3] = cube[0][3];
+            cube[0][3] = cube[0][2];
+            cube[0][2] = cube[1][2];
+            cube[1][2] = temp;
 
-                temp = cube[2][3];
-                cube[2][3] = cube[2][5];
-                cube[2][5] = cube[2][7];
-                cube[2][7] = cube[2][1];
-                cube[2][1] = temp;
+            temp = cube[2][4];
+            cube[2][4] = cube[2][6];
+            cube[2][6] = cube[2][0];
+            cube[2][0] = cube[2][2];
+            cube[2][2] = temp;
 
-            }
+            temp = cube[2][3];
+            cube[2][3] = cube[2][5];
+            cube[2][5] = cube[2][7];
+            cube[2][7] = cube[2][1];
+            cube[2][1] = temp;
+
+
         }
     }
 
@@ -285,25 +285,37 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         char[] array = alg.toCharArray();
         int index = 0;
         while (index < array.length){
-
             if (Character.isDigit(array[index])){
-                moveGivenAlg(array[index+1], 2);
+                moveOneWall(array[index+1], 2);
                 index+=2;
             }
             else { // is letter
                 if(array[index+1]==39){
-                    moveGivenAlg(array[index], -1);
+                    // counter clockwise
+                    moveOneWall(array[index], -1);
                     index+=2;
                 }
                 else{
-                    moveGivenAlg(array[index], 1);
+                    // clockwise
+                    moveOneWall(array[index], 1);
                     index+=1;
                 }
             }
         }
     }
 
-    private void moveGivenAlg(char wall, int rotate){
+    public void randomScramble(){
+        String poll= "UDRLFB";
+        Random r = new Random();
+        StringBuilder builder = new StringBuilder();
+        int ran = (int)(Math.random() * (25 - 15 + 1) + 15);
+        for(int i = 0; i<ran; i++){
+            builder.append(poll.charAt( r.nextInt(poll.length())));
+        }
+        moveCube(builder.toString());
+    }
+
+    private void moveOneWall(char wall, int rotate){
         switch (wall) {
             case 'R' -> this.move_R(rotate);
             case 'L' -> this.move_L(rotate);
@@ -317,14 +329,39 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         }
     }
 
-
-
-    public void show() {
-        this.paint2D();
+    /**
+     * Solving cube
+     */
+    public void solve() {
+        orientLeftWall();
+        this.rotate_y(2);
+        orientLeftWall();
+        // resolve two last not orient stickers
+        // orientation of layers
+        // permutation of layers  one or two algs
     }
-   /*****************************************************************************
-   GRAPHICS 2D ******************************************************************
-    *****************************************************************************/
+
+    private void orientLeftWall() {
+        // on left and right yellow/white stickers
+        int sexyCounter = 0;
+        for (int i = 4; i > 0; i--){
+            while (cube[3][1]!=0 || cube[3][1]!=5){
+                this.moveCube(SEXY_MOVE_ON_LEFT);
+                this.moveCube(SEXY_MOVE_ON_LEFT);
+                sexyCounter = sexyCounter + 2;
+            }
+            this.move_L(1);
+        }
+        while (sexyCounter%6 != 0){
+            this.moveCube(SEXY_MOVE_ON_LEFT);
+            this.moveCube(SEXY_MOVE_ON_LEFT);
+            sexyCounter = sexyCounter + 2;
+        }
+    }
+
+    /**
+     * GRAPHICS 2D
+     */
     class Grid extends JComponent {
        public void paintComponent(Graphics g) {
            super.paintComponent(g);
@@ -333,7 +370,6 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
            for (int j = 0; j < 8; j++) {
                for (int i = 0; i < 6; i++) {
                    g2d.drawRect(j * 100, i * 100, 100, 100);
-
                    switch (cube[i][j]) {
                        case 0 -> g2d.setColor(Color.WHITE);
                        case 1 -> g2d.setColor(Color.RED);
@@ -342,18 +378,14 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
                        case 4 -> g2d.setColor(Color.ORANGE);
                        case 5 -> g2d.setColor(Color.YELLOW);
                        default -> g2d.setColor(Color.BLACK);
-
-
                    }
-
-
                    g2d.fillRect(j * 100, i * 100, 100, 100);
                }
            }
        }
    }
 
-   public void paint2D() {
+   private void paint2D() {
        JFrame window = new JFrame();
        window.setSize(850,650);
        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -361,6 +393,8 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
        window.setVisible(true);
    }
 
-
+    public void showCube() {
+        this.paint2D();
+    }
 }
 

@@ -2,11 +2,9 @@ import cubes.Cube_2x2;
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
-        //consoleMenu(new Cube_2x2());
-        Cube_2x2 cube_2x2 = new Cube_2x2();
-        cube_2x2.moveCube("RUR'U'RUR'U'RUR'U'RUR'U'RUR'U'RUR'U'");
-        cube_2x2.paint2D();
+        consoleMenu(new Cube_2x2());
     }
 
     public static void consoleMenu(Cube_2x2 cube){
@@ -24,7 +22,6 @@ public class Main {
         System.out.println(menu);
         while (true) {
             Scanner scanner = new Scanner(System.in);
-
             System.out.print("Type your action: ");
             String input = scanner.next();
 
@@ -34,19 +31,25 @@ public class Main {
             else if (input.equals("1")){
                 cube = new Cube_2x2();
                 System.out.println("Cube reset");
+                cube.showCube();
             }
             else if (input.equals("2")){
                 System.out.println("Showing cube...");
-                cube.paint2D();
+                cube.showCube();
             }
             else if (input.equals("3")){
-
+                cube.randomScramble();
+                cube.showCube();
             }
             else if (input.equals("4")){
-
+                System.out.print("Type scramble: ");
+                String scramble = scanner.next();
+                cube.moveCube(scramble);
+                cube.showCube();
             }
             else if (input.equals("5")){
-
+                cube.solve();
+                cube.showCube();
             }
             else if (input.equals("9")){
                 System.out.print("Goodbye world!");
