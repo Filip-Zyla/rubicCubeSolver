@@ -285,12 +285,12 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         char[] array = alg.toCharArray();
         int index = 0;
         while (index < array.length){
-            if (Character.isDigit(array[index])){
+            if (index+1<array.length && Character.isDigit(array[index])){
                 moveOneWall(array[index+1], 2);
                 index+=2;
             }
             else { // is letter
-                if(array[index+1]==39){
+                if( index+1<array.length && array[index+1]==39){
                     // counter clockwise
                     moveOneWall(array[index], -1);
                     index+=2;
@@ -304,7 +304,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         }
     }
 
-    public void randomScramble(){
+    public static String randomScramble(){
         String poll= "UDRLFB";
         Random r = new Random();
         StringBuilder builder = new StringBuilder();
@@ -312,7 +312,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         for(int i = 0; i<ran; i++){
             builder.append(poll.charAt( r.nextInt(poll.length())));
         }
-        moveCube(builder.toString());
+        return builder.toString();
     }
 
     private void moveOneWall(char wall, int rotate){
@@ -375,7 +375,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
                        case 1 -> g2d.setColor(Color.RED);
                        case 2 -> g2d.setColor(Color.BLUE);
                        case 3-> g2d.setColor(Color.GREEN);
-                       case 4 -> g2d.setColor(Color.ORANGE);
+                       case 4 -> g2d.setColor(Color.getHSBColor(0.10f, 1f, 1f));
                        case 5 -> g2d.setColor(Color.YELLOW);
                        default -> g2d.setColor(Color.BLACK);
                    }

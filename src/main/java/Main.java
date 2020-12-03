@@ -11,8 +11,7 @@ public class Main {
         System.out.println("!!!!!!!!!Welcome!!!!!!!!!!!");
         System.out.println("It's your menu");
         System.out.println("Choose proper option");
-        String menu = "List of options:\n" +
-                "0 - menu description\n" +
+        String menu =  "0 - menu description\n" +
                 "1 - new cube, reset colors\n" +
                 "2 - show cube\n" +
                 "3 - scramble cube\n" +
@@ -25,38 +24,36 @@ public class Main {
             System.out.print("Type your action: ");
             String input = scanner.next();
 
-            if (input.equals("0")){
-                System.out.println(menu);
-            }
-            else if (input.equals("1")){
-                cube = new Cube_2x2();
-                System.out.println("Cube reset");
-                cube.showCube();
-            }
-            else if (input.equals("2")){
-                System.out.println("Showing cube...");
-                cube.showCube();
-            }
-            else if (input.equals("3")){
-                cube.randomScramble();
-                cube.showCube();
-            }
-            else if (input.equals("4")){
-                System.out.print("Type scramble: ");
-                String scramble = scanner.next();
-                cube.moveCube(scramble);
-                cube.showCube();
-            }
-            else if (input.equals("5")){
-                cube.solve();
-                cube.showCube();
-            }
-            else if (input.equals("9")){
-                System.out.print("Goodbye world!");
-                break;
-            }
-            else{
-                System.err.println("Incorrect input, try again");
+            switch (input) {
+                case "0" -> System.out.println(menu);
+                case "1" -> {
+                    cube = new Cube_2x2();
+                    System.out.println("Cube reset");
+                }
+                case "2" -> {
+                    System.out.println("Showing cube...");
+                    cube.showCube();
+                }
+                case "3" -> {
+                    System.out.println("Scramble");
+                    String scm = Cube_2x2.randomScramble();
+                    cube.moveCube(scm);
+                    System.out.println(scm);
+                    cube.showCube();
+                }
+                case "4" -> {
+                    System.out.print("Type scramble: ");
+                    String scramble = scanner.next();
+                    cube.moveCube(scramble);
+                    cube.showCube();
+                }
+                case "5" -> {
+                    System.out.println("Solve cube");
+                    cube.solve();
+                    cube.showCube();
+                }
+                case "9" -> System.out.print("Goodbye world!");
+                default -> System.err.println("Incorrect input, try again");
             }
         }
     }
