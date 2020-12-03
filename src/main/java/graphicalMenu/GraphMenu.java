@@ -7,31 +7,26 @@ import java.awt.*;
 
 public class GraphMenu extends JComponent {
 
+    private JFrame window;
+    private Cube_2x2 gCube
 
-    private JFrame window = new JFrame();
-    private Cube_2x2 gCube;
 
-    public GraphMenu(Cube_2x2 cube){
-        gCube=cube;
-        paintComponent(new Graphics(), cube);
-    }
-
-    public void gMenu(Cube_2x2 cube) {
-        JFrame window = new JFrame();
+    public void showGcube(Cube_2x2 gCube){
+        window = new JFrame();
         window.setSize(850, 650);
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        window.getContentPane().add();
+        window.getContentPane().add(paintComponent(new GraphMenu(), this.gCube);
         window.setVisible(true);
     }
 
-    public void paintComponent(Graphics g, Cube_2x2 cube) {
+    public void paintComponent(Graphics g, Cube_2x2 gCube) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
         for (int j = 0; j < 8; j++) {
             for (int i = 0; i < 6; i++) {
                 g2d.drawRect(j * 100, i * 100, 100, 100);
-                switch (cube.getCube()[i][j]) {
+                switch (gCube.getCube()[i][j]) {
                     case 0 -> g2d.setColor(Color.WHITE);
                     case 1 -> g2d.setColor(Color.RED);
                     case 2 -> g2d.setColor(Color.BLUE);
@@ -45,3 +40,5 @@ public class GraphMenu extends JComponent {
         }
     }
 }
+
+
