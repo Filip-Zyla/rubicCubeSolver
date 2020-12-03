@@ -3,13 +3,17 @@ package cubes;
 import lombok.*;
 import moveInterfaces.moveOneWallInterfaceTwoCube;
 import moveInterfaces.rotateInterface;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
 @Data
-public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
-    private final int NUMBER_OF_WALLS = 6; /** colors */
+public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
+    private final int NUMBER_OF_WALLS = 6;
+    /**
+     * colors
+     */
     private final int DEGREE_OF_CUBE = 2;
     private final int HEIGHT = DEGREE_OF_CUBE * 3;
     private final int WIDTH = DEGREE_OF_CUBE * 4;
@@ -25,16 +29,16 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
      * red=1 orange=4
      * blue=2 green=3
      * BLACK=9
-     *
+     * <p>
      * orientation: laying cross:
      * 99  44  99  99
      * 33  00  22  55
      * 99  11  99  99
      * nulls as 9 in code
-     * */
+     */
 
-    public Cube_2x2(){
-        cube=new int[HEIGHT][WIDTH];
+    public Cube_2x2() {
+        cube = new int[HEIGHT][WIDTH];
         paintCube();
     }
 
@@ -43,29 +47,23 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
     }
 
     private static void paint(int height, int width, int degree_of_cube, int[][] cube) {
-        for (int i = 0; i< height; i++){
-            for (int j = 0; j< width; j++){
-                if ((i< degree_of_cube || i>= degree_of_cube *2) && (j< degree_of_cube || j>= degree_of_cube *2)){
-                    cube[i][j]=9;
-                }
-                else if (i< degree_of_cube){
-                    cube[i][j]=4;
-                }
-                else if (i>= degree_of_cube *2){
-                    cube[i][j]=1;
-                }
-                else {
-                    if (j< degree_of_cube){
-                        cube[i][j]=3;
-                    }
-                    else if(j< degree_of_cube *2){
-                        cube[i][j]=0;
-                    }
-                    else if(j< degree_of_cube *3){
-                        cube[i][j]=2;
-                    }
-                    else {
-                        cube[i][j]=5;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if ((i < degree_of_cube || i >= degree_of_cube * 2) && (j < degree_of_cube || j >= degree_of_cube * 2)) {
+                    cube[i][j] = 9;
+                } else if (i < degree_of_cube) {
+                    cube[i][j] = 4;
+                } else if (i >= degree_of_cube * 2) {
+                    cube[i][j] = 1;
+                } else {
+                    if (j < degree_of_cube) {
+                        cube[i][j] = 3;
+                    } else if (j < degree_of_cube * 2) {
+                        cube[i][j] = 0;
+                    } else if (j < degree_of_cube * 3) {
+                        cube[i][j] = 2;
+                    } else {
+                        cube[i][j] = 5;
                     }
                 }
             }
@@ -78,9 +76,9 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
     }
 
     private static String getString(int height, int width, int[][] cube) {
-        StringBuilder stringBuilder=new StringBuilder();
-        for (int i = 0; i< height; i++){
-            for (int j = 0; j< width; j++){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 stringBuilder.append(cube[i][j]);
                 stringBuilder.append(" ");
             }
@@ -120,6 +118,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
 
         }
     }
+
     @Override
     public void move_D(int rotate) {
         if (rotate < 0)
@@ -175,6 +174,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
 
         }
     }
+
     @Override
     public void move_L(int rotate) {
         if (rotate < 0)
@@ -232,6 +232,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
 
         }
     }
+
     @Override
     public void move_B(int rotate) {
         if (rotate > 0)
@@ -266,11 +267,13 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
         this.move_R(rotate);
         this.move_L(-rotate);
     }
+
     @Override
     public void rotate_y(int rotate) {
         this.move_U(rotate);
         this.move_D(-rotate);
     }
+
     @Override
     public void rotate_z(int rotate) {
         this.move_F(rotate);
@@ -278,44 +281,75 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
     }
 
 
-    public void moveCube(String alg){
-        /**
-        Assuming alg is correct
-         */
+    public void moveCube(String alg) {
+        if (!checkIsAlgProper(alg)) {
+            // explicitly fot 2x2x2
+            System.out.println("Not proper alg");
+            return;
+        }
+
         char[] array = alg.toCharArray();
         int index = 0;
-        while (index < array.length){
-            if (index+1<array.length && Character.isDigit(array[index])){
-                moveOneWall(array[index+1], 2);
-                index+=2;
-            }
-            else { // is letter
-                if( index+1<array.length && array[index+1]==39){
+        while (index < array.length) {
+            if (index + 1 < array.length && Character.isDigit(array[index + 1])) {
+                moveOneWall(array[index], array[index + 1]);
+                index += 2;
+            } else { // index is letter
+                if (index + 1 < array.length && array[index + 1] == 39) {
                     // counter clockwise
                     moveOneWall(array[index], -1);
-                    index+=2;
-                }
-                else{
-                    // clockwise
+                    index += 2;
+                } else { // clockwise
                     moveOneWall(array[index], 1);
-                    index+=1;
+                    index += 1;
                 }
             }
         }
     }
 
-    public static String randomScramble(){
-        String poll= "UDRLFB";
+    private boolean checkIsAlgProper(String alg) {
+        if (!alg.equals(alg.toUpperCase())) {
+            System.err.println("Alg with lower case");
+            return false;
+        }
+        String poll = "UDRLFB2'";
+        char[] array = alg.toCharArray();
+        int i = 0;
+        while (i < array.length) {
+            if (poll.indexOf(array[i]) == -1) {
+                System.err.println("Char " + array[i] + " at index " + i + " cannot be in alg");
+                return false;
+            } else if (Character.isDigit(array[i])) {
+                System.err.println("Char " + array[i] + " at index " + i + " is repeated int");
+                return false;
+            } else if (array[i] == 39) {
+                System.err.println("Char " + array[i] + " at index " + i + " is repeated coma");
+                return false;
+            }
+            if (i+1<array.length && (array[i+1]==39 || Character.isDigit(array[i+1])))
+                i=i+2;
+            else i++;
+        }
+
+        return true;
+    }
+
+    public static String randomScramble() {
+        String poll = "UDRLFB";
         Random r = new Random();
         StringBuilder builder = new StringBuilder();
-        int ran = (int)(Math.random() * (25 - 15 + 1) + 15);
-        for(int i = 0; i<ran; i++){
-            builder.append(poll.charAt( r.nextInt(poll.length())));
+        int ran = (int) (Math.random() * (25 - 15 + 1) + 15); // from 15 to 25
+        for (int i = 0; i < ran; i++) {
+            builder.append(poll.charAt(r.nextInt(poll.length())));
+            switch (r.nextInt(poll.length()) % 3) {
+                case 0 -> builder.append("2");
+                case 1 -> builder.append("'");
+            }
         }
         return builder.toString();
     }
 
-    private void moveOneWall(char wall, int rotate){
+    private void moveOneWall(char wall, int rotate) {
         switch (wall) {
             case 'R' -> this.move_R(rotate);
             case 'L' -> this.move_L(rotate);
@@ -344,15 +378,15 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
     private void orientLeftWall() {
         // on left and right yellow/white stickers
         int sexyCounter = 0;
-        for (int i = 4; i > 0; i--){
-            while (cube[3][1]!=0 || cube[3][1]!=5){
+        for (int i = 4; i > 0; i--) {
+            while (cube[3][1] != 0 || cube[3][1] != 5) {
                 this.moveCube(SEXY_MOVE_ON_LEFT);
                 this.moveCube(SEXY_MOVE_ON_LEFT);
                 sexyCounter = sexyCounter + 2;
             }
             this.move_L(1);
         }
-        while (sexyCounter%6 != 0){
+        while (sexyCounter % 6 != 0) {
             this.moveCube(SEXY_MOVE_ON_LEFT);
             this.moveCube(SEXY_MOVE_ON_LEFT);
             sexyCounter = sexyCounter + 2;
@@ -363,35 +397,35 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface  {
      * GRAPHICS 2D
      */
     class Grid extends JComponent {
-       public void paintComponent(Graphics g) {
-           super.paintComponent(g);
-           Graphics2D g2d = (Graphics2D) g;
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
 
-           for (int j = 0; j < 8; j++) {
-               for (int i = 0; i < 6; i++) {
-                   g2d.drawRect(j * 100, i * 100, 100, 100);
-                   switch (cube[i][j]) {
-                       case 0 -> g2d.setColor(Color.WHITE);
-                       case 1 -> g2d.setColor(Color.RED);
-                       case 2 -> g2d.setColor(Color.BLUE);
-                       case 3-> g2d.setColor(Color.GREEN);
-                       case 4 -> g2d.setColor(Color.getHSBColor(0.10f, 1f, 1f));
-                       case 5 -> g2d.setColor(Color.YELLOW);
-                       default -> g2d.setColor(Color.BLACK);
-                   }
-                   g2d.fillRect(j * 100, i * 100, 100, 100);
-               }
-           }
-       }
-   }
+            for (int j = 0; j < 8; j++) {
+                for (int i = 0; i < 6; i++) {
+                    g2d.drawRect(j * 100, i * 100, 100, 100);
+                    switch (cube[i][j]) {
+                        case 0 -> g2d.setColor(Color.WHITE);
+                        case 1 -> g2d.setColor(Color.RED);
+                        case 2 -> g2d.setColor(Color.BLUE);
+                        case 3 -> g2d.setColor(Color.GREEN);
+                        case 4 -> g2d.setColor(Color.getHSBColor(0.10f, 1f, 1f));
+                        case 5 -> g2d.setColor(Color.YELLOW);
+                        default -> g2d.setColor(Color.BLACK);
+                    }
+                    g2d.fillRect(j * 100, i * 100, 100, 100);
+                }
+            }
+        }
+    }
 
-   private void paint2D() {
-       JFrame window = new JFrame();
-       window.setSize(850,650);
-       window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-       window.getContentPane().add(new Grid());
-       window.setVisible(true);
-   }
+    private void paint2D() {
+        JFrame window = new JFrame();
+        window.setSize(850, 650);
+        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        window.getContentPane().add(new Grid());
+        window.setVisible(true);
+    }
 
     public void showCube() {
         this.paint2D();
