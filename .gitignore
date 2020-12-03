@@ -9,6 +9,7 @@ TO DO LIST
 .idea/
 *.iml
 *.iws
+*.txt
 
 # Mac
 .DS_Store
