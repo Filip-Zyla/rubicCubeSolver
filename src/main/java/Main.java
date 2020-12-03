@@ -1,10 +1,13 @@
 import cubes.Cube_2x2;
+import graphicalMenu.GraphMenu;
+
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        consoleMenu(new Cube_2x2());
+        //consoleMenu(new Cube_2x2());
+        new GraphMenu(new Cube_2x2());
     }
 
     public static void consoleMenu(Cube_2x2 cube){
