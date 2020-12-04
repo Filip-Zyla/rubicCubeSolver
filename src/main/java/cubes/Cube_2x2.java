@@ -340,10 +340,23 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         StringBuilder builder = new StringBuilder();
         int ran = (int) (Math.random() * (25 - 15 + 1) + 15); // from 15 to 25
         for (int i = 0; i < ran; i++) {
-            builder.append(poll.charAt(r.nextInt(poll.length())));
-            switch (r.nextInt(poll.length()) % 3) {
-                case 0 -> builder.append("2");
-                case 1 -> builder.append("'");
+            char ch = poll.charAt(r.nextInt(poll.length()));
+            if(i>0 && !Character.isLetter(builder.charAt(i-1)) && builder.charAt(i-1)==ch){
+                while (builder.charAt(i-2)==ch)
+                    ch=poll.charAt(r.nextInt(poll.length()));
+            }
+            while (i>0 && builder.charAt(i-1)==ch)
+                ch=poll.charAt(r.nextInt(poll.length()));
+            builder.append(ch);
+            switch (r.nextInt(poll.length()) % 8) {
+                case 0 -> {
+                    builder.append("2");
+                    ran++; i++;
+                }
+                case 1,5 -> {
+                    builder.append("'");
+                    ran++; i++;
+                }
             }
         }
         return builder.toString();
