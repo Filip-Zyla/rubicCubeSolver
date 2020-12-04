@@ -235,11 +235,12 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     @Override
     public void move_B(int rotate) {
-        if (rotate > 0)
+        if (rotate < 0)
             rotate = rotate + 4;
+        // !!! rotate is counter-clockwise
 
         int temp;
-        for (int i = 0; i > rotate; i--) {
+        for (int i = 0; i < rotate; i++) {
             temp = cube[1][3];
             cube[1][3] = cube[0][3];
             cube[0][3] = cube[0][2];
@@ -341,7 +342,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         int ran = (int) (Math.random() * (25 - 15 + 1) + 15); // from 15 to 25
         for (int i = 0; i < ran; i++) {
             char ch = poll.charAt(r.nextInt(poll.length()));
-            if(i>0 && !Character.isLetter(builder.charAt(i-1)) && builder.charAt(i-1)==ch){
+            if(i>1 && !Character.isLetter(builder.charAt(i-1)) && builder.charAt(i-2)==ch){
                 while (builder.charAt(i-2)==ch)
                     ch=poll.charAt(r.nextInt(poll.length()));
             }
