@@ -90,6 +90,7 @@ public class graphMenu extends JComponent implements ActionListener {
             repaintCube();
         } else if (e.getSource() == b2) {
             String sc = Cube_2x2.randomScramble();
+            System.out.println(sc);
             cube.moveCube(sc);
             jl.setText(sc);
             repaintCube();
@@ -98,7 +99,8 @@ public class graphMenu extends JComponent implements ActionListener {
             cube.moveCube(sc);
             repaintCube();
         } else if (e.getSource() == b4) {
-            cube.solve();
+            String solveAlg = cube.solve();
+            System.out.println(solveAlg);
             repaintCube();
         } else if (e.getSource() == b5) {
             System.exit(0);

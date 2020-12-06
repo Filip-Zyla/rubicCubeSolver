@@ -375,37 +375,52 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
      * Solving cube
      */
 
-    public void solve() {
-        orientLeftWall();
+    public String solve() {
+        String solvAlg = "";
+        solvAlg+=orientLeftWall();
         this.rotate_y(2);
-        orientLeftWall();
-        orientLastTwoEdges();
+        solvAlg+="y2";
+        solvAlg+=orientLeftWall();
+        solvAlg+=orientLastTwoEdges();
 
         this.rotate_z(1);
-        orientLastLayer();
+        solvAlg+="z";
+        solvAlg+=orientLastLayer();
 
-        permuteLastLayer();
+        solvAlg+=permuteLastLayer();
         this.rotate_z(2);
-        permuteLastLayer();
-        while (cube[4][3]!=cube[5][3])
+        solvAlg+="z2";
+        solvAlg+=permuteLastLayer();
+        while (cube[4][3]!=cube[5][3]) {
             this.move_U(1);
+            solvAlg+="U";
+        }
 
+        return solvAlg;
     }
 
-    private void permuteLastLayer() {
+    private String permuteLastLayer() {
+        String solveAlg = "";
         if (cube[2][1]==cube[3][1] && cube[2][4]==cube[3][4])
-            return;
+            return solveAlg;
         else if (cube[1][2]+cube[4][3]==5){
             this.moveCube("RU'R'U'F2U'RUR'DR2");
+            solveAlg+="RU'R'U'F2U'RUR'DR2";
         }
         else{
-            while (cube[2][1]!=cube[3][1])
+            while (cube[2][1]!=cube[3][1]) {
                 this.move_U(1);
+                solveAlg+="U";
+            }
             this.moveCube("RU2R'U'RU2L'UR'U'L");
+            solveAlg+="RU2R'U'RU2L'UR'U'L";
         }
+        return solveAlg;
     }
 
-    private void orientLastLayer() {
+    private String orientLastLayer() {
+        String solvAlg = "";
+
         int check=0;
         for (int i=2; i<4; i++){
             for (int j=2; j<4; j++){
@@ -417,46 +432,73 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         int upperColor = check<0 ? 5 : 0;
 
         if (Math.abs(check)==4)
-            return;
+            return solvAlg;
         else if (Math.abs(check)==2){
-            while (cube[3][3]==upperColor)
+            while (cube[3][3]==upperColor) {
                 this.move_U(1);
-            while (cube[3][7]!=upperColor)
+                solvAlg+="U";
+            }
+            while (cube[3][7]!=upperColor) {
                 this.move_D(1);
+                solvAlg+="D";
+            }
             this.moveCube("R2DR2");
+            solvAlg+="R2DR2";
         }
         else {
             if (isOllLayoutCrossed(2, 2) && isOllLayoutCrossed(2,6)){
-                while (cube[3][3]!=cube[2][7])
+                while (cube[3][3]!=cube[2][7]) {
                     this.move_U(1);
+                    solvAlg+="U";
+                }
                 this.moveCube("R2D2F2");
+                solvAlg+="R2D2F2";
             }
             else if (isOllLayoutCrossed(2, 2) && !isOllLayoutCrossed(2,6)){
-                while (cube[2][6]!=cube[3][6])
+                while (cube[2][6]!=cube[3][6]) {
                     this.move_D(1);
-                if(cube[3][7]==cube[3][3])
+                    solvAlg+="D";
+                }
+                if(cube[3][7]==cube[3][3]) {
                     this.moveCube("R2U'R2U'R2");
-                else
+                    solvAlg+="R2U'R2U'R2";
+                }
+                else {
                     this.moveCube("R2UR2UR2");
+                    solvAlg+="R2UR2UR2";
+                }
             }
             else if (!isOllLayoutCrossed(2, 2) && isOllLayoutCrossed(2,6)){
-                while (cube[2][3]!=cube[3][3])
+                while (cube[2][3]!=cube[3][3]) {
                     this.move_U(1);
-                if(cube[3][6]==cube[3][2])
+                    solvAlg+="U";
+                }
+                if(cube[3][6]==cube[3][2]) {
                     this.moveCube("R2DR2DR2");
-                else
+                    solvAlg+="R2DR2DR2";
+                }
+                else {
                     this.moveCube("R2D'R2D'R2");
+                    solvAlg+="R2D'R2D'R2";
+                }
 
             }
             else if (!isOllLayoutCrossed(2, 2) && !isOllLayoutCrossed(2,6)){
-                while (cube[2][3]!=cube[3][3])
+                while (cube[2][3]!=cube[3][3]) {
                     this.move_U(1);
+                    solvAlg+="U";
+                }
                 int color = cube[3][3];
-                while (cube[2][6]==color || cube[3][6]==color)
+                while (cube[2][6]==color || cube[3][6]==color) {
                     this.move_D(1);
+                    solvAlg+="D";
+                }
                 this.move_R(2);
+                solvAlg+="R2";
             }
         }
+
+        return solvAlg;
     }
 
     private boolean isOllLayoutCrossed(int x, int y){
@@ -465,40 +507,58 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return false;
     }
 
-    private void orientLastTwoEdges() {
+    private String orientLastTwoEdges() {
+        String solvAlg = "";
         if(cube[3][1] != 0 && cube[3][1] != 5 && cube[2][4] != 0 && cube[2][4] != 5){
             this.move_R(-1);
+            solvAlg+="R'";
             this.rotate_z(-1);
+            solvAlg+="z'";
             while (cube[3][2] != 0 && cube[3][2] != 5) {
                 this.moveCube(SEXY_MOVE_ON_LEFT);
                 this.moveCube(SEXY_MOVE_ON_LEFT);
+                solvAlg+=SEXY_MOVE_ON_LEFT;
+                solvAlg+=SEXY_MOVE_ON_LEFT;
             }
             this.move_L(-1);
+            solvAlg+="L'";
             while (cube[4][2] != 0 && cube[4][2] != 5) {
                 this.moveCube(SEXY_MOVE_ON_LEFT);
                 this.moveCube(SEXY_MOVE_ON_LEFT);
+                solvAlg+=SEXY_MOVE_ON_LEFT;
+                solvAlg+=SEXY_MOVE_ON_LEFT;
             }
             this.move_L(1);
+            solvAlg+="L";
             this.rotate_z(1);
+            solvAlg+="z";
         }
+        return solvAlg;
     }
 
-    private void orientLeftWall() {
+    private String orientLeftWall() {
         // on left and right yellow/white stickers
+        String solvAlg = "";
         int sexyCounter = 0;
         for (int i = 4; i > 0; i--) {
             while (cube[3][1] != 0 && cube[3][1] != 5) {
                 this.moveCube(SEXY_MOVE_ON_LEFT);
                 this.moveCube(SEXY_MOVE_ON_LEFT);
+                solvAlg+=SEXY_MOVE_ON_LEFT;
+                solvAlg+=SEXY_MOVE_ON_LEFT;
                 sexyCounter += 2;
             }
             this.move_L(1);
+            solvAlg+="L";
         }
         while (sexyCounter % 6 != 0) {
             this.moveCube(SEXY_MOVE_ON_LEFT);
             this.moveCube(SEXY_MOVE_ON_LEFT);
+            solvAlg+=SEXY_MOVE_ON_LEFT;
+            solvAlg+=SEXY_MOVE_ON_LEFT;
             sexyCounter = sexyCounter + 2;
         }
+        return solvAlg;
     }
 
 }
