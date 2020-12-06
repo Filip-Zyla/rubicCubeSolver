@@ -1,27 +1,23 @@
 package cubes;
 
+import jdk.jshell.execution.Util;
 import lombok.*;
 import moveInterfaces.moveOneWallInterfaceTwoCube;
 import moveInterfaces.rotateInterface;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.Random;
 
 @Data
 public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
+
     private final int NUMBER_OF_WALLS = 6;
-    /**
-     * colors
-     */
     private final int DEGREE_OF_CUBE = 2;
     private final int HEIGHT = DEGREE_OF_CUBE * 3;
     private final int WIDTH = DEGREE_OF_CUBE * 4;
     private int[][] cube;
 
     // alg scrambles
-    private final String SEXY_MOVE_ON_RIGHT = "U'R'UR";
-    private final String SEXY_MOVE_ON_LEFT = "ULU'L'";
+    private final String SEXY_MOVE_ON_LEFT = "U'R'UR";
 
     /**
      * colors id's:
@@ -29,7 +25,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
      * red=1 orange=4
      * blue=2 green=3
      * BLACK=9
-     * <p>
+     *
      * orientation: laying cross:
      * 99  44  99  99
      * 33  00  22  55
@@ -308,12 +304,9 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         }
     }
 
-    private boolean checkIsAlgProper(String alg) {
-        if (!alg.equals(alg.toUpperCase())) {
-            System.err.println("Alg with lower case");
-            return false;
-        }
-        String poll = "UDRLFB2'";
+    private boolean checkIsAlgProper(String alg)
+    {
+        String poll = "xyzUDRLFB2'";
         char[] array = alg.toCharArray();
         int i = 0;
         while (i < array.length) {
@@ -363,6 +356,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return builder.toString();
     }
 
+    @SneakyThrows
     private void moveOneWall(char wall, int rotate) {
         switch (wall) {
             case 'R' -> this.move_R(rotate);
@@ -380,23 +374,123 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     /**
      * Solving cube
      */
+
     public void solve() {
         orientLeftWall();
         this.rotate_y(2);
         orientLeftWall();
-        // resolve two last not orient stickers
-        // orientation of layers
-        // permutation of layers  one or two algs
+        orientLastTwoEdges();
+
+        this.rotate_z(1);
+        orientLastLayer();
+
+        permuteLastLayer();
+        this.rotate_z(2);
+        permuteLastLayer();
+        while (cube[4][3]!=cube[5][3])
+            this.move_U(1);
+
+    }
+
+    private void permuteLastLayer() {
+        if (cube[2][1]==cube[3][1] && cube[2][4]==cube[3][4])
+            return;
+        else if (cube[1][2]+cube[4][3]==5){
+            this.moveCube("RU'R'U'F2U'RUR'DR2");
+        }
+        else{
+            while (cube[2][1]!=cube[3][1])
+                this.move_U(1);
+            this.moveCube("RU2R'U'RU2L'UR'U'L");
+        }
+    }
+
+    private void orientLastLayer() {
+        int check=0;
+        for (int i=2; i<4; i++){
+            for (int j=2; j<4; j++){
+                if (cube[i][j]==0)
+                    check++;
+                else check--;
+            }
+        }
+        int upperColor = check<0 ? 5 : 0;
+
+        if (Math.abs(check)==4)
+            return;
+        else if (Math.abs(check)==2){
+            while (cube[3][3]==upperColor)
+                this.move_U(1);
+            while (cube[3][7]!=upperColor)
+                this.move_D(1);
+            this.moveCube("R2DR2");
+        }
+        else {
+            if (isOllLayoutCrossed(2, 2) && isOllLayoutCrossed(2,6)){
+                while (cube[3][3]!=cube[2][7])
+                    this.move_U(1);
+                this.moveCube("R2D2F2");
+            }
+            else if (isOllLayoutCrossed(2, 2) && !isOllLayoutCrossed(2,6)){
+                while (cube[2][6]!=cube[3][6])
+                    this.move_D(1);
+                if(cube[3][7]==cube[3][3])
+                    this.moveCube("R2U'R2U'R2");
+                else
+                    this.moveCube("R2UR2UR2");
+            }
+            else if (!isOllLayoutCrossed(2, 2) && isOllLayoutCrossed(2,6)){
+                while (cube[2][3]!=cube[3][3])
+                    this.move_U(1);
+                if(cube[3][6]==cube[3][2])
+                    this.moveCube("R2DR2DR2");
+                else
+                    this.moveCube("R2D'R2D'R2");
+
+            }
+            else if (!isOllLayoutCrossed(2, 2) && !isOllLayoutCrossed(2,6)){
+                while (cube[2][3]!=cube[3][3])
+                    this.move_U(1);
+                int color = cube[3][3];
+                while (cube[2][6]==color || cube[3][6]==color)
+                    this.move_D(1);
+                this.move_R(2);
+            }
+        }
+    }
+
+    private boolean isOllLayoutCrossed(int x, int y){
+        if(cube[x][y]==cube[x+1][y+1])
+            return true;
+        return false;
+    }
+
+    private void orientLastTwoEdges() {
+        if(cube[3][1] != 0 && cube[3][1] != 5 && cube[2][4] != 0 && cube[2][4] != 5){
+            this.move_R(-1);
+            this.rotate_z(-1);
+            while (cube[3][2] != 0 && cube[3][2] != 5) {
+                this.moveCube(SEXY_MOVE_ON_LEFT);
+                this.moveCube(SEXY_MOVE_ON_LEFT);
+            }
+            this.move_L(-1);
+            while (cube[4][2] != 0 && cube[4][2] != 5) {
+                this.moveCube(SEXY_MOVE_ON_LEFT);
+                this.moveCube(SEXY_MOVE_ON_LEFT);
+            }
+            this.move_L(1);
+            this.rotate_z(1);
+        }
     }
 
     private void orientLeftWall() {
         // on left and right yellow/white stickers
         int sexyCounter = 0;
         for (int i = 4; i > 0; i--) {
-            while (cube[3][1] != 0 || cube[3][1] != 5) {
+            while (cube[3][1] != 0 && cube[3][1] != 5) {
                 this.moveCube(SEXY_MOVE_ON_LEFT);
                 this.moveCube(SEXY_MOVE_ON_LEFT);
-                sexyCounter = sexyCounter + 2;
+                sexyCounter += 2;
             }
             this.move_L(1);
         }
@@ -407,8 +501,4 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         }
     }
 
-    public void showCube(){
-        return;
-    }
 }
-
