@@ -18,6 +18,16 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     // alg scrambles
     private final String SEXY_MOVE_ON_LEFT = "U'R'UR";
+    private final String SEXY_MOVE_ON_LEFT_DOUBLE = "U'R'URU'R'UR";
+    private final String T_PERM = "RU2R'U'RU2L'UR'U'L";
+    private final String J_PERM = "RU'R'U'F2U'RUR'DR2";
+    private final String ORIENT_X_BOTH_WALLS = "R2D2F2";
+    private final String ORIENT_ONE_ON_BOTH = "R2DR2";
+    private final String ORIENT_TWO_AND_X = "R2DR2DR2";
+    private final String ORIENT_TWO_AND_X_REV = "R2D'R2D'R2";
+    private final String ORIENT_X_AND_TWO = "R2U'R2U'R2";
+    private final String ORIENT_X_AND_TWO_REV = "R2UR2UR2";
+
 
     /**
      * colors id's:
@@ -304,8 +314,7 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         }
     }
 
-    private boolean checkIsAlgProper(String alg)
-    {
+    private boolean checkIsAlgProper(String alg) {
         String poll = "xyzUDRLFB2'";
         char[] array = alg.toCharArray();
         int i = 0;
@@ -378,19 +387,24 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     public String solve() {
         String solvAlg = "";
         solvAlg+=orientLeftWall();
+
         this.rotate_y(2);
         solvAlg+="y2";
+
         solvAlg+=orientLeftWall();
         solvAlg+=orientLastTwoEdges();
 
         this.rotate_z(1);
         solvAlg+="z";
-        solvAlg+=orientLastLayer();
 
+        solvAlg+=orientLastLayer();
         solvAlg+=permuteLastLayer();
+
         this.rotate_z(2);
         solvAlg+="z2";
+
         solvAlg+=permuteLastLayer();
+
         while (cube[4][3]!=cube[5][3]) {
             this.move_U(1);
             solvAlg+="U";
@@ -404,16 +418,17 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         if (cube[2][1]==cube[3][1] && cube[2][4]==cube[3][4])
             return solveAlg;
         else if (cube[1][2]+cube[4][3]==5){
-            this.moveCube("RU'R'U'F2U'RUR'DR2");
-            solveAlg+="RU'R'U'F2U'RUR'DR2";
+            this.moveCube(J_PERM);
+            solveAlg+=J_PERM;
         }
         else{
             while (cube[2][1]!=cube[3][1]) {
                 this.move_U(1);
                 solveAlg+="U";
             }
-            this.moveCube("RU2R'U'RU2L'UR'U'L");
-            solveAlg+="RU2R'U'RU2L'UR'U'L";
+
+            this.moveCube(T_PERM);
+            solveAlg+= T_PERM;
         }
         return solveAlg;
     }
@@ -442,8 +457,8 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 this.move_D(1);
                 solvAlg+="D";
             }
-            this.moveCube("R2DR2");
-            solvAlg+="R2DR2";
+            this.moveCube(ORIENT_ONE_ON_BOTH);
+            solvAlg+= ORIENT_ONE_ON_BOTH;
         }
         else {
             if (isOllLayoutCrossed(2, 2) && isOllLayoutCrossed(2,6)){
@@ -451,8 +466,8 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                     this.move_U(1);
                     solvAlg+="U";
                 }
-                this.moveCube("R2D2F2");
-                solvAlg+="R2D2F2";
+                this.moveCube(ORIENT_X_BOTH_WALLS);
+                solvAlg+= ORIENT_X_BOTH_WALLS;
             }
             else if (isOllLayoutCrossed(2, 2) && !isOllLayoutCrossed(2,6)){
                 while (cube[2][6]!=cube[3][6]) {
@@ -460,12 +475,12 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                     solvAlg+="D";
                 }
                 if(cube[3][7]==cube[3][3]) {
-                    this.moveCube("R2U'R2U'R2");
-                    solvAlg+="R2U'R2U'R2";
+                    this.moveCube(ORIENT_X_AND_TWO);
+                    solvAlg+= ORIENT_X_AND_TWO;
                 }
                 else {
-                    this.moveCube("R2UR2UR2");
-                    solvAlg+="R2UR2UR2";
+                    this.moveCube(ORIENT_X_AND_TWO_REV);
+                    solvAlg+= ORIENT_X_AND_TWO_REV;
                 }
             }
             else if (!isOllLayoutCrossed(2, 2) && isOllLayoutCrossed(2,6)){
@@ -474,12 +489,12 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                     solvAlg+="U";
                 }
                 if(cube[3][6]==cube[3][2]) {
-                    this.moveCube("R2DR2DR2");
-                    solvAlg+="R2DR2DR2";
+                    this.moveCube(ORIENT_TWO_AND_X);
+                    solvAlg+= ORIENT_TWO_AND_X;
                 }
                 else {
-                    this.moveCube("R2D'R2D'R2");
-                    solvAlg+="R2D'R2D'R2";
+                    this.moveCube(ORIENT_TWO_AND_X_REV);
+                    solvAlg+= ORIENT_TWO_AND_X_REV;
                 }
 
             }
@@ -515,18 +530,14 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             this.rotate_z(-1);
             solvAlg+="z'";
             while (cube[3][2] != 0 && cube[3][2] != 5) {
-                this.moveCube(SEXY_MOVE_ON_LEFT);
-                this.moveCube(SEXY_MOVE_ON_LEFT);
-                solvAlg+=SEXY_MOVE_ON_LEFT;
-                solvAlg+=SEXY_MOVE_ON_LEFT;
+                this.moveCube(SEXY_MOVE_ON_LEFT_DOUBLE);
+                solvAlg+=SEXY_MOVE_ON_LEFT_DOUBLE;
             }
             this.move_L(-1);
             solvAlg+="L'";
             while (cube[4][2] != 0 && cube[4][2] != 5) {
-                this.moveCube(SEXY_MOVE_ON_LEFT);
-                this.moveCube(SEXY_MOVE_ON_LEFT);
-                solvAlg+=SEXY_MOVE_ON_LEFT;
-                solvAlg+=SEXY_MOVE_ON_LEFT;
+                this.moveCube(SEXY_MOVE_ON_LEFT_DOUBLE);
+                solvAlg+=SEXY_MOVE_ON_LEFT_DOUBLE;
             }
             this.move_L(1);
             solvAlg+="L";
@@ -542,20 +553,16 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         int sexyCounter = 0;
         for (int i = 4; i > 0; i--) {
             while (cube[3][1] != 0 && cube[3][1] != 5) {
-                this.moveCube(SEXY_MOVE_ON_LEFT);
-                this.moveCube(SEXY_MOVE_ON_LEFT);
-                solvAlg+=SEXY_MOVE_ON_LEFT;
-                solvAlg+=SEXY_MOVE_ON_LEFT;
+                this.moveCube(SEXY_MOVE_ON_LEFT_DOUBLE);
+                solvAlg+=SEXY_MOVE_ON_LEFT_DOUBLE;
                 sexyCounter += 2;
             }
             this.move_L(1);
             solvAlg+="L";
         }
         while (sexyCounter % 6 != 0) {
-            this.moveCube(SEXY_MOVE_ON_LEFT);
-            this.moveCube(SEXY_MOVE_ON_LEFT);
-            solvAlg+=SEXY_MOVE_ON_LEFT;
-            solvAlg+=SEXY_MOVE_ON_LEFT;
+            this.moveCube(SEXY_MOVE_ON_LEFT_DOUBLE);
+            solvAlg+=SEXY_MOVE_ON_LEFT_DOUBLE;
             sexyCounter = sexyCounter + 2;
         }
         return solvAlg;
