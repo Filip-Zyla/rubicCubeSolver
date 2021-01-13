@@ -302,32 +302,33 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
      */
 
     public String solve() {
-        String solvAlg = "";
-        solvAlg+=orientLeftWall();
+        StringBuilder builderSolve = new StringBuilder();
+
+        builderSolve.append(orientLeftWall());
 
         this.rotateY(2);
-        solvAlg+="y2";
+        builderSolve.append("y2");
 
-        solvAlg+=orientLeftWall();
-        solvAlg+=orientLastTwoEdges();
+        builderSolve.append(orientLeftWall());
+        builderSolve.append(orientLastTwoEdges());
 
         this.rotateZ(1);
-        solvAlg+="z";
+        builderSolve.append("z");
 
-        solvAlg+=orientLastLayer();
-        solvAlg+=permuteLastLayer();
+        builderSolve.append(orientLastLayer());
+        builderSolve.append(permuteLastLayer());
 
         this.rotateZ(2);
-        solvAlg+="z2";
+        builderSolve.append("z2");
 
-        solvAlg+=permuteLastLayer();
+        builderSolve.append(permuteLastLayer());
 
         while (cube[4][3]!=cube[5][3]) {
             this.moveU(1);
-            solvAlg+="U";
+            builderSolve.append("U");
         }
 
-        return solvAlg;
+        return builderSolve.toString();
     }
 
     private String permuteLastLayer() {
@@ -486,3 +487,19 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
