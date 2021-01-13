@@ -2,12 +2,12 @@ package moveInterfaces;
 
 public interface moveOneWallInterfaceTwoCube {
 
-    void move_U(int rotate);
-    void move_D(int rotate);
+    void moveU(int rotate);
+    void moveD(int rotate);
 
-    void move_R(int rotate);
-    void move_L(int rotate);
+    void moveR(int rotate);
+    void moveL(int rotate);
 
-    void move_F(int rotate);
-    void move_B(int rotate);
+    void moveF(int rotate);
+    void moveB(int rotate);
 }

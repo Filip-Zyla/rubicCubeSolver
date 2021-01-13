@@ -1,5 +1,6 @@
 package graphicalMenu;
 
+import cubes.Algorithm;
 import cubes.Cube_2x2;
 
 import javax.swing.*;
@@ -89,7 +90,7 @@ public class graphMenu extends JComponent implements ActionListener {
             cube = new Cube_2x2();
             repaintCube();
         } else if (e.getSource() == b2) {
-            String sc = Cube_2x2.randomScramble();
+            String sc = Algorithm.randomScramble(15,20);
             System.out.println(sc);
             cube.moveCube(sc);
             jl.setText(sc);
