@@ -5,7 +5,7 @@ import moveInterfaces.moveOneWallInterfaceTwoCube;
 import moveInterfaces.rotateInterface;
 
 @Data
-public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
+public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     private final int NUMBER_OF_WALLS = 6;
     private final int DEGREE_OF_CUBE = 2;
@@ -29,16 +29,16 @@ public class Cube_2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
      * white=0 yellow=5
      * red=1 orange=4
      * blue=2 green=3
-     * BLACK=9
      *
-     * orientation: laying cross:
-     * 99  44  99  99
-     * 33  00  22  55
-     * 99  11  99  99
-     * 9 is null in code
+     *      4 4
+     *      4 4
+     * 3 3  0 0  2 2  5 5
+     * 3 3  0 0  2 2  5 5
+     *      1 1
+     *      1 1
      */
 
-    public Cube_2x2() {
+    public Cube2x2() {
         cube = new int[HEIGHT][WIDTH];
         paintCube();
     }

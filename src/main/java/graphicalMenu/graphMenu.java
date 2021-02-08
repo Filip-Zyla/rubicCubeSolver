@@ -1,7 +1,7 @@
 package graphicalMenu;
 
 import cubes.Algorithm;
-import cubes.Cube_2x2;
+import cubes.Cube2x2;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,14 +11,14 @@ import java.util.ArrayList;
 
 public class graphMenu extends JComponent implements ActionListener {
 
-    Cube_2x2 cube;
+    Cube2x2 cube;
     JButton b1, b2, b3, b4, b5;
     JTextField tf;
     JLabel jl;
     JFrame window;
     ArrayList<JPanel> jp = new ArrayList<>();
 
-    public graphMenu(Cube_2x2 cube) {
+    public graphMenu(Cube2x2 cube) {
         this.cube = cube;
         window = new JFrame();
         window.setSize(1400, 650);
@@ -64,7 +64,7 @@ public class graphMenu extends JComponent implements ActionListener {
         window.setVisible(true);
     }
 
-    private void paintCube(Cube_2x2 cube) {
+    private void paintCube(Cube2x2 cube) {
         jp = new ArrayList<>();
         for (int j = 0; j < 8; j++) {
             for (int i = 0; i < 6; i++) {
@@ -87,7 +87,7 @@ public class graphMenu extends JComponent implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == b1) {
-            cube = new Cube_2x2();
+            cube = new Cube2x2();
             repaintCube();
         } else if (e.getSource() == b2) {
             String sc = Algorithm.randomScramble(15,20);
