@@ -10,6 +10,7 @@ public class Main {
         //QuickestSolve quickestSolve = new QuickestSolve(new Cube2x2());
         Cube2x2 cube2x2 = new Cube2x2();
         System.out.println(cube2x2.solve());
+        test1();
 
     }
 
@@ -24,6 +25,7 @@ public class Main {
         int bezFull = 0;
         int bezTwo = 0;
         int coutTwos = 0;
+        int manyFull = 0;
 
         for(int i = 0; i< poll; i++) {
             Cube2x2 cube = new Cube2x2();
@@ -53,6 +55,9 @@ public class Main {
             if(res[2]==1 && res[0]==0 && res[1]==0){
                 coutTwos++;
             }
+            if(res[0]>1){
+                manyFull++;
+            }
         }
         System.out.println(
                           "Sum " + (int) poll
@@ -65,7 +70,9 @@ public class Main {
                         + "\nbez all: " + zero/poll
                         + "\nbez two: " + bezTwo/poll
                         + "\ntwo<2: " + coutTwos/poll
-                        + "\nsum of %: " + (int)(full+bezFull+onlyTwo)/poll
+                        + "\nsum of %: " + (full+bezFull+onlyTwo)/poll
+                        + "\nfull>1: " + manyFull/poll
+
         );
     }
 

@@ -305,16 +305,26 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
      * @return
      */
 
+    private final String OLL_ONE_UP_COUNTER_CLOCK = "RUR'URU2R'";
+    private final String OLL_ONE_UP_CLOCK = "RU2R'U'RU'R'";
+    private final String OLL_TWO_UP_TWO_BESIDE = "UFRUR'U'F'";
+    private final String OLL_TWO_UP_TWO_OPPOSITE = "L'U'LURU'L'U";
+    private final String OLL_TWO_UP_DIAGONAL = "FRU'R'U'RUR'F'";
+    private final String OLL_NO_UP_TWO_PAIRS = "R2U2RU2R2";
+    private final String OLL_NO_UP_ONE_PAIR = "RU2R2U'R2U'R2U2R";
+
+
     public int[] solve() {
+        StringBuilder builderSolve = new StringBuilder();
+
         final String alg = Algorithm.randomScramble(15, 20);
         this.moveCube(alg);
-        StringBuilder builderSolve = new StringBuilder();
 
         List<Pair<Integer, Integer>> walls = Arrays.asList(new Pair<>(0,2), new Pair<>(2,0), new Pair<>(2,2), new Pair<>(2,4), new Pair<>(2,6), new Pair<>(4,2));
         List<Pair<Integer, Integer>> colors = Arrays.asList(new Pair<>(0,5), new Pair<>(1,4), new Pair<>(2,3));
-        Set fullWall = new HashSet<Pair>();
-        Set threeWall = new HashSet<Pair>();
-        Set twoWall = new HashSet<Pair>();
+        List<Pair> fullWall = new ArrayList<>();
+        List<Pair> threeWall = new ArrayList<>();
+        List<Pair> twoWall = new ArrayList<>();
         for(Pair w : walls){
             for(Pair c : colors) {
                 int x = (int) w.getValue0();
@@ -341,14 +351,58 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 }
             }
         }
-        if (!fullWall.isEmpty()){
 
+        if (!fullWall.isEmpty()){
+            if (fullWall.size()==1){
+                Pair p = fullWall.get(0);
+                Pair w = (Pair) p.getValue0();
+                Pair c = (Pair) p.getValue1();
+                int x = (int) w.getValue0();
+                int y = (int) w.getValue1();
+                int c0 = (int) c.getValue0();
+                int c1 = (int) c.getValue1();
+
+                if (x==2 && y==6){
+                    builderSolve.append("");
+                }
+                else if (x==2){
+                    if (y==0)
+                        builderSolve.append("z'");
+                    else {
+                        if (y==2)
+                            builderSolve.append("z");
+                        builderSolve.append("z");
+                    }
+                }
+                else if (y==2){
+                    if(y<2)
+                        builderSolve.append("x");
+                    else builderSolve.append("x'");
+                }
+
+                List<Integer> arePresent = new ArrayList<>();
+                for(int i=2; i<4; i++){
+                    for(int j=2; j<4; j++){
+                        if(this.getCube()[i][j]==c0 || this.getCube()[i][j]==c1){
+
+                        }
+                    }
+                }
+                //TODO
+            }
+            else {
+                //TODO check isSolved? maybe some shortcuts?
+                // find wall with best not solved wall
+                // two_up_two_next -> two_diagonal -> two_up_two_further -> one_up x2 -> no_up_both_besides -> no_up_one_besides
+            }
         }
         else if (!threeWall.isEmpty()){
-
+            //TODO shortcuts?
+            // instant second wall
+            // second wall min two? or any other three?
         }
         else if (!twoWall.isEmpty()){
-
+            //TODO
         }
         else {
             builderSolve.append(orientLeftWall());
@@ -366,19 +420,19 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 //  red=1 orange=4
 //  blue=2 green=3
 
-//        builderSolve.append(orientLastLayer());
-//        builderSolve.append(permuteLastLayer());
-//
-//        this.rotateZ(2);
-//        builderSolve.append("z2");
-//
-//        builderSolve.append(permuteLastLayer());
-//
-//        while (cube[4][3]!=cube[5][3]) {
-//            this.moveU(1);
-//            builderSolve.append("U");
-//        }
-//
+        builderSolve.append(orientLastLayer());
+        builderSolve.append(permuteLastLayer());
+
+        this.rotateZ(2);
+        builderSolve.append("z2");
+
+        builderSolve.append(permuteLastLayer());
+
+        while (cube[4][3]!=cube[5][3]) {
+            this.moveU(1);
+            builderSolve.append("U");
+        }
+
 //        return builderSolve.toString();
         return new int[]{fullWall.size(), threeWall.size(), twoWall.size()};
     }
