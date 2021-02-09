@@ -17,20 +17,10 @@ public class QuickestSolve {
         List<String> listOfSolves = new ArrayList<>();
         String scramble = Algorithm.randomScramble(15,20);
         cube2x2.moveCube(scramble);
-        String solvingScramble = findSolve(cube2x2,"");
-        return solvingScramble;
+
+        return "";
     }
 
-    private String findSolve(Cube2x2 cube2x2, String curSolve){
-        for(int i=0; i<possibleMoves.length; i++){
-            cube2x2.moveCube(possibleMoves[i]);
-            curSolve+=possibleMoves[i];
-            if(isSolved(cube2x2))
-                return curSolve;
-            curSolve+=findSolve(cube2x2, curSolve);
-        }
-        return curSolve;
-    }
 
     private boolean isSolved(Cube2x2 cube2x2) {
         if(cube2x2.getCube()[2][2]!=cube2x2.getCube()[2][3] || cube2x2.getCube()[3][2]!=cube2x2.getCube()[3][3] || cube2x2.getCube()[2][2]!=cube2x2.getCube()[3][3])
