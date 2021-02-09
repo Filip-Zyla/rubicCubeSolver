@@ -95,7 +95,7 @@ public class Algorithm {
                 String s = String.valueOf(algList.get(j).charAt(0));
                 switch (combined){
                     case "", "''" -> {algList.set(j, s+"2"); algList.remove(j+1);}
-                    case "'", "22" -> {algList.remove(j); algList.remove(j+1);}
+                    case "'", "22" -> {algList.remove(j+1); algList.remove(j);}
                     case "2" -> {algList.set(j, s+"'"); algList.remove(j+1);}
                     case "2'", "'2" -> {algList.set(j, s); algList.remove(j+1);}
                 }

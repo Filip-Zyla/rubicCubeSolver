@@ -3,6 +3,9 @@ package cubes;
 import lombok.*;
 import moveInterfaces.moveOneWallInterfaceTwoCube;
 import moveInterfaces.rotateInterface;
+import org.javatuples.Pair;
+
+import java.util.*;
 
 @Data
 public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
@@ -299,36 +302,85 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     /**
      * Solving cube
+     * @return
      */
 
-    public String solve() {
+    public int[] solve() {
+        final String alg = Algorithm.randomScramble(15, 20);
+        this.moveCube(alg);
         StringBuilder builderSolve = new StringBuilder();
 
-        builderSolve.append(orientLeftWall());
-
-        this.rotateY(2);
-        builderSolve.append("y2");
-
-        builderSolve.append(orientLeftWall());
-        builderSolve.append(orientLastTwoEdges());
-
-        this.rotateZ(1);
-        builderSolve.append("z");
-
-        builderSolve.append(orientLastLayer());
-        builderSolve.append(permuteLastLayer());
-
-        this.rotateZ(2);
-        builderSolve.append("z2");
-
-        builderSolve.append(permuteLastLayer());
-
-        while (cube[4][3]!=cube[5][3]) {
-            this.moveU(1);
-            builderSolve.append("U");
+        List<Pair<Integer, Integer>> walls = Arrays.asList(new Pair<>(0,2), new Pair<>(2,0), new Pair<>(2,2), new Pair<>(2,4), new Pair<>(2,6), new Pair<>(4,2));
+        List<Pair<Integer, Integer>> colors = Arrays.asList(new Pair<>(0,5), new Pair<>(1,4), new Pair<>(2,3));
+        Set fullWall = new HashSet<Pair>();
+        Set threeWall = new HashSet<Pair>();
+        Set twoWall = new HashSet<Pair>();
+        for(Pair w : walls){
+            for(Pair c : colors) {
+                int x = (int) w.getValue0();
+                int y = (int) w.getValue1();
+                int c0 = (int) c.getValue0();
+                int c1 = (int) c.getValue1();
+                int[] wall = {this.getCube()[x][y], this.getCube()[x][y+1], this.getCube()[x+1][y+1], this.getCube()[x+1][y]};
+                List<Integer> placeThatConsist = new ArrayList<>();
+                for(int i = 0; i < wall.length; i++){
+                    if(wall[i]==c0 || wall[i]==c1){
+                        placeThatConsist.add(i);
+                    }
+                }
+                if (placeThatConsist.size()==4){
+                    fullWall.add(new Pair<>(w,c));
+                }
+                if (placeThatConsist.size()==3){
+                    threeWall.add(new Pair<>(w,c));
+                }
+                if (placeThatConsist.size()==2){
+                    if(Math.abs(placeThatConsist.get(0)-placeThatConsist.get(1))==1 || Math.abs(placeThatConsist.get(0)-placeThatConsist.get(1))==3){
+                        twoWall.add(new Pair<>(w,c));
+                    }
+                }
+            }
         }
+        if (!fullWall.isEmpty()){
 
-        return builderSolve.toString();
+        }
+        else if (!threeWall.isEmpty()){
+
+        }
+        else if (!twoWall.isEmpty()){
+
+        }
+        else {
+            builderSolve.append(orientLeftWall());
+
+            this.rotateY(2);
+            builderSolve.append("y2");
+
+            builderSolve.append(orientLeftWall());
+            builderSolve.append(orientLastTwoEdges());
+
+            this.rotateZ(1);
+            builderSolve.append("z");
+        }
+//  white=0 yellow=5
+//  red=1 orange=4
+//  blue=2 green=3
+
+//        builderSolve.append(orientLastLayer());
+//        builderSolve.append(permuteLastLayer());
+//
+//        this.rotateZ(2);
+//        builderSolve.append("z2");
+//
+//        builderSolve.append(permuteLastLayer());
+//
+//        while (cube[4][3]!=cube[5][3]) {
+//            this.moveU(1);
+//            builderSolve.append("U");
+//        }
+//
+//        return builderSolve.toString();
+        return new int[]{fullWall.size(), threeWall.size(), twoWall.size()};
     }
 
     private String permuteLastLayer() {
