@@ -10,7 +10,6 @@ public class Main {
         //QuickestSolve quickestSolve = new QuickestSolve(new Cube2x2());
         Cube2x2 cube2x2 = new Cube2x2();
         System.out.println(cube2x2.solve());
-        test1();
 
     }
 
@@ -29,7 +28,7 @@ public class Main {
 
         for(int i = 0; i< poll; i++) {
             Cube2x2 cube = new Cube2x2();
-            int [] res = cube.solve();
+            int [] res = new int[1];//cube.solve();
             if(res[0]>0) {
                 full++;
             }
