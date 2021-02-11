@@ -100,8 +100,8 @@ public class graphMenu extends JComponent implements ActionListener {
             cube.moveCube(sc);
             repaintCube();
         } else if (e.getSource() == b4) {
-            //String solveAlg = cube.solve();
-            //System.out.println(solveAlg);
+            String solveAlg = cube.solve();
+            System.out.println(solveAlg);
             repaintCube();
         } else if (e.getSource() == b5) {
             System.exit(0);

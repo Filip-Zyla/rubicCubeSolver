@@ -1,16 +1,12 @@
-
 import cubes.*;
-
-import java.time.temporal.ChronoUnit;
+import graphicalMenu.graphMenu;
 
 public class Main {
 
     public static void main(String[] args) {
-        //new graphMenu(new Cube2x2());
-        //QuickestSolve quickestSolve = new QuickestSolve(new Cube2x2());
-        Cube2x2 cube2x2 = new Cube2x2();
-        System.out.println(cube2x2.solve());
-
+        new graphMenu(new Cube2x2());
+//        Cube2x2 cube2x2 = new Cube2x2();
+//        System.out.println(cube2x2.solve());
     }
 
     private static void test1() {
