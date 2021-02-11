@@ -287,7 +287,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     }
 
 
-    private final String SEXY_MOVE_ON_LEFT = "U'R'UR";
     private final String SEXY_MOVE_ON_LEFT_DOUBLE = "U'R'URU'R'UR";
 
     private final String PLL_T = "RU2R'U'RU2L'UR'U'L";  //on right, up
@@ -314,7 +313,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     private final String OLL_UP_A_COUNTER = "RUR'URU2R'";   //up on front-left
     private final String OLL_UP_A_CLOCK = "RU2R'U'RU'R'";   //up on back-right
 
-    //TODO start
+    //TODO solve
     public String solve() {
         StringBuilder builderSolve = new StringBuilder();
 
@@ -444,9 +443,10 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             }
             builderSolve.append(orientLastLayer(c0, c1));
         }
-//        else if (!twoWall.isEmpty()) {
-//
-//        }
+        else if (!twoWall.isEmpty()) {
+            if (true){
+            }
+        }
         else {
             builderSolve.append(orientLeftWall());
 
@@ -474,7 +474,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         }
 
         return builderSolve.toString();
-//        return new int[]{fullWall.size(), threeWall.size(), twoWall.size()};
     }
 
     private String orientLeftWall() {
