@@ -290,20 +290,20 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     private final String SEXY_MOVE_ON_LEFT_DOUBLE = "U'R'URU'R'UR";
 
     private final String PLL_T = "RU2R'U'RU2L'UR'U'L";  //on right, up
-    private final String PLL_T_DOWN = "x2RU2R'U'RU2L'UR'U'L";   //on left, down
+    private final String PLL_T_DOWN = "z2RU2R'U'RU2L'UR'U'L";   //on left, down
     private final String PLL_Y = "RU'R'U'F2U'RUR'DR2";  // right-front -> left-back, up
     private final String PLL_Y_DOWN = "x2RU'R'U'F2U'RUR'DR2";   // left-front -> right-back, down
     private final String PLL_T_BOTH = "R2U'B2U2R2U'R2"; //both on back
     private final String PLL_Y_BOTH = "R2F2R2"; //4 blocks of two
     private final String PLL_Y_DOWN_T_UP = "RU'RF2R'UR'";    //T on back up, Y left-front to right-back down
-    private final String PLL_T_DOWN_Y_UP = "x2RU'RF2R'UR'";    //T on back up, Y right-front to left-back down
+    private final String PLL_T_DOWN_Y_UP = "z2RU'RF2R'UR'";    //T on back up, Y right-front to left-back down
 
     private final String OLL_ONE_UP = "R2DR2";  // front-right
     private final String OLL_Y_BOTH = "R2D2F2";
     private final String OLL_T_DOWN_Y_UP_OPP = "R2U'R2U'R2";   //are left-fronts opposite
     private final String OLL_T_DOWN_Y_UP_SAME = "R2UR2UR2"; //are left-fronts same
-    private final String OLL_Y_DOWN_T_UP_OPP = "R2DR2DR2";   //are left-fronts opposite
-    private final String OLL_Y_DOWN_T_UP_SAME = "R2D'R2D'R2";   //are left-fronts same
+    private final String OLL_Y_DOWN_T_UP_OPP = "R2DR2UR2";   //are left-fronts opposite
+    private final String OLL_Y_DOWN_T_UP_SAME = "R2D'R2D'F2";   //are left-fronts same
 
     private final String OLL_UP_H = "R2U2RU2R2";    //front and back
     private final String OLL_UP_P = "RU2R2U'R2U'R2U2R"; //pair on right
@@ -314,16 +314,13 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     private final String OLL_UP_A_CLOCK = "RU2R'U'RU'R'";   //up on back-right
 
     public String solve() {
-        final String alg = Algorithm.randomScramble(15, 20);
-        moveCube(alg);
-
         String solveAlg = "";
 
         solveAlg+=ortegaFirstStep();
         solveAlg+=orientBothLayer();
         solveAlg+=permuteBothLayers();
 
-        return solveAlg;
+        return Algorithm.optimizeAlg(solveAlg);
     }
 
     private String ortegaFirstStep() {
@@ -557,7 +554,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 moveU(1);
             }
         }
-        else if (countUp == 3) {
+        else if (countUp == 1) {
             while (true) {
                 if (s.contains(cube[1][2]) && s.contains(cube[2][4]) && s.contains(cube[4][3])) {
                     builder.append(OLL_UP_A_COUNTER);
@@ -694,7 +691,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             }
             else {
                 while (cube[2][5]!=cube[3][5]) {
-                    moveU(1);
+                    moveD(1);
                     solveAlg+="D";
                 }
                 moveCube(PLL_T_DOWN);
