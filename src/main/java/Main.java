@@ -4,7 +4,7 @@ import graphicalMenu.graphMenu;
 public class Main {
 
     public static void main(String[] args) {
-        new gitgraphMenu(new Cube2x2());
+        new graphMenu(new Cube2x2());
 //        Cube2x2 cube2x2 = new Cube2x2();
 //        System.out.println(cube2x2.solve());
     }
