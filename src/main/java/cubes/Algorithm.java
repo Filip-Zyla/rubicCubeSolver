@@ -20,7 +20,8 @@ public class Algorithm {
                 while (builder.charAt(i-2)==ch)
                     ch=poll.charAt(r.nextInt(poll.length()));
             }
-            while (i>0 && builder.charAt(i-1)==ch) // avoid repetitions like DD
+            while (i>0 && builder.charAt(i-1)==ch)
+                // avoid repetitions like DD
                 ch=poll.charAt(r.nextInt(poll.length()));
             builder.append(ch);
             switch (r.nextInt(poll.length()) % 8) {

@@ -73,11 +73,16 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return stringBuilder.toString();
     }
 
-    @Override
-    public void moveU(int rotate) {
+    private int rotateCheck(int rotate){
         if (rotate < 0)
             rotate = rotate + 4;
-
+        if (rotate > 3)
+            rotate = rotate - 4;
+        return rotate;
+    }
+    @Override
+    public void moveU(int rotate) {
+        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
             temp       = cube[2][2];
@@ -101,9 +106,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     }
     @Override
     public void moveD(int rotate) {
-        if (rotate < 0)
-            rotate = rotate + 4;
-
+        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
                   temp = cube[2][6];
@@ -127,9 +130,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     }
     @Override
     public void moveR(int rotate) {
-        if (rotate < 0)
-            rotate = rotate + 4;
-
+        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
                   temp = cube[3][4];
@@ -153,9 +154,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     }
     @Override
     public void moveL(int rotate) {
-        if (rotate < 0)
-            rotate = rotate + 4;
-
+        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
                    temp = cube[2][1];
@@ -179,9 +178,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     }
     @Override
     public void moveF(int rotate) {
-        if (rotate < 0)
-            rotate = rotate + 4;
-
+        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
                   temp = cube[4][2];
@@ -205,9 +202,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     }
     @Override
     public void moveB(int rotate) {
-        if (rotate < 0)
-            rotate = rotate + 4;
-
+        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
                   temp = cube[1][3];
@@ -266,26 +261,28 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             return;
         }
 
+        alg = Algorithm.optimizeAlg(alg);
+
         char[] array = alg.toCharArray();
         int index = 0;
         while (index < array.length) {
             if (index + 1 < array.length && Character.isDigit(array[index + 1])) {
-                // double move
+                // double (or more?) move
                 moveOneWall(array[index], array[index + 1]);
                 index += 2;
-            } else { // index is letter
+            } else {
                 if (index + 1 < array.length && array[index + 1] == 39) {
                     // counter clockwise
                     moveOneWall(array[index], -1);
                     index += 2;
-                } else { // clockwise
+                } else {
+                    // clockwise
                     moveOneWall(array[index], 1);
                     index += 1;
                 }
             }
         }
     }
-
 
     private final String SEXY_MOVE_ON_LEFT_DOUBLE = "U'R'URU'R'UR";
 

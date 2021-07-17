@@ -10,7 +10,7 @@ public class Main {
     }
 
     private static void test1() {
-        double poll = 100_000;
+        double poll = 100;
 
         int full = 0;
         int three = 0;
@@ -24,7 +24,8 @@ public class Main {
 
         for(int i = 0; i< poll; i++) {
             Cube2x2 cube = new Cube2x2();
-            int [] res = new int[1];//cube.solve();
+            cube.moveCube(Algorithm.randomScramble(10,15));
+            int [] res = new int[3];//cube.solve();
             if(res[0]>0) {
                 full++;
             }
