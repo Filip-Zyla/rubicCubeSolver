@@ -62,7 +62,6 @@ public class Algorithm {
                 }
             }
         }
-        //return optimizeAlg(builder.toString());
         return builder.toString();
     }
 
