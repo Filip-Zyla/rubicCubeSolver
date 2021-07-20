@@ -255,10 +255,9 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         }
     }
 
-    public void moveCube(String alg) {
+    public boolean moveCube(String alg) {
         if (!Algorithm.checkIsAlgProper(alg)) {
-            System.out.println("Not proper alg");
-            return;
+            return false;
         }
 
         alg = Algorithm.optimizeAlg(alg);
@@ -282,6 +281,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 }
             }
         }
+        return true;
     }
 
     private final String SEXY_MOVE_ON_LEFT_DOUBLE = "U'R'URU'R'UR";

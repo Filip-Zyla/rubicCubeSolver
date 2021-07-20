@@ -14,7 +14,8 @@ public class graphMenu extends JComponent implements ActionListener {
     Cube2x2 cube;
     JButton b1, b2, b3, b4, b5;
     JTextField tf;
-    JLabel jl;
+    JLabel jl1;
+    JTextArea jta1;
     JFrame window;
     ArrayList<JPanel> jp = new ArrayList<>();
 
@@ -27,36 +28,41 @@ public class graphMenu extends JComponent implements ActionListener {
         paintCube(cube);
 
         b1 = new JButton("Reset cube");
-        b1.setBounds(810, 100, 110, 40);
+        b1.setBounds(810, 50, 110, 40);
         window.add(b1);
         b1.addActionListener(this);
 
         b2 = new JButton("Scramble");
-        b2.setBounds(810, 200, 110, 40);
+        b2.setBounds(810, 150, 110, 40);
         window.add(b2);
         b2.addActionListener(this);
 
-        jl = new JLabel("Scramble");
-        jl.setBounds(950, 200, 350, 40);
-        window.add(jl);
+        jl1 = new JLabel("Scramble");
+        jl1.setBounds(950, 150, 350, 40);
+        window.add(jl1);
 
         b3 = new JButton("Move");
-        b3.setBounds(810, 300, 110, 40);
+        b3.setBounds(810, 250, 110, 40);
         window.add(b3);
         b3.addActionListener(this);
 
         tf = new JTextField();
-        tf.setBounds(950, 300, 200, 40);
+        tf.setBounds(950, 250, 200, 40);
         window.add(tf);
         tf.addActionListener(this);
 
         b4 = new JButton("Solve cube");
-        b4.setBounds(810, 400, 110, 40);
+        b4.setBounds(810, 350, 110, 40);
         window.add(b4);
         b4.addActionListener(this);
 
+        jta1 = new JTextArea(2,20);
+        jta1.setBounds(950, 350, 250, 50);
+        jta1.setLineWrap(true);
+        window.add(jta1);
+
         b5 = new JButton("Exit");
-        b5.setBounds(810, 500, 110, 40);
+        b5.setBounds(810, 550, 110, 40);
         window.add(b5);
         b5.addActionListener(this);
 
@@ -89,21 +95,31 @@ public class graphMenu extends JComponent implements ActionListener {
         if (e.getSource() == b1) {
             cube = new Cube2x2();
             repaintCube();
-        } else if (e.getSource() == b2) {
+        }
+        else if (e.getSource() == b2) {
             String sc = Algorithm.randomScramble(15,20);
-            System.out.println(sc);
-            cube.moveCube(sc);
-            jl.setText(sc);
+            boolean b = cube.moveCube(sc);
+            if (!b){
+                JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
+            }
+            jl1.setText(sc);
             repaintCube();
-        } else if (e.getSource() == b3) {
+        }
+        else if (e.getSource() == b3) {
             String sc = tf.getText();
-            cube.moveCube(sc);
+            boolean b = cube.moveCube(sc);
+            if (!b){
+                JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
+
+            }
             repaintCube();
-        } else if (e.getSource() == b4) {
+        }
+        else if (e.getSource() == b4) {
             String solveAlg = cube.solve();
-            System.out.println(solveAlg);
             repaintCube();
-        } else if (e.getSource() == b5) {
+            jta1.setText(solveAlg);
+        }
+        else if (e.getSource() == b5) {
             System.exit(0);
         }
     }
