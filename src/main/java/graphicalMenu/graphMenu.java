@@ -13,9 +13,7 @@ public class graphMenu extends JComponent implements ActionListener {
 
     Cube2x2 cube;
     JButton b1, b2, b3, b4, b5;
-    JTextField tf;
-    JLabel jl1;
-    JTextArea jta1;
+    JTextArea jta1, jta2, jta3;
     JFrame window;
     ArrayList<JPanel> jp = new ArrayList<>();
 
@@ -37,29 +35,30 @@ public class graphMenu extends JComponent implements ActionListener {
         window.add(b2);
         b2.addActionListener(this);
 
-        jl1 = new JLabel("Scramble");
-        jl1.setBounds(950, 150, 350, 40);
-        window.add(jl1);
+        jta1 = new JTextArea();
+        jta1.setBounds(950, 150, 250, 40);
+        jta1.setLineWrap(true);
+        window.add(jta1);
 
         b3 = new JButton("Move");
         b3.setBounds(810, 250, 110, 40);
         window.add(b3);
         b3.addActionListener(this);
 
-        tf = new JTextField();
-        tf.setBounds(950, 250, 200, 40);
-        window.add(tf);
-        tf.addActionListener(this);
+        jta2 = new JTextArea();
+        jta2.setBounds(950, 250, 250, 40);
+        jta2.setLineWrap(true);
+        window.add(jta2);
 
         b4 = new JButton("Solve cube");
         b4.setBounds(810, 350, 110, 40);
         window.add(b4);
         b4.addActionListener(this);
 
-        jta1 = new JTextArea(2,20);
-        jta1.setBounds(950, 350, 250, 50);
-        jta1.setLineWrap(true);
-        window.add(jta1);
+        jta3 = new JTextArea(2,20);
+        jta3.setBounds(950, 350, 250, 50);
+        jta3.setLineWrap(true);
+        window.add(jta3);
 
         b5 = new JButton("Exit");
         b5.setBounds(810, 550, 110, 40);
@@ -95,6 +94,9 @@ public class graphMenu extends JComponent implements ActionListener {
         if (e.getSource() == b1) {
             cube = new Cube2x2();
             repaintCube();
+            jta1.setText(null);
+            jta2.setText(null);
+            jta3.setText(null);
         }
         else if (e.getSource() == b2) {
             String sc = Algorithm.randomScramble(15,20);
@@ -102,11 +104,11 @@ public class graphMenu extends JComponent implements ActionListener {
             if (!b){
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
             }
-            jl1.setText(sc);
+            jta1.setText(sc);
             repaintCube();
         }
         else if (e.getSource() == b3) {
-            String sc = tf.getText();
+            String sc = jta2.getText();
             boolean b = cube.moveCube(sc);
             if (!b){
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
@@ -117,7 +119,7 @@ public class graphMenu extends JComponent implements ActionListener {
         else if (e.getSource() == b4) {
             String solveAlg = cube.solve();
             repaintCube();
-            jta1.setText(solveAlg);
+            jta3.setText(solveAlg);
         }
         else if (e.getSource() == b5) {
             System.exit(0);
