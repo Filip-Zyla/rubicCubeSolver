@@ -317,7 +317,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     private final String OLL_T_DOWN_Y_UP_OPP = "R2U'R2U'R2";   //are left-fronts opposite
     private final String OLL_T_DOWN_Y_UP_SAME = "R2UR2UR2"; //are left-fronts same
     private final String OLL_Y_DOWN_T_UP_OPP = "R2DR2DR2";   //are left-fronts opposite
-    private final String OLL_Y_DOWN_T_UP_SAME = "R2D'R2D'F2";   //are left-fronts same
+    private final String OLL_Y_DOWN_T_UP_SAME = "R2D'R2D'R2";   //are left-fronts same
 
     private final String OLL_UP_H = "R2U2RU2R2";    //front and back
     private final String OLL_UP_P = "RU2R2U'R2U'R2U2R"; //pair on right
@@ -486,9 +486,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
             builderSolve.append(orientLeftWall());
             builderSolve.append(orientLastTwoEdges());
-
-            rotateZ(1);
-            builderSolve.append("z");
         }
         return builderSolve.toString();
     }
@@ -497,7 +494,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         // on left for yellow/white
         String solveAlg = "";
         int counter = 0;
-        for (int i = 4; i > 0; i--) {
+        for (int i = 4; i > 1; i--) {
             while (cube[3][1] != 0 && cube[3][1] != 5) {
                 moveCube(SEXY_MOVE_ON_LEFT_DOUBLE);
                 solveAlg += SEXY_MOVE_ON_LEFT_DOUBLE;
@@ -533,6 +530,10 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             }
             moveL(1);
             solveAlg += "L";
+        }
+        else {
+            rotateZ(-1);
+            solveAlg += "z'";
         }
         return solveAlg;
     }
@@ -648,11 +649,11 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                     solveAlg += "D";
                 }
                 if (cube[3][7] == cube[3][2]) {
-                    moveCube(OLL_Y_DOWN_T_UP_SAME);
-                    solveAlg += OLL_Y_DOWN_T_UP_SAME;
+                    moveCube(OLL_T_DOWN_Y_UP_SAME);
+                    solveAlg += OLL_T_DOWN_Y_UP_SAME;
                 } else {
-                    moveCube(OLL_Y_DOWN_T_UP_OPP);
-                    solveAlg += OLL_Y_DOWN_T_UP_OPP;
+                    moveCube(OLL_T_DOWN_Y_UP_OPP);
+                    solveAlg += OLL_T_DOWN_Y_UP_OPP;
                 }
             }
             else if (!isOllLayoutCrossed(2, 2) && isOllLayoutCrossed(2, 6)) {

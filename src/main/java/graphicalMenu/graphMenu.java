@@ -100,6 +100,7 @@ public class graphMenu extends JComponent implements ActionListener {
         }
         else if (e.getSource() == b2) {
             String sc = Algorithm.randomScramble(15,20);
+            System.out.println(sc);
             boolean b = cube.moveCube(sc);
             if (!b){
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
