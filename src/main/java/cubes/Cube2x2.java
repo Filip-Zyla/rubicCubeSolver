@@ -275,7 +275,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         while (index < array.length) {
             if (index + 1 < array.length && Character.isDigit(array[index + 1])) {
                 // double (or more?) move
-                moveOneWall(array[index], array[index + 1]);
+                moveOneWall(array[index], Character.getNumericValue(array[index + 1]));
                 index += 2;
             } else {
                 if (index + 1 < array.length && array[index + 1] == 39) {
@@ -316,7 +316,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     private final String OLL_Y_BOTH = "R2D2F2";
     private final String OLL_T_DOWN_Y_UP_OPP = "R2U'R2U'R2";   //are left-fronts opposite
     private final String OLL_T_DOWN_Y_UP_SAME = "R2UR2UR2"; //are left-fronts same
-    private final String OLL_Y_DOWN_T_UP_OPP = "R2DR2UR2";   //are left-fronts opposite
+    private final String OLL_Y_DOWN_T_UP_OPP = "R2DR2DR2";   //are left-fronts opposite
     private final String OLL_Y_DOWN_T_UP_SAME = "R2D'R2D'F2";   //are left-fronts same
 
     private final String OLL_UP_H = "R2U2RU2R2";    //front and back
@@ -384,7 +384,13 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
         StringBuilder builderSolve = new StringBuilder();
         if (!fullWall.isEmpty() || !threeWall.isEmpty()) {
-            Pair p = fullWall.get(0);
+            Pair p;
+            if (fullWall.size()>0) {
+                p = fullWall.get(0);
+            }
+            else {
+                p = threeWall.get(0);
+            }
             Pair w = (Pair) p.getValue0();
             Pair c = (Pair) p.getValue1();
             int x = (int) w.getValue0();
@@ -414,7 +420,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                     rotateX(-1);
                 }
             }
-            if (!threeWall.isEmpty()) {
+            if (fullWall.isEmpty() && !threeWall.isEmpty()) {
                 while (cube[3][6] == c0 || cube[3][6] == c1) {
                     moveD(1);
                     builderSolve.append("D");
@@ -436,42 +442,42 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             }
             builderSolve.append(orientLastLayer(c0, c1));
         }
-        else if (!twoWall.isEmpty()) {
-            //check if are two of same pair of colors
-            List<Pair> listOfDoubles = new ArrayList<>();
-            Pair color = null;
-            for (Pair twos : twoWall) {
-                Pair w1 = (Pair) twos.getValue0();
-                Pair c1 = (Pair) twos.getValue1();
-                List<Pair> tempDoubles = new ArrayList<>();
-                tempDoubles.add(w1);
-                color = c1;
-                for (Pair toFind : twoWall) {
-                    Pair w2 = (Pair) toFind.getValue0();
-                    Pair c2 = (Pair) toFind.getValue1();
-                    if (c1 == c2 && w1 != w2) {
-                        tempDoubles.add(w2);
-                    }
-                }
-                if (tempDoubles.size()>listOfDoubles.size()){
-                    listOfDoubles = tempDoubles;
-                }
-            }
-            if (listOfDoubles.size()>1) {
-                // move one to down left, shift their locations
-                if (listOfDoubles.contains(new Pair(2, 6))) {
-                    while (color.contains(cube[2][7]) && color.contains(cube[3][7])) {
-                        builderSolve.append("y");
-                        this.rotateY(1);
-                    }
-                }
-                // check upper, then next to upper, then right down
-            }
-            else{
-
-            }
-            return "";
-        }
+//        else if (!twoWall.isEmpty()) {
+//            //check if are two of same pair of colors
+//            List<Pair> listOfDoubles = new ArrayList<>();
+//            Pair color = null;
+//            for (Pair twos : twoWall) {
+//                Pair w1 = (Pair) twos.getValue0();
+//                Pair c1 = (Pair) twos.getValue1();
+//                List<Pair> tempDoubles = new ArrayList<>();
+//                tempDoubles.add(w1);
+//                color = c1;
+//                for (Pair toFind : twoWall) {
+//                    Pair w2 = (Pair) toFind.getValue0();
+//                    Pair c2 = (Pair) toFind.getValue1();
+//                    if (c1 == c2 && w1 != w2) {
+//                        tempDoubles.add(w2);
+//                    }
+//                }
+//                if (tempDoubles.size()>listOfDoubles.size()){
+//                    listOfDoubles = tempDoubles;
+//                }
+//            }
+//            if (listOfDoubles.size()>1) {
+//                // move one to down left, shift their locations
+//                if (listOfDoubles.contains(new Pair(2, 6))) {
+//                    while (color.contains(cube[2][7]) && color.contains(cube[3][7])) {
+//                        builderSolve.append("y");
+//                        this.rotateY(1);
+//                    }
+//                }
+//                // check upper, then next to upper, then right down
+//            }
+//            else{
+//
+//            }
+//            return "";
+//        }
         else {
             builderSolve.append(orientLeftWall());
 
