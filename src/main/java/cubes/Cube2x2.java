@@ -339,7 +339,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return Algorithm.optimizeAlg(solveAlg);
     }
 
-    private boolean isSolved() {
+    public boolean isSolved() {
         if (this.cube[2][2] != this.cube[2][3] || this.cube[3][2] != this.cube[3][3] || this.cube[2][2] != this.cube[3][3])
             return false;
         if (this.cube[2][4] != this.cube[2][5] || this.cube[3][4] != this.cube[3][5] || this.cube[2][4] != this.cube[3][5])
@@ -438,18 +438,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             }
             else if (fullWallUniColor.size() == 3) {
                 //U-shape, three wall
-                Pair<Integer, Integer> middleWallPos = findMiddleWall(fullWallUniColor);
-                builderSolve.append(givenWallToDown(middleWallPos.getValue0(), middleWallPos.getValue1()));
-
-                //check if only one perm exist
-                if(threeWallUniColor.size()==2){
-                    while (cube[2][3]!=cube[3][3]){
-                        moveU(1);
-                        builderSolve.append("U");
-                    }
-                    rotateX(1);
-                    builderSolve.append("x");
-                }
+                builderSolve.append(givenWallToSide());
             }
         }
         else if (!threeWallUniColor.isEmpty()){
@@ -459,11 +448,13 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 builderSolve.append(orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1()));
                 return builderSolve.toString();
             }
-            //TODO maybe something to do here, dont't know yet, same as above for now
-            builderSolve.append(givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1()));
-            builderSolve.append(orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1()));
-            builderSolve.append(orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1()));
-            return builderSolve.toString();
+            else {
+                //TODO maybe something to do here, dont't know yet, same as above for now
+                builderSolve.append(givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1()));
+                builderSolve.append(orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1()));
+                builderSolve.append(orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1()));
+                return builderSolve.toString();
+            }
         }
         else if (!fullWall.isEmpty() || !threeWall.isEmpty()) {
             Pair p;
@@ -525,6 +516,22 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return "";
     }
 
+    private String givenWallToSide() {
+        if (isWallUniColor(2,0) && isWallUniColor(2,4)) {
+            rotateZ(1);
+            return "z";
+        }
+        else if (isWallUniColor(0,2) && isWallUniColor(4,2)) {
+            rotateX(1);
+            return "x";
+        }
+        return "";
+    }
+
+    private boolean isWallUniColor(int x, int y){
+        return cube[x][y] == cube[x + 1][y + 1] && cube[x + 1][y] == cube[x][y + 1] && cube[x][y] == cube[x][y + 1];
+    }
+
     private Pair<Integer, Integer> findMiddleWall(List<Pair<Pair<Integer, Integer>, Integer>> fullWallUniColor) {
         int xs = fullWallUniColor.stream().mapToInt(x -> x.getValue0().getValue0()).sum();
         int ys = fullWallUniColor.stream().mapToInt(x -> x.getValue0().getValue1()).sum();
@@ -532,7 +539,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         for (Pair p : fullWallUniColor){
             int curX = (int) ((Pair)  p.getValue0()).getValue0();
             int curY = (int) ((Pair)  p.getValue0()).getValue1();
-            if (xs-curX%4==0 && ys-curY%4==0) {
+            if ((xs-curX)%4==0 && (ys-curY)%4==0) {
                 return new Pair<>(curX, curY);
             }
         }
