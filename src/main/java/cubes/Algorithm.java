@@ -1,8 +1,8 @@
 package cubes;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import com.google.common.collect.HashBasedTable;
+
+import java.util.*;
 
 public class Algorithm {
 
@@ -92,21 +92,7 @@ public class Algorithm {
         boolean check = checkIsAlgProper(alg);
         if (!check)
             return "Alg is not proper: " + alg;
-        List<String> movesList = new LinkedList<>();
-        String[] algArr = alg.split("");
-        int i = 0;
-        while (i < alg.length()) {
-            if (i + 1 == alg.length()) {
-                movesList.add(algArr[i]);
-                i++;
-            } else if (algArr[i + 1].matches("[A-Za-z]")) {
-                movesList.add(algArr[i]);
-                i++;
-            } else {
-                movesList.add(algArr[i] + algArr[i + 1]);
-                i += 2;
-            }
-        }
+        LinkedList<String> movesList = algToList(alg);
 
         int j = 0;
         while (j < movesList.size()) {
@@ -254,34 +240,132 @@ public class Algorithm {
                 }
                 else j++;
             }
-//            else if ((cur + nex).contains("'")) {
-//                // case 2 : R'L type to rotate
-//                int size = movesList.size();
-//                if (cur.equals("R'") && nex.equals("L") || cur.equals("L") && nex.equals("R'")) {
-//                    movesList.set(j, "x'");
-//                    movesList.remove(j + 1);
-//                } else if (cur.equals("R") && nex.equals("L'") || cur.equals("L'") && nex.equals("R")) {
-//                    movesList.set(j, "x");
-//                    movesList.remove(j + 1);
-//                } else if (cur.equals("U'") && nex.equals("D") || cur.equals("D") && nex.equals("U'")) {
-//                    movesList.set(j, "y'");
-//                    movesList.remove(j + 1);
-//                } else if (cur.equals("U") && nex.equals("D'") || cur.equals("D'") && nex.equals("U")) {
-//                    movesList.set(j, "y");
-//                    movesList.remove(j + 1);
-//                } else if (cur.equals("F'") && nex.equals("B") || cur.equals("B") && nex.equals("F'")) {
-//                    movesList.set(j, "z'");
-//                    movesList.remove(j + 1);
-//                } else if (cur.equals("F") && nex.equals("B'") || cur.equals("B'") && nex.equals("F")) {
-//                    movesList.set(j, "z");
-//                    movesList.remove(j + 1);
-//                } else j++;
-//                if (j > 0 && size > movesList.size()) {
-//                    j--;
-//                }
-//            }
             else j++;
         }
+
+        skipRotations(movesList);
         return String.join("", movesList);
+    }
+
+    public static String skipRotation(String alg){
+        final LinkedList<String> algToHandle = algToList(alg);
+        skipRotations(algToHandle);
+        return String.join("", algToHandle);
+    }
+
+    private static LinkedList<String> algToList(String alg) {
+        LinkedList<String> movesList = new LinkedList<>();
+        String[] algArr = alg.split("");
+        int i = 0;
+        while (i < alg.length()) {
+            if (i + 1 == alg.length()) {
+                movesList.add(algArr[i]);
+                i++;
+            } else if (algArr[i + 1].matches("[A-Za-z]")) {
+                movesList.add(algArr[i]);
+                i++;
+            } else {
+                movesList.add(algArr[i] + algArr[i + 1]);
+                i += 2;
+            }
+        }
+        return movesList;
+    }
+
+    private static void skipRotations(LinkedList<String> alg){
+        /**
+         *      y   y'   x   x'   z   z'
+         *
+         * R    F   B    R   R    D   U
+         * L    B   F    L   L    U   D
+         *
+         * U    U   U    B   F    R   L
+         * D    D   D    F   B    L   R
+         *
+         * F    L   R    U   D    F   F
+         * B    R   L    D   U    B   B
+         *
+         * if ' or 2 then add it
+         *
+         * xyzR -> xyD -> xD -> F
+         */
+        Set rotations = new HashSet<Character>(Arrays.asList('x', 'y', 'z'));
+        if (alg.size()<2){
+            if (rotations.contains(alg.get(1))) alg.remove(1);
+            return;
+        }
+        for (int i=alg.size()-1; i>=0; i--){
+            if (rotations.contains(alg.get(i).charAt(0))){
+                if (alg.get(i).contains("2")){
+                    alg.set(i, String.valueOf(alg.get(i).charAt(0)));
+                    alg.add(i, String.valueOf(alg.get(i).charAt(0)));
+                    i++;
+                }
+                skipRotations(alg, i);
+            }
+        }
+    }
+
+    private static HashBasedTable<String, String, String> rotationsTable = createTable();
+
+    private static HashBasedTable<String, String, String> createTable() {
+        HashBasedTable<String, String, String> rotationsTable = HashBasedTable.create(6,6);
+        rotationsTable.put("y", "R", "F");
+        rotationsTable.put("y", "L", "B");
+        rotationsTable.put("y", "U", "U");
+        rotationsTable.put("y", "D", "D");
+        rotationsTable.put("y", "F", "L");
+        rotationsTable.put("y", "B", "R");
+        rotationsTable.put("y'", "R", "B");
+        rotationsTable.put("y'", "L", "F");
+        rotationsTable.put("y'", "U", "U");
+        rotationsTable.put("y'", "D", "D");
+        rotationsTable.put("y'", "F", "R");
+        rotationsTable.put("y'", "B", "L");
+        rotationsTable.put("x", "R", "R");
+        rotationsTable.put("x", "L", "L");
+        rotationsTable.put("x", "U", "B");
+        rotationsTable.put("x", "D", "F");
+        rotationsTable.put("x", "F", "U");
+        rotationsTable.put("x", "B", "D");
+        rotationsTable.put("x'", "R", "R");
+        rotationsTable.put("x'", "L", "L");
+        rotationsTable.put("x'", "U", "F");
+        rotationsTable.put("x'", "D", "B");
+        rotationsTable.put("x'", "F", "D");
+        rotationsTable.put("x'", "B", "U");
+        rotationsTable.put("z", "R", "D");
+        rotationsTable.put("z", "L", "U");
+        rotationsTable.put("z", "U", "R");
+        rotationsTable.put("z", "D", "L");
+        rotationsTable.put("z", "F", "F");
+        rotationsTable.put("z", "B", "B");
+        rotationsTable.put("z'", "R", "U");
+        rotationsTable.put("z'", "L", "D");
+        rotationsTable.put("z'", "U", "L");
+        rotationsTable.put("z'", "D", "R");
+        rotationsTable.put("z'", "F", "F");
+        rotationsTable.put("z'", "B", "B");
+        return rotationsTable;
+    }
+
+    private static void skipRotations(LinkedList<String> alg, int i) {
+        if (i+1>=alg.size()) {
+            alg.remove(i);
+            return;
+        }
+        String rotation = alg.get(i);
+        for (int j=i+1; j<alg.size(); j++){
+            String toReplace;
+            if (alg.get(j).length()>1) {
+                // yR2 -> yR + 2 -> F + 2 -> F2
+                toReplace = rotationsTable.get(rotation, String.valueOf(alg.get(j).charAt(0))) + alg.get(j).charAt(1);
+            }
+            else {
+                toReplace = rotationsTable.get(rotation, alg.get(j));
+            }
+            alg.set(j, toReplace);
+        }
+        alg.remove(i);
     }
 }

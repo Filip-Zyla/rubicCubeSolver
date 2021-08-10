@@ -12,8 +12,8 @@ import java.util.ArrayList;
 public class graphMenu extends JComponent implements ActionListener {
 
     Cube2x2 cube;
-    JButton b1, b2, b3, b4, b5;
-    JTextArea jta1, jta2, jta3;
+    JButton b1, b2, b3, b4, b5, b00;
+    JTextArea jta1, jta2, jta3, jta4;
     JFrame window;
     ArrayList<JPanel> jp = new ArrayList<>();
 
@@ -60,10 +60,20 @@ public class graphMenu extends JComponent implements ActionListener {
         jta3.setLineWrap(true);
         window.add(jta3);
 
-        b5 = new JButton("Exit");
-        b5.setBounds(810, 550, 110, 40);
+        b5 = new JButton("Delete rotations");
+        b5.setBounds(810, 450, 110, 40);
         window.add(b5);
         b5.addActionListener(this);
+
+        jta4 = new JTextArea();
+        jta4.setBounds(950, 450, 250, 40);
+        jta4.setLineWrap(true);
+        window.add(jta4);
+
+        b00 = new JButton("Exit");
+        b00.setBounds(810, 550, 110, 40);
+        window.add(b00);
+        b00.addActionListener(this);
 
         window.setLayout(null);
         window.setVisible(true);
@@ -97,6 +107,7 @@ public class graphMenu extends JComponent implements ActionListener {
             jta1.setText(null);
             jta2.setText(null);
             jta3.setText(null);
+            jta4.setText(null);
         }
         else if (e.getSource() == b2) {
             String sc = Algorithm.randomScramble(15,20);
@@ -122,7 +133,12 @@ public class graphMenu extends JComponent implements ActionListener {
             repaintCube();
             jta3.setText(solveAlg);
         }
-        else if (e.getSource() == b5) {
+        else if (e.getSource() == b5){
+            String alg = jta4.getText();
+            alg = Algorithm.skipRotation(alg);
+            jta4.setText(alg);
+        }
+        else if (e.getSource() == b00) {
             System.exit(0);
         }
     }

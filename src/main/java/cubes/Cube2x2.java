@@ -7,7 +7,8 @@ import org.javatuples.Pair;
 
 import java.util.*;
 
-@Data
+@Getter
+@Setter
 public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     private final int NUMBER_OF_WALLS = 6;
@@ -71,6 +72,14 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         }
 
         return stringBuilder.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cube2x2 cube2x2 = (Cube2x2) o;
+        return Arrays.equals(cube, cube2x2.cube);
     }
 
     private int rotateCheck(int rotate) {
@@ -298,7 +307,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
      * ================================================================
      **/
 
-    private final List<Pair<Integer, Integer>> walls = Arrays.asList(new Pair<>(0, 2), new Pair<>(2, 0), new Pair<>(2, 2), new Pair<>(2, 4), new Pair<>(2, 6), new Pair<>(4, 2));
+    private final List<Pair<Integer, Integer>> walls =
+            Arrays.asList(new Pair<>(0, 2), new Pair<>(2, 0), new Pair<>(2, 2), new Pair<>(2, 4), new Pair<>(2, 6), new Pair<>(4, 2));
     private final List<Pair<Integer, Integer>> colors = Arrays.asList(new Pair<>(0, 5), new Pair<>(1, 4), new Pair<>(2, 3));
 
     private final String SEXY_MOVE_ON_LEFT_DOUBLE = "U'R'URU'R'UR";
@@ -339,7 +349,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return Algorithm.optimizeAlg(solveAlg);
     }
 
-    public boolean isSolved() {
+    private boolean isSolved() {
         if (this.cube[2][2] != this.cube[2][3] || this.cube[3][2] != this.cube[3][3] || this.cube[2][2] != this.cube[3][3])
             return false;
         if (this.cube[2][4] != this.cube[2][5] || this.cube[3][4] != this.cube[3][5] || this.cube[2][4] != this.cube[3][5])
@@ -530,20 +540,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     private boolean isWallUniColor(int x, int y){
         return cube[x][y] == cube[x + 1][y + 1] && cube[x + 1][y] == cube[x][y + 1] && cube[x][y] == cube[x][y + 1];
-    }
-
-    private Pair<Integer, Integer> findMiddleWall(List<Pair<Pair<Integer, Integer>, Integer>> fullWallUniColor) {
-        int xs = fullWallUniColor.stream().mapToInt(x -> x.getValue0().getValue0()).sum();
-        int ys = fullWallUniColor.stream().mapToInt(x -> x.getValue0().getValue1()).sum();
-
-        for (Pair p : fullWallUniColor){
-            int curX = (int) ((Pair)  p.getValue0()).getValue0();
-            int curY = (int) ((Pair)  p.getValue0()).getValue1();
-            if ((xs-curX)%4==0 && (ys-curY)%4==0) {
-                return new Pair<>(curX, curY);
-            }
-        }
-        return new Pair<>(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1());
     }
 
     private String orientLastPieceInThreeWall(int c0, int c1) {
@@ -844,5 +840,4 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         }
         return false;
     }
-
 }
