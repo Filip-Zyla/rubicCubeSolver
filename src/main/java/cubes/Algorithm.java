@@ -294,7 +294,7 @@ public class Algorithm {
             if (rotations.contains(alg.get(1))) alg.remove(1);
             return;
         }
-        for (int i=alg.size()-1; i>=0; i--){
+        for (int i=alg.size()-2; i>=0; i--){
             if (rotations.contains(alg.get(i).charAt(0))){
                 if (alg.get(i).contains("2")){
                     alg.set(i, String.valueOf(alg.get(i).charAt(0)));

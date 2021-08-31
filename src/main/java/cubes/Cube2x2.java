@@ -560,8 +560,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         }
         while (true) {
             if (cube[3][4] == c0 || cube[3][4] == c1) {
-                moves +="RUR'U'";
-                moveCube("RUR'U'");
+                moves +="RUR'";
+                moveCube("RUR'");
                 return moves;
             }
             if (cube[4][3] == c0 || cube[4][3] == c1) {

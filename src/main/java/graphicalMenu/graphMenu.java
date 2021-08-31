@@ -121,12 +121,15 @@ public class graphMenu extends JComponent implements ActionListener {
         }
         else if (e.getSource() == b3) {
             String sc = jta2.getText();
-            boolean b = cube.moveCube(sc);
-            if (!b){
-                JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
+            if (!sc.equals("")) {
+                boolean b = cube.moveCube(sc);
+                if (!b) {
+                    JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
 
+                }
+                repaintCube();
             }
-            repaintCube();
+            else System.out.println("Empty field");
         }
         else if (e.getSource() == b4) {
             String solveAlg = cube.solve();
@@ -135,8 +138,11 @@ public class graphMenu extends JComponent implements ActionListener {
         }
         else if (e.getSource() == b5){
             String alg = jta4.getText();
-            alg = Algorithm.skipRotation(alg);
-            jta4.setText(alg);
+            if (!alg.equals("")) {
+                alg = Algorithm.skipRotation(alg);
+                jta4.setText(alg);
+            }
+            else System.out.println("Empty field");
         }
         else if (e.getSource() == b00) {
             System.exit(0);
