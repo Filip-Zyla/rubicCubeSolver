@@ -66,6 +66,8 @@ public class Algorithm {
     }
 
     public static boolean checkIsAlgProper(String alg) {
+        if (alg.isEmpty())
+            return false;
         String poll = "xyzUDRLFB2'";
         char[] array = alg.toCharArray();
         int i = 0;
@@ -243,7 +245,7 @@ public class Algorithm {
             else j++;
         }
 
-        skipRotations(movesList);
+        //skipRotations(movesList);
         return String.join("", movesList);
     }
 

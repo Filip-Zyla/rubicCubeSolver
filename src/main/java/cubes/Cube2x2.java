@@ -349,7 +349,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return Algorithm.optimizeAlg(solveAlg);
     }
 
-    private boolean isSolved() {
+    public boolean isSolved() {
         if (this.cube[2][2] != this.cube[2][3] || this.cube[3][2] != this.cube[3][3] || this.cube[2][2] != this.cube[3][3])
             return false;
         if (this.cube[2][4] != this.cube[2][5] || this.cube[3][4] != this.cube[3][5] || this.cube[2][4] != this.cube[3][5])
@@ -459,6 +459,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 return builderSolve.toString();
             }
             else {
+                //TODO threeWallUniColor==2 and on opposite walls
                 //TODO maybe something to do here, dont't know yet, same as above for now
                 builderSolve.append(givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1()));
                 builderSolve.append(orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1()));
@@ -488,6 +489,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             }
             builderSolve.append(orientLastLayer(c0, c1));
         }
+        //TODO if (!twoWall.isEmpty())  best double, (listOfDoubles.size()>1) and next
         else {
             builderSolve.append(orientLeftWall());
             rotateZ(2);
