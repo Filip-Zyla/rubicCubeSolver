@@ -4,95 +4,135 @@ import org.javatuples.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
+//TODO     https://www.speedsolving.com/wiki/index.php/Kociemba's_Algorithm
 public class QuickestSolve {
-    private final int GODS_NUMBER = 14;
+
+    private final int GODS_NUMBER = 11;
     private final String[] POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'", "D", "D2", "D'", "L", "L2", "L'", "B", "B2", "B'"};
+    private Cube2x2 cube;
 
-    private ArrayList<String> solutions = new ArrayList();
+    private HashMap<Integer, ArrayList<String>> movesDone;
 
-    //TODO     https://www.speedsolving.com/wiki/index.php/Kociemba's_Algorithm
+    public QuickestSolve(Cube2x2 cube) {
+        this.cube=cube;
+        movesDone = new HashMap<Integer, ArrayList<String>>();
+        for (int i = 1; i <= GODS_NUMBER; i++) {
+            movesDone.put(i, new ArrayList<String>());
+        }
+    }
+
     public void findQuickestSolve() {
-        Cube2x2 cube = new Cube2x2();
-        String scramble = Algorithm.randomScramble(3, 4);
+        String scramble = Algorithm.randomScramble(10, 15);
         System.out.println(scramble);
         cube.moveCube(scramble);
-        String fewestAlg = solveFewestMoves(cube);
-        System.out.println(fewestAlg);
+        String alg = solveFewestMoves();
+        System.out.println(alg);
     }
 
-    private String  solveFewestMoves(Cube2x2 cube){
-        StringBuilder fewestAlgBuldier = new StringBuilder();
-        int entropy = calculateEntropy(cube);
+    private String solveFewestMoves() {
+        StringBuilder builder = new StringBuilder();
 
-        int infiniteLoopFlag = 0;
+        while (!cube.isSolved()) {
+            if (currentLength(builder.toString()) == 11) {
+                /**
+                 * If movesDone(11) is not-full just try another move
+                 * if it's full next 'if' block take care(hope so xd)
+                 * B'R2F2
+                 * F'U2FB'FB'U2FB2U2F
+                 */
+                deleteLatestMove(builder);
+            }
 
-        while (!cube.isSolved()){
-            String curMove = getMoveWitheBestEntropy(cube);
-            cube.moveCube(curMove);
+            String curMove = getMoveWitheBestAvailableEntropy(builder.toString());
 
-            int curEntropy = calculateEntropy(cube);
-
-            if (curEntropy>entropy){
-                fewestAlgBuldier.append(curMove);
-                entropy=curEntropy;
-                infiniteLoopFlag=0;
+            if (builder.length() > 0 && movesDone.get(currentLength(builder.toString())+1).size()==POSSIBLE_MOVES.length-3) {
+                /**
+                 * TODO getMoveWitheBestAvailableEntropy just return "" ???
+                 * current length of alg is n, n+1 moves ware all were used
+                 * clear array of current move looked for
+                 * undo last move and delete from builder
+                 */
+                movesDone.get(currentLength(builder.toString())+1).clear();
+                deleteLatestMove(builder);
             }
             else {
-                reverseMove(cube, curMove);
-                infiniteLoopFlag++;
+                cube.moveCube(curMove);
+                builder.append(curMove);
+                movesDone.get(currentLength(builder.toString())).add(curMove);
             }
-
-            if (infiniteLoopFlag>17 && fewestAlgBuldier.length()>0){
-                String s = fewestAlgBuldier.toString();
-                if (s.endsWith("2") || s.endsWith("'")){
-                    reverseMove(cube, s.substring(s.length()-2));
-                    s=s.substring(0, s.length()-2);
-                }
-                else {
-                    reverseMove(cube, s.substring(s.length()-1));
-                    s=s.substring(0, s.length()-1);
-                }
-                fewestAlgBuldier=new StringBuilder();
-                fewestAlgBuldier.append(s);
-            }
-
-            System.out.println(fewestAlgBuldier);
         }
 
-        return fewestAlgBuldier.toString();
+        return builder.toString();
     }
 
-    private String getMoveWitheBestEntropy(Cube2x2 cube) {
+    private void deleteLatestMove(StringBuilder builder) {
+        final int lastIndex = builder.length() - 1;
+        if (builder.charAt(lastIndex)=='\'' || builder.charAt(lastIndex)=='2'){
+            reverseMove(builder.substring(lastIndex-1));
+            builder.delete(lastIndex-1, lastIndex+1);
+
+        }
+        else {
+            reverseMove(builder.substring(lastIndex));
+            builder.deleteCharAt(lastIndex);
+        }
+    }
+
+    private int currentLength(String alg) {
+        final long count = alg.chars().filter(Character::isLetter).count();
+        return (int) count;
+    }
+
+    private String getMoveWitheBestAvailableEntropy(String alg) {
         int e = -1;
         String move = "";
-        for (String m: POSSIBLE_MOVES){
-            cube.moveCube(m);
-            int curE = calculateEntropy(cube);
-            if (curE>e){
-                e=curE;
-                move=m;
+        String end = getLastMove(alg);
+        for (String m : POSSIBLE_MOVES) {
+            //TODO moves like R'-L, and others
+            if (end.contains(String.valueOf(m.charAt(0)))){
             }
-            reverseMove(cube, m);
+            else if(!movesDone.get(currentLength(alg) + 1).contains(m)){
+                cube.moveCube(m);
+                int curE = calculateEntropy(cube);
+                if (curE > e) {
+                    e = curE;
+                    move = m;
+                }
+                reverseMove(m);
+            }
         }
         return move;
     }
 
-    private void reverseMove(Cube2x2 cube, String rev) {
-        if (rev.contains("2")){
+    private String getLastMove(String alg) {
+        if (alg.length()==0){
+            return "";
         }
-        else if (rev.contains("'")){
-            rev=rev.substring(0,1);
+        else if (alg.endsWith("'") || alg.endsWith("2")){
+            return alg.substring(alg.length()-2);
         }
-        else {
-            rev+="'";
+        else return alg.substring(alg.length()-1);
+    }
+
+    private void reverseMove(String rev) {
+        /**
+         * rev is moved that have been done
+         */
+        if (rev.contains("2")) {
+        } else if (rev.contains("'")) {
+            rev = rev.substring(0, 1);
+        } else {
+            rev += "'";
         }
         cube.moveCube(rev);
     }
 
     private int calculateEntropy(Cube2x2 cube2x2) {
         int entropy = 0;
+        //TODO change points???
         /**
          * fullWallUni  = 6
          * fullWall     = 5
@@ -129,27 +169,22 @@ public class QuickestSolve {
                 }
 
                 if (numOfStickersC0.size() == 4 || numOfStickersC1.size() == 4) {
-                    entropy+=6;
-                }
-                else if (numOfStickersC0.size() == 3 || numOfStickersC1.size() == 3) {
-                    entropy+=4;
+                    entropy += 6;
+                } else if (numOfStickersC0.size() == 3 || numOfStickersC1.size() == 3) {
+                    entropy += 4;
                 }
 
                 if (numOfStickers.size() == 4) {
-                    entropy+=4;
-                }
-                else if (numOfStickers.size() == 3) {
-                    entropy+=3;
-                }
-                else if (numOfStickers.size() == 2 && Math.abs(numOfStickers.get(0) - numOfStickers.get(1)) != 2) {
+                    entropy += 4;
+                } else if (numOfStickers.size() == 3) {
+                    entropy += 3;
+                } else if (numOfStickers.size() == 2 && Math.abs(numOfStickers.get(0) - numOfStickers.get(1)) != 2) {
                     if (wall[numOfStickers.get(0)] == c0 && wall[numOfStickers.get(1)] == c0) {
-                        entropy+=2;
-                    }
-                    else if (wall[numOfStickers.get(0)] == c1 && wall[numOfStickers.get(1)] == c1) {
-                        entropy+=2;
-                    }
-                    else {
-                        entropy+=1;
+                        entropy += 2;
+                    } else if (wall[numOfStickers.get(0)] == c1 && wall[numOfStickers.get(1)] == c1) {
+                        entropy += 2;
+                    } else {
+                        entropy += 1;
                     }
                 }
             }
