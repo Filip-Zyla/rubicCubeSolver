@@ -2,10 +2,7 @@ package cubes;
 
 import org.javatuples.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 //TODO     https://www.speedsolving.com/wiki/index.php/Kociemba's_Algorithm
 public class QuickestSolve {
@@ -25,6 +22,7 @@ public class QuickestSolve {
     }
 
     public void findQuickestSolve() {
+        //TODO list od solutions???
         String scramble = Algorithm.randomScramble(10, 15);
         System.out.println(scramble);
         cube.moveCube(scramble);
@@ -91,8 +89,11 @@ public class QuickestSolve {
         String move = "";
         String end = getLastMove(alg);
         for (String m : POSSIBLE_MOVES) {
-            //TODO moves like R'-L, and others
             if (end.contains(String.valueOf(m.charAt(0)))){
+                // if are like U - U2 etc.
+            }
+            else if (areMovesParallel(m, end)){
+                // if are like R' - L2 etc.
             }
             else if(!movesDone.get(currentLength(alg) + 1).contains(m)){
                 cube.moveCube(m);
@@ -105,6 +106,26 @@ public class QuickestSolve {
             }
         }
         return move;
+    }
+
+    private boolean areMovesParallel(String m, String end) {
+        if (end.length()==0 || m.length()==0){
+            return false;
+        }
+        HashSet<Character> set = new HashSet<>();
+        set.add(m.charAt(0));
+        set.add(end.charAt(0));
+        if (set.contains('R') && set.contains('L')){
+            return true;
+        }
+        else if (set.contains('U') && set.contains('D')){
+            return true;
+        }
+        else if (set.contains('F') && set.contains('B')){
+            return true;
+        }
+        else
+            return false;
     }
 
     private String getLastMove(String alg) {
