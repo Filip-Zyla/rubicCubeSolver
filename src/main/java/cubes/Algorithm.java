@@ -5,13 +5,13 @@ import com.google.common.collect.HashBasedTable;
 import java.util.*;
 
 public class Algorithm {
-    final static String POLL_ALL = "URFDLB";
-    final static String POLL_U_D = "RFLB";
-    final static String POLL_R_L = "UFDB";
-    final static String POLL_F_B = "URDL";
-
 
     public static String randomScramble(int min, int max) {
+        final String POLL_ALL = "URFDLB";
+        final String POLL_U_D = "RFLB";
+        final String POLL_R_L = "UFDB";
+        final String POLL_F_B = "URDL";
+
         Random r = new Random();
         StringBuilder builder = new StringBuilder();
         int ran = (int) (Math.random() * (max - min + 1) + min); // from min to max
@@ -60,7 +60,7 @@ public class Algorithm {
         return builder.toString();
     }
 
-    static boolean checkIsAlgProper(String alg) {
+    public static boolean checkIsAlgProper(String alg) {
         if (alg.isEmpty())
             return false;
         String poll = "xyzUDRLFB2'";
@@ -85,10 +85,8 @@ public class Algorithm {
         return true;
     }
 
-    //TODO test and fix
     public static String optimizeAlg(String alg) {
-        boolean check = checkIsAlgProper(alg);
-        if (!check)
+        if (!checkIsAlgProper(alg))
             return "Alg is not proper: " + alg;
         LinkedList<String> movesList = algToList(alg);
 
@@ -100,7 +98,7 @@ public class Algorithm {
             String cur = movesList.get(j);
             String nex = movesList.get(j + 1);
             if (cur.charAt(0) == nex.charAt(0)) {
-                //case 1 : two or three repetitions etc DD DDD D2D D'DD
+                // repetitions DD D'D etc.
                 String combined = (cur + nex).replaceAll("[A-Za-z]", "");
                 String s = String.valueOf(movesList.get(j).charAt(0));
                 switch (combined) {
@@ -126,129 +124,68 @@ public class Algorithm {
                 }
             }
             else if (cur.charAt(0) != nex.charAt(0)){
-                int size = movesList.size();
+                // parallel moves changed to rotation+move
                 final int sum = cur.charAt(0) + nex.charAt(0);
-                if (sum ==158) {
-                    if (cur.equals("R") && nex.equals("L") || cur.equals("L") && nex.equals("R")) {
-                        movesList.set(j, "x'");
-                        movesList.set(j + 1, "R2");
-                    }
-                    else if (cur.equals("R'") && nex.equals("L'") || cur.equals("L'") && nex.equals("R'")) {
-                        movesList.set(j, "x");
-                        movesList.set(j + 1, "R2");
-                    }
-                    else if (cur.equals("R2") && nex.equals("L2") || cur.equals("L2") && nex.equals("R2")) {
-                        movesList.set(j, "x2");
-                        movesList.remove(j + 1);
-                    }
-                    else if (cur.equals("R") && nex.equals("L'") || cur.equals("L'") && nex.equals("R")) {
-                        movesList.set(j, "x");
-                        movesList.remove(j + 1);
-                    }
-                    else if (cur.equals("R'") && nex.equals("L") || cur.equals("L") && nex.equals("R'")) {
-                        movesList.set(j, "x'");
-                        movesList.remove(j + 1);
-                    }
-                    else if (cur.equals("R") && nex.equals("L2") || cur.equals("L2") && nex.equals("R")) {
-                        movesList.set(j, "x");
-                        movesList.set(j + 1, "L'");
-                    }
-                    else if (cur.equals("R2") && nex.equals("L") || cur.equals("L") && nex.equals("R2")) {
-                        movesList.set(j, "x'");
-                        movesList.set(j + 1, "R'");
-                    }
-                    else if (cur.equals("R'") && nex.equals("L2") || cur.equals("L2") && nex.equals("R'")) {
-                        movesList.set(j, "x'");
-                        movesList.set(j + 1, "L");
-                    }
-                    else if (cur.equals("R2") && nex.equals("L'") || cur.equals("L'") && nex.equals("R2")) {
-                        movesList.set(j, "x");
-                        movesList.set(j + 1, "R");
-                    }
-                    else j++;
-                    if (j > 0 && size > movesList.size()) {
-                        j--;
-                    }
-                }
-                else if (sum ==153) {
-                    if (cur.equals("U") && nex.equals("D") || cur.equals("D") && nex.equals("U")) {
-                        movesList.set(j, "y'");
-                        movesList.set(j + 1, "U2");
-                    } else if (cur.equals("U'") && nex.equals("D'") || cur.equals("D'") && nex.equals("U'")) {
-                        movesList.set(j, "y");
-                        movesList.set(j + 1, "U2");
-                    } else if (cur.equals("U2") && nex.equals("D2") || cur.equals("D2") && nex.equals("U2")) {
-                        movesList.set(j, "y2");
-                        movesList.remove(j + 1);
-                    } else if (cur.equals("U") && nex.equals("D'") || cur.equals("D'") && nex.equals("U")) {
-                        movesList.set(j, "y");
-                        movesList.remove(j + 1);
-                    } else if (cur.equals("U'") && nex.equals("D") || cur.equals("D") && nex.equals("U'")) {
-                        movesList.set(j, "y'");
-                        movesList.remove(j + 1);
-                    } else if (cur.equals("U") && nex.equals("D2") || cur.equals("D2") && nex.equals("U")) {
-                        movesList.set(j, "y");
-                        movesList.set(j + 1, "D'");
-                    } else if (cur.equals("U2") && nex.equals("D") || cur.equals("D") && nex.equals("U2")) {
-                        movesList.set(j, "y'");
-                        movesList.set(j + 1, "U'");
-                    } else if (cur.equals("U'") && nex.equals("D2") || cur.equals("D2") && nex.equals("U'")) {
-                        movesList.set(j, "y'");
-                        movesList.set(j + 1, "L");
-                    } else if (cur.equals("U2") && nex.equals("D'") || cur.equals("D'") && nex.equals("U2")) {
-                        movesList.set(j, "y");
-                        movesList.set(j + 1, "U");
-                    } else j++;
-                    if (j > 0 && size > movesList.size()) {
-                        j--;
-                    }
-                }
-                else if (sum==136) {
-                    if (cur.equals("F") && nex.equals("B") || cur.equals("B") && nex.equals("F")) {
-                        movesList.set(j, "z'");
-                        movesList.set(j + 1, "F2");
-                    } else if (cur.equals("F'") && nex.equals("B'") || cur.equals("B'") && nex.equals("F'")) {
-                        movesList.set(j, "z");
-                        movesList.set(j + 1, "F2");
-                    } else if (cur.equals("F2") && nex.equals("B2") || cur.equals("B2") && nex.equals("F2")) {
-                        movesList.set(j, "z2");
-                        movesList.remove(j + 1);
-                    } else if (cur.equals("F") && nex.equals("B'") || cur.equals("B'") && nex.equals("F")) {
-                        movesList.set(j, "z");
-                        movesList.remove(j + 1);
-                    } else if (cur.equals("F'") && nex.equals("B") || cur.equals("B") && nex.equals("F'")) {
-                        movesList.set(j, "z'");
-                        movesList.remove(j + 1);
-                    } else if (cur.equals("F") && nex.equals("B2") || cur.equals("B2") && nex.equals("F")) {
-                        movesList.set(j, "z");
-                        movesList.set(j + 1, "B'");
-                    } else if (cur.equals("F2") && nex.equals("B") || cur.equals("B") && nex.equals("F2")) {
-                        movesList.set(j, "z'");
-                        movesList.set(j + 1, "F'");
-                    } else if (cur.equals("F'") && nex.equals("B2") || cur.equals("B2") && nex.equals("F'")) {
-                        movesList.set(j, "z'");
-                        movesList.set(j + 1, "B");
-                    } else if (cur.equals("F2") && nex.equals("B'") || cur.equals("B'") && nex.equals("F2")) {
-                        movesList.set(j, "z");
-                        movesList.set(j + 1, "F");
-                    } else j++;
-                    if (j > 0 && size > movesList.size()) {
-                        j--;
-                    }
-                }
+                if (sum ==158)
+                    eliminateParallelMoves(cur, nex, "R", "L", "x", movesList, j);
+                else if (sum ==153)
+                    eliminateParallelMoves(cur, nex, "U", "D", "y", movesList, j);
+                else if (sum==136)
+                    eliminateParallelMoves(cur, nex, "F", "B", "z", movesList, j);
                 else j++;
             }
             else j++;
         }
-
-        //skipRotations(movesList);
         return String.join("", movesList);
     }
 
-    //TODO test and fix
+    private static void eliminateParallelMoves(String cur, String nex, String m1, String m2, String r, LinkedList<String> movesList, int j){
+        final int size = movesList.size();
+        if (cur.equals(m1) && nex.equals(m2) || cur.equals(m2) && nex.equals(m1)) {
+            movesList.set(j, r+"'");
+            movesList.set(j + 1, m1+"2");
+        }
+        else if (cur.equals(m1) && nex.equals(m2+"'") || cur.equals(m2+"'") && nex.equals(m1)) {
+            movesList.set(j, r);
+            movesList.remove(j + 1);
+        }
+        else if (cur.equals(m1) && nex.equals(m2+"2") || cur.equals(m2+"2") && nex.equals(m1)) {
+            movesList.set(j, r);
+            movesList.set(j + 1, m2+"'");
+        }
+        else if (cur.equals(m1+"'") && nex.equals(m2) || cur.equals(m2) && nex.equals(m1+"'")) {
+            movesList.set(j, r+"'");
+            movesList.remove(j + 1);
+        }
+        else if (cur.equals(m1+"'") && nex.equals(m2+"'") || cur.equals(m2+"'") && nex.equals(m1+"'")) {
+            movesList.set(j, r);
+            movesList.set(j + 1, m1+"2");
+        }
+        else if (cur.equals(m1+"'") && nex.equals(m2+"2") || cur.equals(m2+"2") && nex.equals(m1+"'")) {
+            movesList.set(j, r+"'");
+            movesList.set(j + 1, m2);
+        }
+        else if (cur.equals(m1+"2") && nex.equals(m2) || cur.equals(m2) && nex.equals(m1+"2")) {
+            movesList.set(j, r+"'");
+            movesList.set(j + 1, m1+"'");
+        }
+        else if (cur.equals(m1+"2") && nex.equals(m2+"'") || cur.equals(m2+"'") && nex.equals(m1+"2")) {
+            movesList.set(j, r);
+            movesList.set(j + 1, m1);
+        }
+        else if (cur.equals(m1+"2") && nex.equals(m2+"2") || cur.equals(m2+"2") && nex.equals(m1+"2")) {
+            movesList.set(j, r+"2");
+            movesList.remove(j + 1);
+        }
+        if (j > 0 && size > movesList.size()) {
+            j--;
+        }
+    }
+
+    //TODO test and fix, check if porper, length
     public static String skipRotation(String alg){
         final LinkedList<String> algToHandle = algToList(alg);
-        skipRotations(algToHandle);
+        skipRotation(algToHandle);
         return String.join("", algToHandle);
     }
 
@@ -271,7 +208,7 @@ public class Algorithm {
         return movesList;
     }
 
-    private static void skipRotations(LinkedList<String> alg){
+    private static void skipRotation(LinkedList<String> alg){
         /**
          *      y   y'   x   x'   z   z'
          *
@@ -300,7 +237,7 @@ public class Algorithm {
                     alg.add(i, String.valueOf(alg.get(i).charAt(0)));
                     i++;
                 }
-                skipRotations(alg, i);
+                skipRotation(alg, i);
             }
         }
     }
@@ -348,7 +285,7 @@ public class Algorithm {
         return rotationsTable;
     }
 
-    private static void skipRotations(LinkedList<String> alg, int i) {
+    private static void skipRotation(LinkedList<String> alg, int i) {
         if (i+1>=alg.size()) {
             alg.remove(i);
             return;

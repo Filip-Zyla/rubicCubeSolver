@@ -142,9 +142,11 @@ public class GraphMenu extends JComponent implements ActionListener {
             jta3.setText(solveAlg);
         }
         else if (e.getSource() == b5){
-            //TODO throwing some IndexOut and when not proper alg etc.
             String alg = jta4.getText();
-            if (!alg.equals("")) {
+            if (!Algorithm.checkIsAlgProper(alg)){
+                JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else if (!alg.equals("")) {
                 alg = Algorithm.skipRotation(alg);
                 jta4.setText(alg);
             }
