@@ -9,15 +9,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class graphMenu extends JComponent implements ActionListener {
+public class GraphMenu extends JComponent implements ActionListener {
 
     Cube2x2 cube;
-    JButton b1, b2, b3, b4, b5, b00;
+    JButton b1, b2, b3, b4, b5, b0;
     JTextArea jta1, jta2, jta3, jta4;
     JFrame window;
     ArrayList<JPanel> jp = new ArrayList<>();
 
-    public graphMenu(Cube2x2 cube) {
+    public GraphMenu(Cube2x2 cube) {
         this.cube = cube;
         window = new JFrame();
         window.setSize(1400, 650);
@@ -70,10 +70,10 @@ public class graphMenu extends JComponent implements ActionListener {
         jta4.setLineWrap(true);
         window.add(jta4);
 
-        b00 = new JButton("Exit");
-        b00.setBounds(810, 550, 110, 40);
-        window.add(b00);
-        b00.addActionListener(this);
+        b0 = new JButton("Exit");
+        b0.setBounds(810, 550, 110, 40);
+        window.add(b0);
+        b0.addActionListener(this);
 
         window.setLayout(null);
         window.setVisible(true);
@@ -85,14 +85,20 @@ public class graphMenu extends JComponent implements ActionListener {
             for (int i = 0; i < 6; i++) {
                 JPanel panel = new JPanel();
                 panel.setBounds(j * 100, i * 100, 100, 100);
-                switch (cube.getCube()[i][j]) {
-                    case 0 -> panel.setBackground(Color.WHITE);
-                    case 1 -> panel.setBackground(Color.RED);
-                    case 2 -> panel.setBackground(Color.BLUE);
-                    case 3 -> panel.setBackground(Color.GREEN);
-                    case 4 -> panel.setBackground(Color.getHSBColor(0.10f, 1f, 1f));
-                    case 5 -> panel.setBackground(Color.YELLOW);
-                    default -> panel.setBackground(Color.BLACK);
+                if (cube.getCube()[i][j] == 0) {
+                    panel.setBackground(Color.WHITE);
+                } else if (cube.getCube()[i][j] == 1) {
+                    panel.setBackground(Color.RED);
+                } else if (cube.getCube()[i][j] == 2) {
+                    panel.setBackground(Color.BLUE);
+                } else if (cube.getCube()[i][j] == 3) {
+                    panel.setBackground(Color.GREEN);
+                } else if (cube.getCube()[i][j] == 4) {
+                    panel.setBackground(Color.getHSBColor(0.10f, 1f, 1f)); // orange
+                } else if (cube.getCube()[i][j] == 5) {
+                    panel.setBackground(Color.YELLOW);
+                } else {
+                    panel.setBackground(Color.BLACK);
                 }
                 jp.add(panel);
                 window.add(panel);
@@ -129,7 +135,6 @@ public class graphMenu extends JComponent implements ActionListener {
                 }
                 repaintCube();
             }
-            else System.out.println("Empty field");
         }
         else if (e.getSource() == b4) {
             String solveAlg = cube.solve();
@@ -137,14 +142,14 @@ public class graphMenu extends JComponent implements ActionListener {
             jta3.setText(solveAlg);
         }
         else if (e.getSource() == b5){
+            //TODO throwing some IndexOut and when not proper alg etc.
             String alg = jta4.getText();
             if (!alg.equals("")) {
                 alg = Algorithm.skipRotation(alg);
                 jta4.setText(alg);
             }
-            else System.out.println("Empty field");
         }
-        else if (e.getSource() == b00) {
+        else if (e.getSource() == b0) {
             System.exit(0);
         }
     }

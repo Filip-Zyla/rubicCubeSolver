@@ -5,9 +5,13 @@ import com.google.common.collect.HashBasedTable;
 import java.util.*;
 
 public class Algorithm {
+    final static String POLL_ALL = "URFDLB";
+    final static String POLL_U_D = "RFLB";
+    final static String POLL_R_L = "UFDB";
+    final static String POLL_F_B = "URDL";
+
 
     public static String randomScramble(int min, int max) {
-        String poll = "URFDLB";
         Random r = new Random();
         StringBuilder builder = new StringBuilder();
         int ran = (int) (Math.random() * (max - min + 1) + min); // from min to max
@@ -26,46 +30,37 @@ public class Algorithm {
 
             char ch;
             if (diff == -1){
-                ch = poll.charAt(r.nextInt(poll.length()));
+                ch = POLL_ALL.charAt(r.nextInt(POLL_ALL.length()));
             }
             else if (builder.charAt(i - diff) == 'D' || builder.charAt(i - diff) =='U'){
-                do {
-                    ch = poll.charAt(r.nextInt(poll.length()));
-                }
-                while (ch == 'D' || ch =='U');
+                ch = POLL_U_D.charAt(r.nextInt(POLL_U_D.length()));
             }
-            else if (builder.charAt(i - diff) == 'B' || builder.charAt(i - diff) =='F'){
-                do {
-                    ch = poll.charAt(r.nextInt(poll.length()));
-                }
-                while (ch == 'B' || ch =='F');
+            else if (builder.charAt(i - diff) == 'B' || builder.charAt(i - diff) =='F') {
+                ch = POLL_F_B.charAt(r.nextInt(POLL_F_B.length()));
             }
             else if (builder.charAt(i - diff) == 'L' || builder.charAt(i - diff) =='R'){
-                do {
-                    ch = poll.charAt(r.nextInt(poll.length()));
-                }
-                while (ch == 'L' || ch =='R');
+                ch = POLL_R_L.charAt(r.nextInt(POLL_R_L.length()));
             }
             else {
-                ch = poll.charAt(r.nextInt(poll.length()));
+                ch = POLL_ALL.charAt(r.nextInt(POLL_ALL.length()));
             }
 
             builder.append(ch);
-            switch (r.nextInt(poll.length()) % 7) {
-                case 1 -> {
-                    builder.append("2");
-                    ran++; i++;
-                }
-                case 3, 5 -> {
-                    builder.append("'");
-                    ran++; i++;
-                }
+            int ii = r.nextInt(POLL_ALL.length()) % 7;
+            if (ii == 1) {
+                builder.append("2");
+                ran++;
+                i++;
+            } else if (ii == 3 || ii == 5) {
+                builder.append("'");
+                ran++;
+                i++;
             }
         }
         return builder.toString();
     }
 
-    public static boolean checkIsAlgProper(String alg) {
+    static boolean checkIsAlgProper(String alg) {
         if (alg.isEmpty())
             return false;
         String poll = "xyzUDRLFB2'";
@@ -90,6 +85,7 @@ public class Algorithm {
         return true;
     }
 
+    //TODO test and fix
     public static String optimizeAlg(String alg) {
         boolean check = checkIsAlgProper(alg);
         if (!check)
@@ -249,6 +245,7 @@ public class Algorithm {
         return String.join("", movesList);
     }
 
+    //TODO test and fix
     public static String skipRotation(String alg){
         final LinkedList<String> algToHandle = algToList(alg);
         skipRotations(algToHandle);
