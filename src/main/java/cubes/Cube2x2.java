@@ -41,17 +41,23 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             for (int j = 0; j < WIDTH; j++) {
                 if ((i < DEGREE_OF_CUBE || i >= DEGREE_OF_CUBE * 2) && (j < DEGREE_OF_CUBE || j >= DEGREE_OF_CUBE * 2)) {
                     cube[i][j] = 9;
-                } else if (i < DEGREE_OF_CUBE) {
+                }
+                else if (i < DEGREE_OF_CUBE) {
                     cube[i][j] = 4;
-                } else if (i >= DEGREE_OF_CUBE * 2) {
+                }
+                else if (i >= DEGREE_OF_CUBE * 2) {
                     cube[i][j] = 1;
-                } else if (j < DEGREE_OF_CUBE) {
+                }
+                else if (j < DEGREE_OF_CUBE) {
                     cube[i][j] = 3;
-                } else if (j < DEGREE_OF_CUBE * 2) {
+                }
+                else if (j < DEGREE_OF_CUBE * 2) {
                     cube[i][j] = 0;
-                } else if (j < DEGREE_OF_CUBE * 3) {
+                }
+                else if (j < DEGREE_OF_CUBE * 3) {
                     cube[i][j] = 2;
-                } else {
+                }
+                else {
                     cube[i][j] = 5;
                 }
             }
@@ -80,18 +86,9 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return Arrays.equals(this.cube, cube.cube);
     }
 
-    private int rotateCheck(int rotate) {
-        if (rotate < 0)
-            rotate = rotate + 4;
-        if (rotate > 3)
-            rotate = rotate - 4;
-        return rotate;
-    }
-
     //TODO find faster method
     @Override
     public void moveU(int rotate) {
-        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
             temp = cube[2][2];
@@ -116,7 +113,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     @Override
     public void moveD(int rotate) {
-        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
             temp = cube[2][6];
@@ -141,7 +137,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     @Override
     public void moveR(int rotate) {
-        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
             temp = cube[3][4];
@@ -166,7 +161,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     @Override
     public void moveL(int rotate) {
-        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
             temp = cube[2][1];
@@ -191,7 +185,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     @Override
     public void moveF(int rotate) {
-        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
             temp = cube[4][2];
@@ -216,7 +209,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     @Override
     public void moveB(int rotate) {
-        rotate = rotateCheck(rotate);
         int temp;
         for (int i = 0; i < rotate; i++) {
             temp = cube[1][3];
@@ -258,25 +250,42 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     }
 
     private void moveOneWall(char wall, int rotate) {
+        rotate = rotateCheck(rotate);
         if (wall == 'R') {
             this.moveR(rotate);
-        } else if (wall == 'L') {
+        }
+        else if (wall == 'L') {
             this.moveL(rotate);
-        } else if (wall == 'U') {
+        }
+        else if (wall == 'U') {
             this.moveU(rotate);
-        } else if (wall == 'D') {
+        }
+        else if (wall == 'D') {
             this.moveD(rotate);
-        } else if (wall == 'F') {
+        }
+        else if (wall == 'F') {
             this.moveF(rotate);
-        } else if (wall == 'B') {
+        }
+        else if (wall == 'B') {
             this.moveB(rotate);
-        } else if (wall == 'x') {
+        }
+        else if (wall == 'x') {
             this.rotateX(rotate);
-        } else if (wall == 'y') {
+        }
+        else if (wall == 'y') {
             this.rotateY(rotate);
-        } else if (wall == 'z') {
+        }
+        else if (wall == 'z') {
             this.rotateZ(rotate);
         }
+    }
+
+    private int rotateCheck(int rotate) {
+        if (rotate < 0)
+            rotate = rotate + 4;
+        if (rotate > 3)
+            rotate = rotate - 4;
+        return rotate;
     }
 
     public boolean moveCube(String alg) {
@@ -284,21 +293,21 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             return false;
         }
 
-        alg = Algorithm.optimizeAlg(alg);
-
         char[] array = alg.toCharArray();
         int index = 0;
         while (index < array.length) {
             if (index + 1 < array.length && Character.isDigit(array[index + 1])) {
-                // double (or more?) move
+                // double move
                 moveOneWall(array[index], Character.getNumericValue(array[index + 1]));
                 index += 2;
-            } else {
+            }
+            else {
                 if (index + 1 < array.length && array[index + 1] == 39) {
                     // counter clockwise
                     moveOneWall(array[index], -1);
                     index += 2;
-                } else {
+                }
+                else {
                     // clockwise
                     moveOneWall(array[index], 1);
                     index += 1;
@@ -354,21 +363,23 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
     private final String PLL_Y_DOWN_T_UP = "RU'RF2R'UR'";    //T on back up, Y left-front to right-back down
     private final String PLL_T_DOWN_Y_UP = "z2RU'RF2R'UR'";    //T on back up, Y right-front to left-back down
 
-    //TODO check once again
     public String solve() {
         String solveAlg = "";
 
         if (this.isSolved())
             return solveAlg;
+
         solveAlg += ortegaFirstStep();
         solveAlg += orientBothLayers();
         solveAlg += permuteBothLayers();
 
         if (this.isSolved())
             return Algorithm.optimizeAlg(solveAlg);
-        else return "Error";
+        else
+            return "Error";
     }
 
+    //TODO improve
     private String ortegaFirstStep() {
         StringBuilder builderSolve = new StringBuilder();
         // < wallsPair, colorsPair/colorInt >
@@ -406,17 +417,21 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
                 if (numOfStickersC0.size() == 4) {
                     fullWallUniColor.add(new Pair<>(w, c0));
-                } else if (numOfStickersC1.size() == 4) {
+                }
+                else if (numOfStickersC1.size() == 4) {
                     fullWallUniColor.add(new Pair<>(w, c1));
-                } else if (numOfStickersC0.size() == 3) {
+                }
+                else if (numOfStickersC0.size() == 3) {
                     threeWallUniColor.add(new Pair<>(w, c0));
-                } else if (numOfStickersC1.size() == 3) {
+                }
+                else if (numOfStickersC1.size() == 3) {
                     threeWallUniColor.add(new Pair<>(w, c1));
                 }
 
                 if (numOfStickers.size() == 4) {
                     fullWall.add(new Pair<>(w, c));
-                } else if (numOfStickers.size() == 3) {
+                }
+                else if (numOfStickers.size() == 3) {
                     threeWall.add(new Pair<>(w, c));
                 }
                 //if are next to each other
@@ -424,7 +439,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                     twoWall.add(new Pair<>(w, c));
                     if (wall[numOfStickers.get(0)] == c0 && wall[numOfStickers.get(1)] == c0) {
                         twoWallUniColor.add(new Pair<>(w, c0));
-                    } else if (wall[numOfStickers.get(0)] == c1 && wall[numOfStickers.get(1)] == c1) {
+                    }
+                    else if (wall[numOfStickers.get(0)] == c1 && wall[numOfStickers.get(1)] == c1) {
                         twoWallUniColor.add(new Pair<>(w, c1));
                     }
                 }
@@ -436,42 +452,46 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 builderSolve.append(givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1()));
                 builderSolve.append(orientLastLayer(5 - fullWallUniColor.get(0).getValue1(), 5 - fullWallUniColor.get(0).getValue1()));
                 return builderSolve.toString();
-            } else if (fullWallUniColor.size() == 2) {
+            }
+            else if (fullWallUniColor.size() == 2) {
                 if (fullWallUniColor.get(0).getValue0().getValue0() + fullWallUniColor.get(1).getValue0().getValue0() % 4 == 0
                         && fullWallUniColor.get(0).getValue0().getValue1() + fullWallUniColor.get(1).getValue0().getValue1() % 4 == 0) {
                     //on opposite walls
                     builderSolve.append(givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1()));
                     return builderSolve.toString();
-                } else {
+                }
+                else {
                     //L-shape, just take first wall
-                    //TODO not worth further work for now, fast enough
                     builderSolve.append(givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1()));
                     builderSolve.append(orientLastLayer(5 - fullWallUniColor.get(0).getValue1(), 5 - fullWallUniColor.get(0).getValue1()));
                     return builderSolve.toString();
                 }
-            } else if (fullWallUniColor.size() == 3) {
-                //U-shape, three wall
-                builderSolve.append(givenWallToSide());
             }
-        } else if (!threeWallUniColor.isEmpty()) {
+            else if (fullWallUniColor.size() == 3) {
+                //U-shape, three wall
+                builderSolve.append(parallelUniColorWallsToUpDown());
+            }
+        }
+        else if (!threeWallUniColor.isEmpty()) {
             if (threeWallUniColor.size() == 1) {
                 builderSolve.append(givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1()));
                 builderSolve.append(orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1()));
                 builderSolve.append(orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1()));
                 return builderSolve.toString();
-            } else {
-                //TODO threeWallUniColor==2 and on opposite walls
-                //TODO maybe something to do here, dont't know yet, same as above for now
+            }
+            else {
                 builderSolve.append(givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1()));
                 builderSolve.append(orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1()));
                 builderSolve.append(orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1()));
                 return builderSolve.toString();
             }
-        } else if (!fullWall.isEmpty() || !threeWall.isEmpty()) {
+        }
+        else if (!fullWall.isEmpty() || !threeWall.isEmpty()) {
             Pair p;
             if (fullWall.size() > 0) {
                 p = fullWall.get(0);
-            } else {
+            }
+            else {
                 p = threeWall.get(0);
             }
             Pair w = (Pair) p.getValue0();
@@ -480,7 +500,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             int y = (int) w.getValue1();
             int c0 = (int) c.getValue0();
             int c1 = (int) c.getValue1();
-            //TODO maybe something to do here, dont't know yet
             builderSolve.append(givenWallToDown(x, y));
 
             if (fullWall.isEmpty() && !threeWall.isEmpty()) {
@@ -488,7 +507,6 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             }
             builderSolve.append(orientLastLayer(c0, c1));
         }
-        //TODO if (!twoWall.isEmpty())  best double, (listOfDoubles.size()>1) and next
         else {
             builderSolve.append(orientLeftWall());
             rotateZ(2);
@@ -505,20 +523,24 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             if (y == 0) {
                 rotateZ(-1);
                 return "z'";
-            } else {
+            }
+            else {
                 if (y == 2) {
                     rotateZ(2);
                     return "z2";
                 }
-                //now y=4
-                rotateZ(1);
-                return "z";
+                else {
+                    rotateZ(1);
+                    return "z";
+                }
             }
-        } else if (y == 2) {
+        }
+        else if (y == 2) {
             if (x == 0) {
                 rotateX(1);
                 return "x";
-            } else {
+            }
+            else {
                 rotateX(-1);
                 return "x'";
             }
@@ -526,11 +548,12 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return "";
     }
 
-    private String givenWallToSide() {
+    private String parallelUniColorWallsToUpDown() {
         if (isWallUniColor(2, 0) && isWallUniColor(2, 4)) {
             rotateZ(1);
             return "z";
-        } else if (isWallUniColor(0, 2) && isWallUniColor(4, 2)) {
+        }
+        else if (isWallUniColor(0, 2) && isWallUniColor(4, 2)) {
             rotateX(1);
             return "x";
         }
@@ -551,7 +574,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             moves += "F'U'FUR'FRF'";
             moveCube("F'U'FUR'FRF'");
             return moves;
-        } else if (cube[3][5] == c0) {
+        }
+        else if (cube[3][5] == c0) {
             moves += "RUR'U'RUR'";
             moveCube("RUR'U'RUR'");
             return moves;
@@ -562,12 +586,12 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 moveCube("RUR'");
                 return moves;
             }
-            if (cube[4][3] == c0 || cube[4][3] == c1) {
+            else if (cube[4][3] == c0 || cube[4][3] == c1) {
                 moves += "R'FRF'";
                 moveCube("R'FRF'");
                 return moves;
             }
-            if (cube[3][3] == c0 || cube[3][3] == c1) {
+            else if (cube[3][3] == c0 || cube[3][3] == c1) {
                 moves += "RU2R'U'RUR'";
                 moveCube("RU2R'U'RUR'");
                 return moves;
@@ -603,7 +627,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 moveU(1);
                 builder.append("U");
             }
-        } else if (countUp == 2) {
+        }
+        else if (countUp == 2) {
             while (true) {
                 if (s.contains(cube[2][4]) && s.contains(cube[4][2])) {
                     builder.append(OLL_UP_L);
@@ -623,7 +648,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 builder.append("U");
                 moveU(1);
             }
-        } else if (countUp == 1) {
+        }
+        else if (countUp == 1) {
             while (true) {
                 if (s.contains(cube[1][2]) && s.contains(cube[2][4]) && s.contains(cube[4][3])) {
                     builder.append(OLL_UP_A_COUNTER);
@@ -642,6 +668,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return builder.toString();
     }
 
+    //TODO improve
     private String orientLeftWall() {
         // on left for yellow/white
         String solveAlg = "";
@@ -672,7 +699,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
         if (Math.abs(check) == 4) {
             return "";
-        } else if (Math.abs(check) == 2) {
+        }
+        else if (Math.abs(check) == 2) {
             while (cube[3][3] == upperColor) {
                 moveU(1);
                 solveAlg += "U";
@@ -683,7 +711,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             }
             moveCube(OBL_ONE_UP);
             solveAlg += OBL_ONE_UP;
-        } else {
+        }
+        else {
             if (isOblCrossed(2, 2) && isOblCrossed(2, 6)) {
                 while (cube[3][3] != cube[3][6]) {
                     moveU(1);
@@ -691,7 +720,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 }
                 moveCube(OBL_Y_BOTH);
                 solveAlg += OBL_Y_BOTH;
-            } else if (isOblCrossed(2, 2) && !isOblCrossed(2, 6)) {
+            }
+            else if (isOblCrossed(2, 2) && !isOblCrossed(2, 6)) {
                 while (cube[2][6] != cube[3][6]) {
                     moveD(1);
                     solveAlg += "D";
@@ -699,11 +729,13 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 if (cube[3][7] == cube[3][2]) {
                     moveCube(OBL_T_DOWN_Y_UP_SAME);
                     solveAlg += OBL_T_DOWN_Y_UP_SAME;
-                } else {
+                }
+                else {
                     moveCube(OBL_T_DOWN_Y_UP_OPP);
                     solveAlg += OBL_T_DOWN_Y_UP_OPP;
                 }
-            } else if (!isOblCrossed(2, 2) && isOblCrossed(2, 6)) {
+            }
+            else if (!isOblCrossed(2, 2) && isOblCrossed(2, 6)) {
                 while (cube[2][3] != cube[3][3]) {
                     moveU(1);
                     solveAlg += "U";
@@ -711,11 +743,13 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 if (cube[3][7] == cube[3][2]) {
                     moveCube(OBL_Y_DOWN_T_UP_SAME);
                     solveAlg += OBL_Y_DOWN_T_UP_SAME;
-                } else {
+                }
+                else {
                     moveCube(OBL_Y_DOWN_T_UP_OPP);
                     solveAlg += OBL_Y_DOWN_T_UP_OPP;
                 }
-            } else if (!isOblCrossed(2, 2) && !isOblCrossed(2, 6)) {
+            }
+            else if (!isOblCrossed(2, 2) && !isOblCrossed(2, 6)) {
                 while (cube[2][3] != cube[3][3]) {
                     moveU(1);
                     solveAlg += "U";
@@ -738,12 +772,14 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
 
     private String permuteBothLayers() {
         String solveAlg = "";
-        if (isWallPermute(2, 2) && isWallPermute(2, 6)) {
-        } else if (isWallPermute(2, 6)) {
-            if (isWall_Y_Perm(2, 2)) {
+        if (isWallPermute(2) && isWallPermute(6)) {
+        }
+        else if (isWallPermute(6)) {
+            if (isWall_Y_Perm( 2)) {
                 moveCube(PLL_Y);
                 solveAlg += PLL_Y;
-            } else {
+            }
+            else {
                 while (cube[2][1] != cube[3][1]) {
                     moveU(1);
                     solveAlg += "U";
@@ -751,11 +787,13 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 moveCube(PLL_T);
                 solveAlg += PLL_T;
             }
-        } else if (isWallPermute(2, 2)) {
-            if (isWall_Y_Perm(2, 6)) {
+        }
+        else if (isWallPermute(2)) {
+            if (isWall_Y_Perm( 6)) {
                 moveCube(PLL_Y_DOWN);
                 solveAlg += PLL_Y_DOWN;
-            } else {
+            }
+            else {
                 while (cube[2][5] != cube[3][5]) {
                     moveD(1);
                     solveAlg += "D";
@@ -763,8 +801,9 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 moveCube(PLL_T_DOWN);
                 solveAlg += PLL_T_DOWN;
             }
-        } else {
-            if (isWall_Y_Perm(2, 2) && !isWall_Y_Perm(2, 6)) {
+        }
+        else {
+            if (isWall_Y_Perm( 2) && !isWall_Y_Perm( 6)) {
                 while (cube[5][2] != cube[5][3]) {
                     moveD(1);
                     solveAlg += "D";
@@ -775,7 +814,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 }
                 moveCube(PLL_T_DOWN_Y_UP);
                 solveAlg += PLL_T_DOWN_Y_UP;
-            } else if (!isWall_Y_Perm(2, 2) && isWall_Y_Perm(2, 6)) {
+            }
+            else if (!isWall_Y_Perm( 2) && isWall_Y_Perm( 6)) {
                 while (cube[4][2] != cube[4][3]) {
                     moveU(1);
                     solveAlg += "U";
@@ -786,7 +826,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 }
                 moveCube(PLL_Y_DOWN_T_UP);
                 solveAlg += PLL_Y_DOWN_T_UP;
-            } else if (!isWall_Y_Perm(2, 2) && !isWall_Y_Perm(2, 6)) {
+            }
+            else if (!isWall_Y_Perm( 2) && !isWall_Y_Perm( 6)) {
                 while (cube[5][2] != cube[5][3]) {
                     moveD(1);
                     solveAlg += "D";
@@ -797,7 +838,8 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
                 }
                 moveCube(PLL_T_BOTH);
                 solveAlg += PLL_T_BOTH;
-            } else {
+            }
+            else {
                 moveCube(PLL_Y_BOTH);
                 solveAlg += PLL_Y_BOTH;
             }
@@ -809,21 +851,23 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return solveAlg;
     }
 
-    private boolean isWall_Y_Perm(int x, int y) {
-        //actually upper and down walls only, only y matters!!!
-        if (x == 2 && y == 2) {
+    private boolean isWall_Y_Perm(int y) {
+        // up and down only, y matters!
+        if (y == 2) {
             return cube[2][1] + cube[3][1] == cube[2][4] + cube[3][4];
-        } else if (x == 2 && y == 6) {
+        }
+        else if (y == 6) {
             return cube[2][0] + cube[3][0] == cube[2][5] + cube[3][5];
         }
         return false;
     }
 
-    private boolean isWallPermute(int x, int y) {
-        //actually upper and down walls only y matters!!!
-        if (x == 2 && y == 2) {
+    private boolean isWallPermute(int y) {
+        // up and down only, y matters!
+        if (y == 2) {
             return cube[2][1] == cube[3][1] && cube[2][4] == cube[3][4];
-        } else if (x == 2 && y == 6) {
+        }
+        else if (y == 6) {
             return cube[2][0] == cube[3][0] && cube[2][5] == cube[3][5];
         }
         return false;

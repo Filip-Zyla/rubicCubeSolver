@@ -85,7 +85,8 @@ public class Algorithm {
         return true;
     }
 
-    public static String optimizeAlg(String alg) {
+    //TODO where is needed/optional
+    static String optimizeAlg(String alg) {
         if (!checkIsAlgProper(alg))
             return "Alg is not proper: " + alg;
         LinkedList<String> movesList = algToList(alg);
@@ -139,6 +140,25 @@ public class Algorithm {
         return String.join("", movesList);
     }
 
+    private static LinkedList<String> algToList(String alg) {
+        LinkedList<String> movesList = new LinkedList<>();
+        String[] array = alg.split("");
+        int i = 0;
+        while (i < alg.length()) {
+            if (i + 1 == alg.length()) {
+                movesList.add(array[i]);
+                i++;
+            } else if (array[i + 1].matches("[A-Za-z]")) {
+                movesList.add(array[i]);
+                i++;
+            } else {
+                movesList.add(array[i] + array[i + 1]);
+                i += 2;
+            }
+        }
+        return movesList;
+    }
+
     private static void eliminateParallelMoves(String cur, String nex, String m1, String m2, String r, LinkedList<String> movesList, int j){
         final int size = movesList.size();
         if (cur.equals(m1) && nex.equals(m2) || cur.equals(m2) && nex.equals(m1)) {
@@ -182,30 +202,11 @@ public class Algorithm {
         }
     }
 
-    //TODO test and fix, check if porper, length
+    //TODO test and fix, check if proper, length
     public static String skipRotation(String alg){
         final LinkedList<String> algToHandle = algToList(alg);
         skipRotation(algToHandle);
         return String.join("", algToHandle);
-    }
-
-    private static LinkedList<String> algToList(String alg) {
-        LinkedList<String> movesList = new LinkedList<>();
-        String[] algArr = alg.split("");
-        int i = 0;
-        while (i < alg.length()) {
-            if (i + 1 == alg.length()) {
-                movesList.add(algArr[i]);
-                i++;
-            } else if (algArr[i + 1].matches("[A-Za-z]")) {
-                movesList.add(algArr[i]);
-                i++;
-            } else {
-                movesList.add(algArr[i] + algArr[i + 1]);
-                i += 2;
-            }
-        }
-        return movesList;
     }
 
     private static void skipRotation(LinkedList<String> alg){
@@ -240,6 +241,26 @@ public class Algorithm {
                 skipRotation(alg, i);
             }
         }
+    }
+
+    private static void skipRotation(LinkedList<String> alg, int i) {
+        if (i+1>=alg.size()) {
+            alg.remove(i);
+            return;
+        }
+        String rotation = alg.get(i);
+        for (int j=i+1; j<alg.size(); j++){
+            String toReplace;
+            if (alg.get(j).length()>1) {
+                // yR2 -> yR + 2 -> F + 2 -> F2
+                toReplace = rotationsTable.get(rotation, String.valueOf(alg.get(j).charAt(0))) + alg.get(j).charAt(1);
+            }
+            else {
+                toReplace = rotationsTable.get(rotation, alg.get(j));
+            }
+            alg.set(j, toReplace);
+        }
+        alg.remove(i);
     }
 
     private static HashBasedTable<String, String, String> rotationsTable = createTable();
@@ -283,25 +304,5 @@ public class Algorithm {
         rotationsTable.put("z'", "F", "F");
         rotationsTable.put("z'", "B", "B");
         return rotationsTable;
-    }
-
-    private static void skipRotation(LinkedList<String> alg, int i) {
-        if (i+1>=alg.size()) {
-            alg.remove(i);
-            return;
-        }
-        String rotation = alg.get(i);
-        for (int j=i+1; j<alg.size(); j++){
-            String toReplace;
-            if (alg.get(j).length()>1) {
-                // yR2 -> yR + 2 -> F + 2 -> F2
-                toReplace = rotationsTable.get(rotation, String.valueOf(alg.get(j).charAt(0))) + alg.get(j).charAt(1);
-            }
-            else {
-                toReplace = rotationsTable.get(rotation, alg.get(j));
-            }
-            alg.set(j, toReplace);
-        }
-        alg.remove(i);
     }
 }
