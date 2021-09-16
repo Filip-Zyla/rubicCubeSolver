@@ -1,4 +1,6 @@
+
 import cubes.*;
+import graphicalMenu.GraphMenu;
 
 public class Main {
 

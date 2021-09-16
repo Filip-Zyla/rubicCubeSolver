@@ -280,6 +280,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         }
     }
 
+    //TODO avoid avoiding negatives rotations
     private int rotateCheck(int rotate) {
         if (rotate < 0)
             rotate = rotate + 4;
@@ -333,6 +334,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
      * ================================================================
      **/
 
+    //TODO move to another class
     private final List<Pair<Integer, Integer>> walls =
             Arrays.asList(new Pair<>(0, 2), new Pair<>(2, 0), new Pair<>(2, 2), new Pair<>(2, 4), new Pair<>(2, 6), new Pair<>(4, 2));
     private final List<Pair<Integer, Integer>> colors = Arrays.asList(new Pair<>(0, 5), new Pair<>(1, 4), new Pair<>(2, 3));
@@ -508,12 +510,11 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
             builderSolve.append(orientLastLayer(c0, c1));
         }
         else {
+            //only for white/yellow
             builderSolve.append(orientLeftWall());
-            rotateZ(2);
-            builderSolve.append("z2");
-            builderSolve.append(orientLeftWall());
-            rotateZ(1);
-            builderSolve.append("z");
+            rotateZ(-1);
+            builderSolve.append("z'");
+            builderSolve.append(orientLastLayer(0, 5));
         }
         return builderSolve.toString();
     }
@@ -668,11 +669,9 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return builder.toString();
     }
 
-    //TODO improve
     private String orientLeftWall() {
-        // on left for yellow/white
         String solveAlg = "";
-        for (int i = 4; i > 0; i--) {
+        for (int i = 0; i < 4; i++) {
             while (cube[3][1] != 0 && cube[3][1] != 5) {
                 moveCube(SEXY_MOVE_ON_LEFT_DOUBLE);
                 solveAlg += SEXY_MOVE_ON_LEFT_DOUBLE;
