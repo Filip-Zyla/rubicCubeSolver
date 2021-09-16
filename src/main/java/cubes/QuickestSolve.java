@@ -162,7 +162,7 @@ public class QuickestSolve {
          * twoWallUni   = 2       4
          * twoWall      = 1       1
          */
-        int[][] cube = cube2x2.getCube();
+        int[][] cube = cube2x2.getArray();
         List<Pair<Integer, Integer>> walls = Arrays.asList(new Pair<>(0, 2), new Pair<>(2, 0), new Pair<>(2, 2), new Pair<>(2, 4), new Pair<>(2, 6), new Pair<>(4, 2));
         List<Pair<Integer, Integer>> colors = Arrays.asList(new Pair<>(0, 5), new Pair<>(1, 4), new Pair<>(2, 3));
 

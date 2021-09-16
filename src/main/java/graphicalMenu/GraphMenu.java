@@ -87,17 +87,17 @@ public class GraphMenu extends JComponent implements ActionListener {
             for (int i = 0; i < 6; i++) {
                 JPanel panel = new JPanel();
                 panel.setBounds(j * 100, i * 100, 100, 100);
-                if (cube.getCube()[i][j] == 0) {
+                if (cube.getArray()[i][j] == 0) {
                     panel.setBackground(Color.WHITE);
-                } else if (cube.getCube()[i][j] == 1) {
+                } else if (cube.getArray()[i][j] == 1) {
                     panel.setBackground(Color.RED);
-                } else if (cube.getCube()[i][j] == 2) {
+                } else if (cube.getArray()[i][j] == 2) {
                     panel.setBackground(Color.BLUE);
-                } else if (cube.getCube()[i][j] == 3) {
+                } else if (cube.getArray()[i][j] == 3) {
                     panel.setBackground(Color.GREEN);
-                } else if (cube.getCube()[i][j] == 4) {
+                } else if (cube.getArray()[i][j] == 4) {
                     panel.setBackground(Color.getHSBColor(0.10f, 1f, 1f)); // orange
-                } else if (cube.getCube()[i][j] == 5) {
+                } else if (cube.getArray()[i][j] == 5) {
                     panel.setBackground(Color.YELLOW);
                 } else {
                     panel.setBackground(Color.BLACK);
