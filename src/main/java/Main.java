@@ -5,7 +5,14 @@ import graphicalMenu.GraphMenu;
 public class Main {
 
     public static void main(String[] args) {
-        b();
+        c();
+    }
+
+    private static void c() {
+        System.out.println(Algorithm.skipRotation("x'"));
+        System.out.println(Algorithm.skipRotation("xU'"));
+        System.out.println(Algorithm.skipRotation("Rxx"));
+        System.out.println(Algorithm.skipRotation("UzDxF'y'B'"));
     }
 
     private static void b() {

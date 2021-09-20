@@ -139,25 +139,6 @@ public class Algorithm {
         return String.join("", movesList);
     }
 
-    private static LinkedList<String> algToList(String alg) {
-        LinkedList<String> movesList = new LinkedList<>();
-        String[] array = alg.split("");
-        int i = 0;
-        while (i < alg.length()) {
-            if (i + 1 == alg.length()) {
-                movesList.add(array[i]);
-                i++;
-            } else if (array[i + 1].matches("[A-Za-z]")) {
-                movesList.add(array[i]);
-                i++;
-            } else {
-                movesList.add(array[i] + array[i + 1]);
-                i += 2;
-            }
-        }
-        return movesList;
-    }
-
     private static void eliminateParallelMoves(String cur, String nex, String m1, String m2, String r, LinkedList<String> movesList, int j){
         final int size = movesList.size();
         if (cur.equals(m1) && nex.equals(m2) || cur.equals(m2) && nex.equals(m1)) {
@@ -201,36 +182,52 @@ public class Algorithm {
         }
     }
 
-    //TODO test and fix, check if proper, length
+    private static LinkedList<String> algToList(String alg) {
+        LinkedList<String> movesList = new LinkedList<>();
+        String[] array = alg.split("");
+        int i = 0;
+        while (i < alg.length()) {
+            if (i + 1 == alg.length()) {
+                movesList.add(array[i]);
+                i++;
+            } else if (array[i + 1].matches("[A-Za-z]")) {
+                movesList.add(array[i]);
+                i++;
+            } else {
+                movesList.add(array[i] + array[i + 1]);
+                i += 2;
+            }
+        }
+        return movesList;
+    }
+
     public static String skipRotation(String alg){
-        final LinkedList<String> algToHandle = algToList(alg);
+        LinkedList<String> algToHandle = algToList(alg);
         skipRotation(algToHandle);
-        return String.join("", algToHandle);
+        final String join = String.join("", algToHandle);
+        return optimizeAlg(join);
     }
 
     private static void skipRotation(LinkedList<String> alg){
         /**
          *      y   y'   x   x'   z   z'
          *
-         * R    F   B    R   R    D   U
-         * L    B   F    L   L    U   D
+         * R    B   F    R   R    U   D
+         * L    F   B    L   L    D   U
          *
-         * U    U   U    B   F    R   L
-         * D    D   D    F   B    L   R
+         * U    U   U    F   B    L   R
+         * D    D   D    B   F    R   L
          *
-         * F    L   R    U   D    F   F
-         * B    R   L    D   U    B   B
+         * F    R   L    D   U    F   F
+         * B    L   R    U   D    B   B
          *
          * if ' or 2 then add it
-         *
-         * xyzR -> xyD -> xD -> F
          */
         Set rotations = new HashSet<Character>(Arrays.asList('x', 'y', 'z'));
         if (alg.size()<2){
-            if (rotations.contains(alg.get(1))) alg.remove(1);
             return;
         }
-        for (int i=alg.size()-2; i>=0; i--){
+        for (int i=alg.size()-1; i>=0; i--){
             if (rotations.contains(alg.get(i).charAt(0))){
                 if (alg.get(i).contains("2")){
                     alg.set(i, String.valueOf(alg.get(i).charAt(0)));
@@ -251,7 +248,7 @@ public class Algorithm {
         for (int j=i+1; j<alg.size(); j++){
             String toReplace;
             if (alg.get(j).length()>1) {
-                // yR2 -> yR + 2 -> F + 2 -> F2
+                // yR2 -> yR + 2 -> B + 2 -> B2
                 toReplace = rotationsTable.get(rotation, String.valueOf(alg.get(j).charAt(0))) + alg.get(j).charAt(1);
             }
             else {
@@ -266,40 +263,40 @@ public class Algorithm {
 
     private static HashBasedTable<String, String, String> createTable() {
         HashBasedTable<String, String, String> rotationsTable = HashBasedTable.create(6,6);
-        rotationsTable.put("y", "R", "F");
-        rotationsTable.put("y", "L", "B");
+        rotationsTable.put("y", "R", "B");
+        rotationsTable.put("y", "L", "F");
         rotationsTable.put("y", "U", "U");
         rotationsTable.put("y", "D", "D");
-        rotationsTable.put("y", "F", "L");
-        rotationsTable.put("y", "B", "R");
-        rotationsTable.put("y'", "R", "B");
-        rotationsTable.put("y'", "L", "F");
+        rotationsTable.put("y", "F", "R");
+        rotationsTable.put("y", "B", "L");
+        rotationsTable.put("y'", "R", "F");
+        rotationsTable.put("y'", "L", "B");
         rotationsTable.put("y'", "U", "U");
         rotationsTable.put("y'", "D", "D");
-        rotationsTable.put("y'", "F", "R");
-        rotationsTable.put("y'", "B", "L");
+        rotationsTable.put("y'", "F", "L");
+        rotationsTable.put("y'", "B", "R");
         rotationsTable.put("x", "R", "R");
         rotationsTable.put("x", "L", "L");
-        rotationsTable.put("x", "U", "B");
-        rotationsTable.put("x", "D", "F");
-        rotationsTable.put("x", "F", "U");
-        rotationsTable.put("x", "B", "D");
+        rotationsTable.put("x", "U", "F");
+        rotationsTable.put("x", "D", "B");
+        rotationsTable.put("x", "F", "D");
+        rotationsTable.put("x", "B", "U");
         rotationsTable.put("x'", "R", "R");
         rotationsTable.put("x'", "L", "L");
-        rotationsTable.put("x'", "U", "F");
-        rotationsTable.put("x'", "D", "B");
-        rotationsTable.put("x'", "F", "D");
-        rotationsTable.put("x'", "B", "U");
-        rotationsTable.put("z", "R", "D");
-        rotationsTable.put("z", "L", "U");
-        rotationsTable.put("z", "U", "R");
-        rotationsTable.put("z", "D", "L");
+        rotationsTable.put("x'", "U", "B");
+        rotationsTable.put("x'", "D", "F");
+        rotationsTable.put("x'", "F", "U");
+        rotationsTable.put("x'", "B", "D");
+        rotationsTable.put("z", "R", "U");
+        rotationsTable.put("z", "L", "D");
+        rotationsTable.put("z", "U", "L");
+        rotationsTable.put("z", "D", "R");
         rotationsTable.put("z", "F", "F");
         rotationsTable.put("z", "B", "B");
-        rotationsTable.put("z'", "R", "U");
-        rotationsTable.put("z'", "L", "D");
-        rotationsTable.put("z'", "U", "L");
-        rotationsTable.put("z'", "D", "R");
+        rotationsTable.put("z'", "R", "D");
+        rotationsTable.put("z'", "L", "U");
+        rotationsTable.put("z'", "U", "R");
+        rotationsTable.put("z'", "D", "L");
         rotationsTable.put("z'", "F", "F");
         rotationsTable.put("z'", "B", "B");
         return rotationsTable;
