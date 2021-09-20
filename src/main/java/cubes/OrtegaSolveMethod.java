@@ -13,32 +13,6 @@ public class OrtegaSolveMethod {
             Arrays.asList(new Pair<>(0, 2), new Pair<>(2, 0), new Pair<>(2, 2), new Pair<>(2, 4), new Pair<>(2, 6), new Pair<>(4, 2));
     private final List<Pair<Integer, Integer>> colors = Arrays.asList(new Pair<>(0, 5), new Pair<>(1, 4), new Pair<>(2, 3));
 
-    private final String SEXY_MOVE_ON_LEFT_DOUBLE = "U'R'UR";
-
-    private final String OBL_ONE_UP = "R2DR2";  // front-right
-    private final String OBL_Y_BOTH = "R2D2F2";
-    private final String OBL_T_DOWN_Y_UP_OPP = "R2U'R2U'R2";   //are left-fronts opposite
-    private final String OBL_T_DOWN_Y_UP_SAME = "R2UR2UR2"; //are left-fronts same
-    private final String OBL_Y_DOWN_T_UP_OPP = "R2DR2DR2";   //are left-fronts opposite
-    private final String OBL_Y_DOWN_T_UP_SAME = "R2D'R2D'R2";   //are left-fronts same
-
-    private final String OLL_UP_H = "R2U2RU2R2";    //front and back
-    private final String OLL_UP_P = "RU2R2U'R2U'R2U2R"; //pair on right
-    private final String OLL_UP_L = "FRU'R'U'RUR'F'";   // front-left and right-back
-    private final String OLL_UP_U = "FRUR'U'F'";    //pair on left
-    private final String OLL_UP_T = "L'U'LURU'L'Ux'"; // on right front and back
-    private final String OLL_UP_A_COUNTER = "RUR'URU2R'";   //up on front-left
-    private final String OLL_UP_A_CLOCK = "RU2R'U'RU'R'";   //up on back-right
-
-    private final String PLL_T = "RU2R'U'RU2L'UR'U'L";  //on right, up
-    private final String PLL_T_DOWN = "z2RU2R'U'RU2L'UR'U'L";   //on left, down
-    private final String PLL_Y = "RU'R'U'F2U'RUR'DR2";  // right-front -> left-back, up
-    private final String PLL_Y_DOWN = "x2RU'R'U'F2U'RUR'DR2";   // left-front -> right-back, down
-    private final String PLL_T_BOTH = "R2U'B2U2R2U'R2"; //both on back
-    private final String PLL_Y_BOTH = "R2F2R2"; //4 blocks of two
-    private final String PLL_Y_DOWN_T_UP = "RU'RF2R'UR'";    //T on back up, Y left-front to right-back down
-    private final String PLL_T_DOWN_Y_UP = "z2RU'RF2R'UR'";    //T on back up, Y right-front to left-back down
-
     public OrtegaSolveMethod(Cube2x2 cube2x2){
         this.cube=cube2x2;
         stringBuilder = new StringBuilder();
@@ -233,32 +207,40 @@ public class OrtegaSolveMethod {
         return cube.getArray()[x][y] == cube.getArray()[x + 1][y + 1] && cube.getArray()[x + 1][y] == cube.getArray()[x][y + 1] && cube.getArray()[x][y] == cube.getArray()[x][y + 1];
     }
 
-    //TODO extract strings
     private void orientLastPieceInThreeWall(int c0, int c1) {
+        // in place, but rotate
+        final String FRONT_RIGHT_DOWN = "F'U'FUR'FRF'";
+        final String RIGHT_FRONT_DOWN = "RUR'U'RUR'";
+        // upper layer
+        final String RIGHT_FRONT_UP = "RUR'";
+        final String FRONT_RIGHT_UP = "URU'R'";
+        final String UP_FRONT_RIGHT = "RU2R'U'RUR'";
+
+
         while (cube.getArray()[3][6] == c0 || cube.getArray()[3][6] == c1) {
             cube.moveD(1);
             stringBuilder.append("D");
         }
         if (cube.getArray()[5][3] == c0) {
-            stringBuilder.append("F'U'FUR'FRF'");
-            cube.moveCube("F'U'FUR'FRF'");
+            stringBuilder.append(FRONT_RIGHT_DOWN);
+            cube.moveCube(FRONT_RIGHT_DOWN);
         }
         else if (cube.getArray()[3][5] == c0) {
-            stringBuilder.append("RUR'U'RUR'");
-            cube.moveCube("RUR'U'RUR'");
+            stringBuilder.append(RIGHT_FRONT_DOWN);
+            cube.moveCube(RIGHT_FRONT_DOWN);
         }
         while (true) {
             if (cube.getArray()[3][4] == c0 || cube.getArray()[3][4] == c1) {
-                stringBuilder.append("RUR'");
-                cube.moveCube("RUR'");
+                stringBuilder.append(RIGHT_FRONT_UP);
+                cube.moveCube(RIGHT_FRONT_UP);
             }
             else if (cube.getArray()[4][3] == c0 || cube.getArray()[4][3] == c1) {
-                stringBuilder.append("R'FRF'");
-                cube.moveCube("R'FRF'");
+                stringBuilder.append(FRONT_RIGHT_UP);
+                cube.moveCube(FRONT_RIGHT_UP);
             }
             else if (cube.getArray()[3][3] == c0 || cube.getArray()[3][3] == c1) {
-                stringBuilder.append("RU2R'U'RUR'");
-                cube.moveCube("RU2R'U'RUR'");
+                stringBuilder.append(UP_FRONT_RIGHT);
+                cube.moveCube(UP_FRONT_RIGHT);
             }
             stringBuilder.append("U");
             cube.moveU(1);
@@ -266,6 +248,14 @@ public class OrtegaSolveMethod {
     }
 
     private void orientLastLayer(int c0, int c1) {
+        final String OLL_UP_H = "R2U2RU2R2";    //front and back
+        final String OLL_UP_P = "RU2R2U'R2U'R2U2R"; //pair on right
+        final String OLL_UP_L = "FRU'R'U'RUR'F'";   // front-left and right-back
+        final String OLL_UP_U = "FRUR'U'F'";    //pair on left
+        final String OLL_UP_T = "L'U'LURU'L'Ux'"; // on right front and back
+        final String OLL_UP_A_COUNTER = "RUR'URU2R'";   //up on front-left
+        final String OLL_UP_A_CLOCK = "RU2R'U'RU'R'";   //up on back-right
+
         List<Integer> topStickers = Arrays.asList(cube.getArray()[2][2], cube.getArray()[2][3], cube.getArray()[3][2], cube.getArray()[3][3]);
 
         Set s = new HashSet<Integer>();
@@ -329,38 +319,59 @@ public class OrtegaSolveMethod {
         }
     }
 
-    //TODO try some shortcuts, extract strings?, still toDO
     private void orientLeftWall() {
+        final String DOWN_FRONT_RIGHT = "U'RU";
+        final String FRONT_UP_RIGHT = "R'U'RU";
+        final String UP_BACK_RIGHT = "R'FRF'";
+        final String BACK_UP_RIGHT = "FR'F'";
+        final String UP_FRONT_RIGHT = "RFR'F'";
+        final String UP_FRONT_LEFT = "U'R'URU'R'U";
+        final String FRONT_UP_LEFT = "FRF'R2U'RU";
+
         for (int i = 0; i < 4; i++) {
             if (cube.getArray()[3][1] != 0 && cube.getArray()[3][1] != 5) {
-                if (cube.getArray()[4][3] != 0 && cube.getArray()[4][3] != 5){
-                    cube.moveCube("R'U'RU");
-                    stringBuilder.append("R'U'RU");
+                if (cube.getArray()[3][6] != 0 && cube.getArray()[3][6] != 5) {
+                    cube.moveCube(DOWN_FRONT_RIGHT);
+                    stringBuilder.append(DOWN_FRONT_RIGHT);
                 }
-                else if (cube.getArray()[3][6] != 0 && cube.getArray()[3][6] != 5){
-                    cube.moveCube("U'RU");
-                    stringBuilder.append("U'RU");
+                else if (cube.getArray()[4][3] != 0 && cube.getArray()[4][3] != 5) {
+                    cube.moveCube(FRONT_UP_RIGHT);
+                    stringBuilder.append(FRONT_UP_RIGHT);
                 }
-                else if (cube.getArray()[3][2] != 0 && cube.getArray()[3][2] != 5){
-                    cube.moveCube("U'R'URU'R'U");
-                    stringBuilder.append("U'R'URU'R'U");
+                else if (cube.getArray()[2][3] != 0 && cube.getArray()[2][3] != 5) {
+                    cube.moveCube(UP_BACK_RIGHT);
+                    stringBuilder.append(UP_BACK_RIGHT);
                 }
-                else if (cube.getArray()[3][3] != 0 && cube.getArray()[3][3] != 5){
-                    cube.moveCube("RFR'F'");
-                    stringBuilder.append("RFR'F'");
+                else if (cube.getArray()[1][3] != 0 && cube.getArray()[1][3] != 5) {
+                    cube.moveCube(BACK_UP_RIGHT);
+                    stringBuilder.append(BACK_UP_RIGHT);
                 }
-                else if (cube.getArray()[2][3] != 0 && cube.getArray()[2][3] != 5){
-                    cube.moveCube("R'FRF'");
-                    stringBuilder.append("R'FRF'");
+                else if (cube.getArray()[3][3] != 0 && cube.getArray()[3][3] != 5) {
+                    cube.moveCube(UP_FRONT_RIGHT);
+                    stringBuilder.append(UP_FRONT_RIGHT);
                 }
-
-
-                stringBuilder.append(SEXY_MOVE_ON_LEFT_DOUBLE);
+                else if (cube.getArray()[3][2] != 0 && cube.getArray()[3][2] != 5) {
+                    cube.moveCube(UP_FRONT_LEFT);
+                    stringBuilder.append(UP_FRONT_LEFT);
+                }
+                else if (cube.getArray()[4][2] != 0 && cube.getArray()[4][2] != 5) {
+                    cube.moveCube(FRONT_UP_LEFT);
+                    stringBuilder.append(FRONT_UP_LEFT);
+                }
             }
+            cube.moveL(1);
+            stringBuilder.append("L");
         }
     }
 
     private void orientBothLayers() {
+        final String OBL_ONE_UP = "R2DR2";  // front-right
+        final String OBL_Y_BOTH = "R2D2F2";
+        final String OBL_T_DOWN_Y_UP_OPP = "R2U'R2U'R2";   //are left-fronts opposite
+        final String OBL_T_DOWN_Y_UP_SAME = "R2UR2UR2"; //are left-fronts same
+        final String OBL_Y_DOWN_T_UP_OPP = "R2DR2DR2";   //are left-fronts opposite
+        final String OBL_Y_DOWN_T_UP_SAME = "R2D'R2D'R2";   //are left-fronts same
+
         int posColor = cube.getArray()[2][2];
         int check = 0;
         for (int i = 2; i < 4; i++) {
@@ -442,10 +453,19 @@ public class OrtegaSolveMethod {
     }
 
     private void permuteBothLayers() {
+        final String PLL_T = "RU2R'U'RU2L'UR'U'L";  //on right, up
+        final String PLL_T_DOWN = "z2RU2R'U'RU2L'UR'U'L";   //on left, down
+        final String PLL_Y = "RU'R'U'F2U'RUR'DR2";  // right-front -> left-back, up
+        final String PLL_Y_DOWN = "x2RU'R'U'F2U'RUR'DR2";   // left-front -> right-back, down
+        final String PLL_T_BOTH = "R2U'B2U2R2U'R2"; //both on back
+        final String PLL_Y_BOTH = "R2F2R2"; //4 blocks of two
+        final String PLL_Y_DOWN_T_UP = "RU'RF2R'UR'";    //T on back up, Y left-front to right-back down
+        final String PLL_T_DOWN_Y_UP = "z2RU'RF2R'UR'";    //T on back up, Y right-front to left-back down
+
         if (isWallPermute(2) && isWallPermute(6)) {
         }
         else if (isWallPermute(6)) {
-            if (isWall_Y_Perm( 2)) {
+            if (isWall_Y_Perm(2)) {
                 cube.moveCube(PLL_Y);
                 stringBuilder.append(PLL_Y);
             }
@@ -459,7 +479,7 @@ public class OrtegaSolveMethod {
             }
         }
         else if (isWallPermute(2)) {
-            if (isWall_Y_Perm( 6)) {
+            if (isWall_Y_Perm(6)) {
                 cube.moveCube(PLL_Y_DOWN);
                 stringBuilder.append(PLL_Y_DOWN);
             }
@@ -473,7 +493,7 @@ public class OrtegaSolveMethod {
             }
         }
         else {
-            if (isWall_Y_Perm( 2) && !isWall_Y_Perm( 6)) {
+            if (isWall_Y_Perm(2) && !isWall_Y_Perm(6)) {
                 while (cube.getArray()[5][2] != cube.getArray()[5][3]) {
                     cube.moveD(1);
                     stringBuilder.append("D");
@@ -485,7 +505,7 @@ public class OrtegaSolveMethod {
                 cube.moveCube(PLL_T_DOWN_Y_UP);
                 stringBuilder.append(PLL_T_DOWN_Y_UP);
             }
-            else if (!isWall_Y_Perm( 2) && isWall_Y_Perm( 6)) {
+            else if (!isWall_Y_Perm(2) && isWall_Y_Perm(6)) {
                 while (cube.getArray()[4][2] != cube.getArray()[4][3]) {
                     cube.moveU(1);
                     stringBuilder.append("U");
@@ -497,7 +517,7 @@ public class OrtegaSolveMethod {
                 cube.moveCube(PLL_Y_DOWN_T_UP);
                 stringBuilder.append(PLL_Y_DOWN_T_UP);
             }
-            else if (!isWall_Y_Perm( 2) && !isWall_Y_Perm( 6)) {
+            else if (!isWall_Y_Perm(2) && !isWall_Y_Perm(6)) {
                 while (cube.getArray()[5][2] != cube.getArray()[5][3]) {
                     cube.moveD(1);
                     stringBuilder.append("D");
