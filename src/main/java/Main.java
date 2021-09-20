@@ -5,7 +5,7 @@ import graphicalMenu.GraphMenu;
 public class Main {
 
     public static void main(String[] args) {
-        c();
+        b();
     }
 
     private static void c() {

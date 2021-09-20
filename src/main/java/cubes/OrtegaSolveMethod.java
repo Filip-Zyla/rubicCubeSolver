@@ -64,10 +64,30 @@ public class OrtegaSolveMethod {
             }
         }
         else if (!threeWallUniColor.isEmpty()) {
-            if (threeWallUniColor.size() == 1) {
-                givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1());
-                orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1());
-                orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1());
+            Pair<Pair<Integer, Integer>, Integer> p = getParallelWalls();
+            if(p!=null){
+                givenWallToDown(p.getValue0().getValue0(), p.getValue0().getValue1());
+                int c = p.getValue1();
+                while (cube.getArray()[3][3]!= c){
+                    cube.moveU(1);
+                    stringBuilder.append("U");
+                }
+                while (cube.getArray()[3][6] == c){
+                    cube.moveD(1);
+                    stringBuilder.append("D");
+                }
+                cube.rotateX(1);
+                stringBuilder.append("x");
+                if (cube.getArray()[3][3] == c){
+                    cube.moveCube("y2z");
+                    stringBuilder.append("y2z");
+                }
+                final String PLL_T = "RU2R'U'RU2L'UR'U'L";  //on right, up
+                cube.moveCube(PLL_T);
+                stringBuilder.append(PLL_T);
+
+                cube.rotateX(1);
+                stringBuilder.append("x");
             }
             else {
                 givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1());
@@ -96,8 +116,7 @@ public class OrtegaSolveMethod {
             }
             orientLastLayer(c0, c1);
         }
-        else if (!twoWallUniColor.isEmpty() || !twoWall.isEmpty()){
-        }
+        else if (!twoWallUniColor.isEmpty() || !twoWall.isEmpty()){ }
         else {
             //only for white/yellow
             orientLeftWall();
@@ -206,6 +225,23 @@ public class OrtegaSolveMethod {
             cube.rotateX(1);
             stringBuilder.append("x");
         }
+    }
+
+    private Pair getParallelWalls(){
+        for (int i = 0; i < threeWallUniColor.size(); i++) {
+            for (int j = 0; j < threeWallUniColor.size(); j++) {
+                if (i!=j && threeWallUniColor.get(i).getValue1() == threeWallUniColor.get(j).getValue1()){
+                    int i1 = threeWallUniColor.get(i).getValue0().getValue0();
+                    int i2 = threeWallUniColor.get(i).getValue0().getValue1();
+                    int j1 = threeWallUniColor.get(j).getValue0().getValue0();
+                    int j2 = threeWallUniColor.get(j).getValue0().getValue1();
+                    if ((i1+j1)%4==0 && (i2+j2)%4==0){
+                        return threeWall.get(i);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private boolean isWallUniColor(int x, int y) {
