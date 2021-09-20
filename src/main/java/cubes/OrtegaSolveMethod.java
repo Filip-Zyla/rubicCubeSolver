@@ -9,9 +9,14 @@ public class OrtegaSolveMethod {
     private Cube2x2 cube;
     private StringBuilder stringBuilder;
 
-    private final List<Pair<Integer, Integer>> walls =
-            Arrays.asList(new Pair<>(0, 2), new Pair<>(2, 0), new Pair<>(2, 2), new Pair<>(2, 4), new Pair<>(2, 6), new Pair<>(4, 2));
-    private final List<Pair<Integer, Integer>> colors = Arrays.asList(new Pair<>(0, 5), new Pair<>(1, 4), new Pair<>(2, 3));
+    // < wallsPair, colorsPair/colorInt >
+    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> fullWall = new ArrayList<>();
+    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> threeWall = new ArrayList<>();
+    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> twoWall = new ArrayList<>();
+
+    private List<Pair<Pair<Integer, Integer>, Integer>> fullWallUniColor = new ArrayList<>();
+    private List<Pair<Pair<Integer, Integer>, Integer>> threeWallUniColor = new ArrayList<>();
+    private List<Pair<Pair<Integer, Integer>, Integer>> twoWallUniColor = new ArrayList<>();
 
     public OrtegaSolveMethod(Cube2x2 cube2x2){
         this.cube=cube2x2;
@@ -34,16 +39,79 @@ public class OrtegaSolveMethod {
 
     //TODO improve
     private void ortegaFirstStep() {
-        // < wallsPair, colorsPair/colorInt >
-        List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> fullWall = new ArrayList<>();
-        List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> threeWall = new ArrayList<>();
-        List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> twoWall = new ArrayList<>();
+        inspectWalls();
 
-        List<Pair<Pair<Integer, Integer>, Integer>> fullWallUniColor = new ArrayList<>();
-        List<Pair<Pair<Integer, Integer>, Integer>> threeWallUniColor = new ArrayList<>();
-        List<Pair<Pair<Integer, Integer>, Integer>> twoWallUniColor = new ArrayList<>();
+        if (!fullWallUniColor.isEmpty()) {
+            if (fullWallUniColor.size() == 1) {
+                givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1());
+                orientLastLayer(5 - fullWallUniColor.get(0).getValue1(), 5 - fullWallUniColor.get(0).getValue1());
+            }
+            else if (fullWallUniColor.size() == 2) {
+                if (fullWallUniColor.get(0).getValue0().getValue0() + fullWallUniColor.get(1).getValue0().getValue0() % 4 == 0
+                        && fullWallUniColor.get(0).getValue0().getValue1() + fullWallUniColor.get(1).getValue0().getValue1() % 4 == 0) {
+                    //on opposite walls
+                    givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1());
+                }
+                else {
+                    //L-shape, just take first wal
+                    givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1());
+                    orientLastLayer(5 - fullWallUniColor.get(0).getValue1(), 5 - fullWallUniColor.get(0).getValue1());
+                }
+            }
+            else if (fullWallUniColor.size() == 3) {
+                //U-shape, three wall
+                parallelUniColorWallsToUpDown();
+            }
+        }
+        else if (!threeWallUniColor.isEmpty()) {
+            if (threeWallUniColor.size() == 1) {
+                givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1());
+                orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1());
+                orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1());
+            }
+            else {
+                givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1());
+                orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1());
+                orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1());
+            }
+        }
+        else if (!fullWall.isEmpty() || !threeWall.isEmpty()) {
+            Pair p;
+            if (!fullWall.isEmpty()) {
+                p = fullWall.get(0);
+            }
+            else {
+                p = threeWall.get(0);
+            }
+            Pair w = (Pair) p.getValue0();
+            Pair c = (Pair) p.getValue1();
+            int x = (int) w.getValue0();
+            int y = (int) w.getValue1();
+            int c0 = (int) c.getValue0();
+            int c1 = (int) c.getValue1();
+            givenWallToDown(x, y);
 
-        //find colors on all walls
+            if (fullWall.isEmpty()) {
+                orientLastPieceInThreeWall(c0, c1);
+            }
+            orientLastLayer(c0, c1);
+        }
+        else if (!twoWallUniColor.isEmpty() || !twoWall.isEmpty()){
+        }
+        else {
+            //only for white/yellow
+            orientLeftWall();
+            cube.rotateZ(-1);
+            stringBuilder.append("z'");
+            orientLastLayer(0, 5);
+        }
+    }
+
+    private void inspectWalls(){
+        final List<Pair<Integer, Integer>> walls =
+                Arrays.asList(new Pair<>(0, 2), new Pair<>(2, 0), new Pair<>(2, 2), new Pair<>(2, 4), new Pair<>(2, 6), new Pair<>(4, 2));
+        final List<Pair<Integer, Integer>> colors = Arrays.asList(new Pair<>(0, 5), new Pair<>(1, 4), new Pair<>(2, 3));
+
         for (Pair w : walls) {
             int x = (int) w.getValue0();
             int y = (int) w.getValue1();
@@ -86,7 +154,7 @@ public class OrtegaSolveMethod {
                 else if (numOfStickers.size() == 3) {
                     threeWall.add(new Pair<>(w, c));
                 }
-                //if are next to each other
+                //if doubles are next to each other
                 else if (numOfStickers.size() == 2 && Math.abs(numOfStickers.get(0) - numOfStickers.get(1)) != 2) {
                     twoWall.add(new Pair<>(w, c));
                     if (wall[numOfStickers.get(0)] == c0 && wall[numOfStickers.get(1)] == c0) {
@@ -97,69 +165,6 @@ public class OrtegaSolveMethod {
                     }
                 }
             }
-        }
-
-        if (!fullWallUniColor.isEmpty()) {
-            if (fullWallUniColor.size() == 1) {
-                givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1());
-                orientLastLayer(5 - fullWallUniColor.get(0).getValue1(), 5 - fullWallUniColor.get(0).getValue1());
-            }
-            else if (fullWallUniColor.size() == 2) {
-                if (fullWallUniColor.get(0).getValue0().getValue0() + fullWallUniColor.get(1).getValue0().getValue0() % 4 == 0
-                        && fullWallUniColor.get(0).getValue0().getValue1() + fullWallUniColor.get(1).getValue0().getValue1() % 4 == 0) {
-                    //on opposite walls
-                    givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1());
-                }
-                else {
-                    //L-shape, just take first wall
-                    givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1());
-                    orientLastLayer(5 - fullWallUniColor.get(0).getValue1(), 5 - fullWallUniColor.get(0).getValue1());
-                }
-            }
-            else if (fullWallUniColor.size() == 3) {
-                //U-shape, three wall
-                parallelUniColorWallsToUpDown();
-            }
-        }
-        else if (!threeWallUniColor.isEmpty()) {
-            if (threeWallUniColor.size() == 1) {
-                givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1());
-                orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1());
-                orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1());
-            }
-            else {
-                givenWallToDown(threeWallUniColor.get(0).getValue0().getValue0(), threeWallUniColor.get(0).getValue0().getValue1());
-                orientLastPieceInThreeWall(threeWallUniColor.get(0).getValue1(), threeWallUniColor.get(0).getValue1());
-                orientLastLayer(5 - threeWallUniColor.get(0).getValue1(), 5 - threeWallUniColor.get(0).getValue1());
-            }
-        }
-        else if (!fullWall.isEmpty() || !threeWall.isEmpty()) {
-            Pair p;
-            if (fullWall.size() > 0) {
-                p = fullWall.get(0);
-            }
-            else {
-                p = threeWall.get(0);
-            }
-            Pair w = (Pair) p.getValue0();
-            Pair c = (Pair) p.getValue1();
-            int x = (int) w.getValue0();
-            int y = (int) w.getValue1();
-            int c0 = (int) c.getValue0();
-            int c1 = (int) c.getValue1();
-            givenWallToDown(x, y);
-
-            if (fullWall.isEmpty() && !threeWall.isEmpty()) {
-                orientLastPieceInThreeWall(c0, c1);
-            }
-            orientLastLayer(c0, c1);
-        }
-        else {
-            //only for white/yellow
-            orientLeftWall();
-            cube.rotateZ(-1);
-            stringBuilder.append("z'");
-            orientLastLayer(0, 5);
         }
     }
 
