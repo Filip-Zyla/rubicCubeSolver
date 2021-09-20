@@ -34,7 +34,7 @@ public class OrtegaSolveMethod {
         if (cube.isSolved())
             return Algorithm.optimizeAlg(stringBuilder.toString());
         else
-            return "Error";
+            return "Error: " + stringBuilder.toString();
     }
 
     //TODO improve

@@ -25,7 +25,7 @@ public class QuickestSolve {
     }
 
     public void findQuickestSolve() {
-        //TODO list od solutions???
+        //TODO list od solutions?, optimizeAlg?
         String scramble = Algorithm.randomScramble(5, 7);
         System.out.println(scramble);
         cube.moveCube(scramble);

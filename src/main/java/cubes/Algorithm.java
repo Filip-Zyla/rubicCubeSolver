@@ -85,8 +85,7 @@ public class Algorithm {
         return true;
     }
 
-    //TODO where is needed/optional
-    static String optimizeAlg(String alg) {
+    public static String optimizeAlg(String alg) {
         if (!checkIsAlgProper(alg))
             return "Alg is not proper: " + alg;
         LinkedList<String> movesList = algToList(alg);
