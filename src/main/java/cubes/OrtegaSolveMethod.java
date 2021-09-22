@@ -10,18 +10,17 @@ public class OrtegaSolveMethod {
     private StringBuilder stringBuilder;
 
     // < wallsPair, colorsPair/colorInt >
-
     private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> fullWallUniColor = new ArrayList<>();
     private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> fullWall = new ArrayList<>();
     private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> threeWallAll = new ArrayList<>();
-    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> twoWallUniColor = new ArrayList<>();
-    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> twoWall = new ArrayList<>();
+    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> twoWallAll = new ArrayList<>();
 
     public OrtegaSolveMethod(Cube2x2 cube2x2){
         this.cube=cube2x2;
         stringBuilder = new StringBuilder();
     }
 
+    //TODO test
     public String solve() {
         if (cube.isSolved())
             return "";
@@ -36,7 +35,6 @@ public class OrtegaSolveMethod {
             return "Error: " + stringBuilder.toString();
     }
 
-    //TODO test
     private void ortegaFirstStep() {
         inspectWalls();
 
@@ -106,10 +104,36 @@ public class OrtegaSolveMethod {
                 orientLastLayer(threeWallAll.get(0).getValue1().getValue0(), threeWallAll.get(0).getValue1().getValue1());
             }
         }
-        //TODO something else if (!twoWallUniColor.isEmpty() || !twoWall.isEmpty())
+        else if (!twoWallAll.isEmpty()) {
+            Pair p1 = getSimilarWalls(twoWallAll);
+            if (p1 != null && twoWallAll.size() > 1) {
+                Optional<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> pOpt = twoWallAll.stream().filter(pf1 -> !pf1.equals(p1) && pf1.getValue1() == p1.getValue1()).findFirst();
+                if (pOpt.isPresent()) {
+                    Pair p2 = pOpt.get();
+                    //TODO connectTwoDoubles(p1, p2);
+                    return;
+                }
+            }
+            int c0;
+            int c1;
+            if (twoWallAll.stream().noneMatch(w -> w.getValue0().equals(new Pair<>(2, 0)))) {
+                givenWallToLeft(twoWallAll.get(0).getValue0().getValue0(), twoWallAll.get(0).getValue0().getValue1());
+                c0 = twoWallAll.get(0).getValue1().getValue0();
+                c1 = twoWallAll.get(0).getValue1().getValue1();
+            }
+            else {
+                Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> colors = twoWallAll.stream().filter(w -> w.getValue0().equals(new Pair<>(2, 0))).findFirst().get();
+                c0 = colors.getValue1().getValue0();
+                c1 = colors.getValue1().getValue1();
+            }
+            orientLeftWall(c0, c1);
+            cube.rotateZ(-1);
+            stringBuilder.append("z'");
+            orientLastLayer(c0, c1);
+
+        }
         else {
-            //only for white/yellow
-            orientLeftWall();
+            orientLeftWall(0, 5);
             cube.rotateZ(-1);
             stringBuilder.append("z'");
             orientLastLayer(0, 5);
@@ -144,6 +168,9 @@ public class OrtegaSolveMethod {
                     }
                 }
 
+                if (numOfStickers.size() == 4) {
+                    fullWall.add(new Pair<>(w, c));
+                }
                 if (numOfStickersC0.size() == 4) {
                     fullWallUniColor.add(new Pair<>(w, new Pair<>(c0,c0)));
                 }
@@ -159,19 +186,8 @@ public class OrtegaSolveMethod {
                 else if (numOfStickers.size() == 3){
                     threeWallAll.add(new Pair<>(w, c));
                 }
-
-                if (numOfStickers.size() == 4) {
-                    fullWall.add(new Pair<>(w, c));
-                }
-                //if doubles are next to each other
                 else if (numOfStickers.size() == 2 && Math.abs(numOfStickers.get(0) - numOfStickers.get(1)) != 2) {
-                    twoWall.add(new Pair<>(w, c));
-                    if (wall[numOfStickers.get(0)] == c0 && wall[numOfStickers.get(1)] == c0) {
-                        twoWallUniColor.add(new Pair<>(w, new Pair<>(c0,c0)));
-                    }
-                    else if (wall[numOfStickers.get(0)] == c1 && wall[numOfStickers.get(1)] == c1) {
-                        twoWallUniColor.add(new Pair<>(w, new Pair<>(c1,c1)));
-                    }
+                    twoWallAll.add(new Pair<>(w, c));
                 }
             }
         }
@@ -183,16 +199,15 @@ public class OrtegaSolveMethod {
                 cube.rotateZ(-1);
                 stringBuilder.append("z'");
             }
-            else {
-                if (y == 2) {
-                    cube.rotateZ(2);
-                    stringBuilder.append("z2");
-                }
-                else {
-                    cube.rotateZ(1);
-                    stringBuilder.append("z");
-                }
+            else if (y == 2) {
+                cube.rotateZ(2);
+                stringBuilder.append("z2");
             }
+            else {
+                cube.rotateZ(1);
+                stringBuilder.append("z");
+            }
+
         }
         else if (y == 2) {
             if (x == 0) {
@@ -202,6 +217,34 @@ public class OrtegaSolveMethod {
             else {
                 cube.rotateX(-1);
                 stringBuilder.append("x'");
+            }
+        }
+    }
+
+    private void givenWallToLeft(int x, int y) {
+        if (x == 2 && y != 0) {
+            if (y == 2) {
+                cube.rotateZ(-1);
+                stringBuilder.append("z'");
+            }
+            else if (y == 4) {
+                cube.rotateZ(2);
+                stringBuilder.append("z2");
+            }
+            else {
+                cube.rotateZ(1);
+                stringBuilder.append("z");
+            }
+
+        }
+        else if (y == 2) {
+            if (x == 0) {
+                cube.rotateY(-1);
+                stringBuilder.append("y'");
+            }
+            else {
+                cube.rotateY(1);
+                stringBuilder.append("y");
             }
         }
     }
@@ -228,6 +271,17 @@ public class OrtegaSolveMethod {
                     if ((i1+j1)%4==0 && (i2+j2)%4==0){
                         return list.get(i);
                     }
+                }
+            }
+        }
+        return null;
+    }
+
+    private Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> getSimilarWalls(List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> list){
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < list.size(); j++) {
+                if (i!=j && list.get(i).getValue1() == list.get(j).getValue1()){
+                    return list.get(i);
                 }
             }
         }
@@ -346,7 +400,7 @@ public class OrtegaSolveMethod {
         }
     }
 
-    private void orientLeftWall() {
+    private void orientLeftWall(int c0, int c1) {
         final String DOWN_FRONT_RIGHT = "U'RU";
         final String FRONT_UP_RIGHT = "R'U'RU";
         final String UP_BACK_RIGHT = "R'FRF'";
@@ -356,32 +410,32 @@ public class OrtegaSolveMethod {
         final String FRONT_UP_LEFT = "FRF'R2U'RU";
 
         for (int i = 0; i < 4; i++) {
-            if (cube.getArray()[3][1] != 0 && cube.getArray()[3][1] != 5) {
-                if (cube.getArray()[3][6] == 0 && cube.getArray()[3][6] == 5) {
+            if (cube.getArray()[3][1] != c0 && cube.getArray()[3][1] != c1) {
+                if (cube.getArray()[3][6] == c0 && cube.getArray()[3][6] == c1) {
                     cube.moveCube(DOWN_FRONT_RIGHT);
                     stringBuilder.append(DOWN_FRONT_RIGHT);
                 }
-                else if (cube.getArray()[4][3] == 0 && cube.getArray()[4][3] == 5) {
+                else if (cube.getArray()[4][3] == c0 && cube.getArray()[4][3] == c1) {
                     cube.moveCube(FRONT_UP_RIGHT);
                     stringBuilder.append(FRONT_UP_RIGHT);
                 }
-                else if (cube.getArray()[2][3] == 0 && cube.getArray()[2][3] == 5) {
+                else if (cube.getArray()[2][3] == c0 && cube.getArray()[2][3] == c1) {
                     cube.moveCube(UP_BACK_RIGHT);
                     stringBuilder.append(UP_BACK_RIGHT);
                 }
-                else if (cube.getArray()[1][3] == 0 && cube.getArray()[1][3] == 5) {
+                else if (cube.getArray()[1][3] == c0 && cube.getArray()[1][3] == c1) {
                     cube.moveCube(BACK_UP_RIGHT);
                     stringBuilder.append(BACK_UP_RIGHT);
                 }
-                else if (cube.getArray()[3][3] == 0 && cube.getArray()[3][3] == 5) {
+                else if (cube.getArray()[3][3] == c0 && cube.getArray()[3][3] == c1) {
                     cube.moveCube(UP_FRONT_RIGHT);
                     stringBuilder.append(UP_FRONT_RIGHT);
                 }
-                else if (cube.getArray()[3][2] == 0 && cube.getArray()[3][2] == 5) {
+                else if (cube.getArray()[3][2] == c0 && cube.getArray()[3][2] == c1) {
                     cube.moveCube(UP_FRONT_LEFT);
                     stringBuilder.append(UP_FRONT_LEFT);
                 }
-                else if (cube.getArray()[4][2] == 0 && cube.getArray()[4][2] == 5) {
+                else if (cube.getArray()[4][2] == c0 && cube.getArray()[4][2] == c1) {
                     cube.moveCube(FRONT_UP_LEFT);
                     stringBuilder.append(FRONT_UP_LEFT);
                 }

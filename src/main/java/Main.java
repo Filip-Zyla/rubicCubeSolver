@@ -5,7 +5,7 @@ import graphicalMenu.GraphMenu;
 public class Main {
 
     public static void main(String[] args) {
-        b();
+        a();
     }
 
     private static void c() {
@@ -24,6 +24,8 @@ public class Main {
         Cube2x2 cube = new Cube2x2();
         String scramble = Algorithm.randomScramble(10,15);
         cube.moveCube(scramble);
+        //cube.moveCube("RDF'DL'BR'D'FD");
+        //cube.moveCube("BU'BL'U'R2D'B2UB'UF'RU'B");
         System.out.println("Scramble " + scramble);
         OrtegaSolveMethod method = new OrtegaSolveMethod(cube);
         System.out.println("Solve " + method.solve());
