@@ -105,12 +105,12 @@ public class OrtegaSolveMethod {
             }
         }
         else if (!twoWallAll.isEmpty()) {
-            Pair p1 = getSimilarWalls(twoWallAll);
+            Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> p1 = getSimilarWalls(twoWallAll);
             if (p1 != null && twoWallAll.size() > 1) {
                 Optional<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> pOpt = twoWallAll.stream().filter(pf1 -> !pf1.equals(p1) && pf1.getValue1() == p1.getValue1()).findFirst();
                 if (pOpt.isPresent()) {
-                    Pair p2 = pOpt.get();
-                    //TODO connectTwoDoubles(p1, p2);
+                    Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> p2 = pOpt.get();
+                    connectTwoDoubles(p1.getValue0(), p2.getValue0(), p1.getValue1());
                     return;
                 }
             }
@@ -286,6 +286,37 @@ public class OrtegaSolveMethod {
             }
         }
         return null;
+    }
+
+    private void connectTwoDoubles(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, Pair<Integer, Integer> c) {
+        boolean areParallel = false;
+        boolean atLeastOneIsOnTopOrDown = false;
+
+        if ( p1.getValue0()+p2.getValue0()%4==0 && p1.getValue1()+p2.getValue1()%4==0 ){
+            areParallel = true;
+        }
+        if (p1 == new Pair<>(2,6) || p2 == new Pair<>(2,6) || p1 == new Pair<>(2,2) || p2 == new Pair<>(2,2)){
+            atLeastOneIsOnTopOrDown = true;
+        }
+
+        //TODO unless its hard xd
+        if (areParallel){
+            if (atLeastOneIsOnTopOrDown){
+                //are top-down
+            }
+            else {
+                // rotate x or y
+            }
+        }
+        else {
+            if (atLeastOneIsOnTopOrDown){
+                //rotate y until one is front
+            }
+            else {
+                //rotate until on is front and x/x'
+            }
+        }
+
     }
 
     private boolean isWallUniColor(int x, int y) {
