@@ -78,11 +78,11 @@ public class OrtegaSolveMethod {
                 int c1 = p.getValue1().getValue1();
 
                 while (cube.getArray()[3][3] != c0 || cube.getArray()[3][3] != c1) {
-                    cube.moveU(1);
+                    cube.moveNormalU();
                     stringBuilder.append("U");
                 }
                 while (cube.getArray()[3][6] != c0 || cube.getArray()[3][6] != c1) {
-                    cube.moveD(1);
+                    cube.moveNormalD();
                     stringBuilder.append("D");
                 }
                 cube.rotateX(1);
@@ -334,7 +334,7 @@ public class OrtegaSolveMethod {
 
 
         while (cube.getArray()[3][6] == c0 || cube.getArray()[3][6] == c1) {
-            cube.moveD(1);
+            cube.moveNormalD();
             stringBuilder.append("D");
         }
         if (cube.getArray()[3][4] == c0 || cube.getArray()[3][4] == c1) {
@@ -388,7 +388,7 @@ public class OrtegaSolveMethod {
                     cube.moveCube(OLL_UP_P);
                     break;
                 }
-                cube.moveU(1);
+                cube.moveNormalU();
                 stringBuilder.append("U");
             }
         }
@@ -410,7 +410,7 @@ public class OrtegaSolveMethod {
                     break;
                 }
                 stringBuilder.append("U");
-                cube.moveU(1);
+                cube.moveNormalU();
             }
         }
         else if (countUp == 1) {
@@ -425,7 +425,7 @@ public class OrtegaSolveMethod {
                     cube.moveCube(OLL_UP_A_CLOCK);
                     break;
                 }
-                cube.moveU(1);
+                cube.moveNormalU();
                 stringBuilder.append("U");
             }
         }
@@ -471,7 +471,7 @@ public class OrtegaSolveMethod {
                     stringBuilder.append(FRONT_UP_LEFT);
                 }
             }
-            cube.moveL(1);
+            cube.moveNormalL();
             stringBuilder.append("L");
         }
     }
@@ -497,11 +497,11 @@ public class OrtegaSolveMethod {
 
         if (Math.abs(check) == 2) {
             while (cube.getArray()[3][3] == upperColor) {
-                cube.moveU(1);
+                cube.moveNormalU();
                 stringBuilder.append("U");
             }
             while (cube.getArray()[3][7] != upperColor) {
-                cube.moveD(1);
+                cube.moveNormalD();
                 stringBuilder.append("D");
             }
             cube.moveCube(OBL_ONE_UP);
@@ -510,7 +510,7 @@ public class OrtegaSolveMethod {
         else if (Math.abs(check) != 4) {
             if (isOblCrossed(2, 2) && isOblCrossed(2, 6)) {
                 while (cube.getArray()[3][3] != cube.getArray()[3][6]) {
-                    cube.moveU(1);
+                    cube.moveNormalU();
                     stringBuilder.append("U");
                 }
                 cube.moveCube(OBL_Y_BOTH);
@@ -518,7 +518,7 @@ public class OrtegaSolveMethod {
             }
             else if (isOblCrossed(2, 2) && !isOblCrossed(2, 6)) {
                 while (cube.getArray()[2][6] != cube.getArray()[3][6]) {
-                    cube.moveD(1);
+                    cube.moveNormalD();
                     stringBuilder.append("D");
                 }
                 if (cube.getArray()[3][7] == cube.getArray()[3][2]) {
@@ -532,7 +532,7 @@ public class OrtegaSolveMethod {
             }
             else if (!isOblCrossed(2, 2) && isOblCrossed(2, 6)) {
                 while (cube.getArray()[2][3] != cube.getArray()[3][3]) {
-                    cube.moveU(1);
+                    cube.moveNormalU();
                     stringBuilder.append("U");
                 }
                 if (cube.getArray()[3][7] == cube.getArray()[3][2]) {
@@ -546,15 +546,15 @@ public class OrtegaSolveMethod {
             }
             else if (!isOblCrossed(2, 2) && !isOblCrossed(2, 6)) {
                 while (cube.getArray()[2][3] != cube.getArray()[3][3]) {
-                    cube.moveU(1);
+                    cube.moveNormalU();
                     stringBuilder.append("U");
                 }
                 int color = cube.getArray()[3][3];
                 while (cube.getArray()[2][6] == color || cube.getArray()[3][6] == color) {
-                    cube.moveD(1);
+                    cube.moveNormalD();
                     stringBuilder.append("D");
                 }
-                cube.moveR(2);
+                cube.moveDoubleR();
                 stringBuilder.append("R2");
             }
         }
@@ -583,7 +583,7 @@ public class OrtegaSolveMethod {
             }
             else {
                 while (cube.getArray()[2][1] != cube.getArray()[3][1]) {
-                    cube.moveU(1);
+                    cube.moveNormalU();
                     stringBuilder.append("U");
                 }
                 cube.moveCube(PLL_T);
@@ -597,7 +597,7 @@ public class OrtegaSolveMethod {
             }
             else {
                 while (cube.getArray()[2][5] != cube.getArray()[3][5]) {
-                    cube.moveD(1);
+                    cube.moveNormalD();
                     stringBuilder.append("D");
                 }
                 cube.moveCube(PLL_T_DOWN);
@@ -607,11 +607,11 @@ public class OrtegaSolveMethod {
         else {
             if (isWall_Y_Perm(2) && !isWall_Y_Perm(6)) {
                 while (cube.getArray()[5][2] != cube.getArray()[5][3]) {
-                    cube.moveD(1);
+                    cube.moveNormalD();
                     stringBuilder.append("D");
                 }
                 while (cube.getArray()[5][2] != cube.getArray()[4][2]) {
-                    cube.moveU(1);
+                    cube.moveNormalU();
                     stringBuilder.append("U");
                 }
                 cube.moveCube(PLL_T_DOWN_Y_UP);
@@ -619,11 +619,11 @@ public class OrtegaSolveMethod {
             }
             else if (!isWall_Y_Perm(2) && isWall_Y_Perm(6)) {
                 while (cube.getArray()[4][2] != cube.getArray()[4][3]) {
-                    cube.moveU(1);
+                    cube.moveNormalU();
                     stringBuilder.append("U");
                 }
                 while (cube.getArray()[5][3] != cube.getArray()[4][3]) {
-                    cube.moveD(1);
+                    cube.moveNormalD();
                     stringBuilder.append("D");
                 }
                 cube.moveCube(PLL_Y_DOWN_T_UP);
@@ -631,11 +631,11 @@ public class OrtegaSolveMethod {
             }
             else if (!isWall_Y_Perm(2) && !isWall_Y_Perm(6)) {
                 while (cube.getArray()[5][2] != cube.getArray()[5][3]) {
-                    cube.moveD(1);
+                    cube.moveNormalD();
                     stringBuilder.append("D");
                 }
                 while (cube.getArray()[4][2] != cube.getArray()[4][3]) {
-                    cube.moveU(1);
+                    cube.moveNormalU();
                     stringBuilder.append("U");
                 }
                 cube.moveCube(PLL_T_BOTH);
@@ -647,7 +647,7 @@ public class OrtegaSolveMethod {
             }
         }
         while (cube.getArray()[2][1] != cube.getArray()[2][0]) {
-            cube.moveU(1);
+            cube.moveNormalU();
             stringBuilder.append("U");
         }
     }

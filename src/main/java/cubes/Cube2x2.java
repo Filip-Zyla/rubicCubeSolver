@@ -1,15 +1,14 @@
 package cubes;
 
 import lombok.*;
-import moveInterfaces.moveOneWallInterfaceTwoCube;
+import moveInterfaces.moveOneWallInterface;
 import moveInterfaces.rotateInterface;
-import org.javatuples.Pair;
 
 import java.util.*;
 
 @Getter
 @Setter
-public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
+public class Cube2x2 implements moveOneWallInterface, rotateInterface {
 
     private final int NUMBER_OF_WALLS = 6;
     private final int DEGREE_OF_CUBE = 2;
@@ -30,7 +29,7 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
      * 1 1
      */
 
-    //TODO abstract class, general for cubs  or olny NxNxN
+    //TODO abstract class, general for cubs  or only NxNxN. loggers everywhere
     public Cube2x2() {
         array = new int[HEIGHT][WIDTH];
         paintCube();
@@ -86,207 +85,14 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return Arrays.equals(this.array, cube.array);
     }
 
-    //TODO find faster method
-    @Override
-    public void moveU(int rotate) {
-        int temp;
-        for (int i = 0; i < rotate; i++) {
-            temp = array[2][2];
-            array[2][2] = array[3][2];
-            array[3][2] = array[3][3];
-            array[3][3] = array[2][3];
-            array[2][3] = temp;
-
-            temp = array[2][1];
-            array[2][1] = array[4][2];
-            array[4][2] = array[3][4];
-            array[3][4] = array[1][3];
-            array[1][3] = temp;
-
-            temp = array[1][2];
-            array[1][2] = array[3][1];
-            array[3][1] = array[4][3];
-            array[4][3] = array[2][4];
-            array[2][4] = temp;
-        }
-    }
-
-    @Override
-    public void moveD(int rotate) {
-        int temp;
-        for (int i = 0; i < rotate; i++) {
-            temp = array[2][6];
-            array[2][6] = array[3][6];
-            array[3][6] = array[3][7];
-            array[3][7] = array[2][7];
-            array[2][7] = temp;
-
-            temp = array[2][5];
-            array[2][5] = array[5][3];
-            array[5][3] = array[3][0];
-            array[3][0] = array[0][2];
-            array[0][2] = temp;
-
-            temp = array[0][3];
-            array[0][3] = array[3][5];
-            array[3][5] = array[5][2];
-            array[5][2] = array[2][0];
-            array[2][0] = temp;
-        }
-    }
-
-    @Override
-    public void moveR(int rotate) {
-        int temp;
-        for (int i = 0; i < rotate; i++) {
-            temp = array[3][4];
-            array[3][4] = array[3][5];
-            array[3][5] = array[2][5];
-            array[2][5] = array[2][4];
-            array[2][4] = temp;
-
-            temp = array[4][3];
-            array[4][3] = array[3][6];
-            array[3][6] = array[0][3];
-            array[0][3] = array[2][3];
-            array[2][3] = temp;
-
-            temp = array[3][3];
-            array[3][3] = array[5][3];
-            array[5][3] = array[2][6];
-            array[2][6] = array[1][3];
-            array[1][3] = temp;
-        }
-    }
-
-    @Override
-    public void moveL(int rotate) {
-        int temp;
-        for (int i = 0; i < rotate; i++) {
-            temp = array[2][1];
-            array[2][1] = array[2][0];
-            array[2][0] = array[3][0];
-            array[3][0] = array[3][1];
-            array[3][1] = temp;
-
-            temp = array[1][2];
-            array[1][2] = array[2][7];
-            array[2][7] = array[5][2];
-            array[5][2] = array[3][2];
-            array[3][2] = temp;
-
-            temp = array[2][2];
-            array[2][2] = array[0][2];
-            array[0][2] = array[3][7];
-            array[3][7] = array[4][2];
-            array[4][2] = temp;
-        }
-    }
-
-    @Override
-    public void moveF(int rotate) {
-        int temp;
-        for (int i = 0; i < rotate; i++) {
-            temp = array[4][2];
-            array[4][2] = array[5][2];
-            array[5][2] = array[5][3];
-            array[5][3] = array[4][3];
-            array[4][3] = temp;
-
-            temp = array[3][1];
-            array[3][1] = array[3][7];
-            array[3][7] = array[3][5];
-            array[3][5] = array[3][3];
-            array[3][3] = temp;
-
-            temp = array[3][2];
-            array[3][2] = array[3][0];
-            array[3][0] = array[3][6];
-            array[3][6] = array[3][4];
-            array[3][4] = temp;
-        }
-    }
-
-    @Override
-    public void moveB(int rotate) {
-        int temp;
-        for (int i = 0; i < rotate; i++) {
-            temp = array[1][3];
-            array[1][3] = array[0][3];
-            array[0][3] = array[0][2];
-            array[0][2] = array[1][2];
-            array[1][2] = temp;
-
-            temp = array[2][4];
-            array[2][4] = array[2][6];
-            array[2][6] = array[2][0];
-            array[2][0] = array[2][2];
-            array[2][2] = temp;
-
-            temp = array[2][3];
-            array[2][3] = array[2][5];
-            array[2][5] = array[2][7];
-            array[2][7] = array[2][1];
-            array[2][1] = temp;
-        }
-    }
-
-    @Override
-    public void rotateX(int rotate) {
-        this.moveR(rotate);
-        this.moveL(-rotate);
-    }
-
-    @Override
-    public void rotateY(int rotate) {
-        this.moveU(rotate);
-        this.moveD(-rotate);
-    }
-
-    @Override
-    public void rotateZ(int rotate) {
-        this.moveF(rotate);
-        this.moveB(-rotate);
-    }
-
-    private void moveOneWall(char wall, int rotate) {
-        rotate = rotateCheck(rotate);
-        if (wall == 'R') {
-            this.moveR(rotate);
-        }
-        else if (wall == 'L') {
-            this.moveL(rotate);
-        }
-        else if (wall == 'U') {
-            this.moveU(rotate);
-        }
-        else if (wall == 'D') {
-            this.moveD(rotate);
-        }
-        else if (wall == 'F') {
-            this.moveF(rotate);
-        }
-        else if (wall == 'B') {
-            this.moveB(rotate);
-        }
-        else if (wall == 'x') {
-            this.rotateX(rotate);
-        }
-        else if (wall == 'y') {
-            this.rotateY(rotate);
-        }
-        else if (wall == 'z') {
-            this.rotateZ(rotate);
-        }
-    }
-
-    //TODO avoid avoiding negatives rotations
-    private int rotateCheck(int rotate) {
-        if (rotate < 0)
-            rotate = rotate + 4;
-        if (rotate > 3)
-            rotate = rotate - 4;
-        return rotate;
+    boolean isSolved() {
+        if (this.array[2][2] != this.array[2][3] || this.array[3][2] != this.array[3][3] || this.array[2][2] != this.array[3][3])
+            return false;
+        if (this.array[2][4] != this.array[2][5] || this.array[3][4] != this.array[3][5] || this.array[2][4] != this.array[3][5])
+            return false;
+        if (this.array[4][2] != this.array[4][3] || this.array[5][2] != this.array[5][3] || this.array[4][2] != this.array[5][3])
+            return false;
+        return true;
     }
 
     public boolean moveCube(String alg) {
@@ -318,13 +124,526 @@ public class Cube2x2 implements moveOneWallInterfaceTwoCube, rotateInterface {
         return true;
     }
 
-    boolean isSolved() {
-        if (this.array[2][2] != this.array[2][3] || this.array[3][2] != this.array[3][3] || this.array[2][2] != this.array[3][3])
-            return false;
-        if (this.array[2][4] != this.array[2][5] || this.array[3][4] != this.array[3][5] || this.array[2][4] != this.array[3][5])
-            return false;
-        if (this.array[4][2] != this.array[4][3] || this.array[5][2] != this.array[5][3] || this.array[4][2] != this.array[5][3])
-            return false;
-        return true;
+    private void moveOneWall(char wall, int rotate) {
+        if (wall == 'R') {
+            if (rotate == 1) {
+                moveNormalR();
+            }
+            else if (rotate == -1) {
+                moveCounterR();
+            }
+            else {
+                moveDoubleR();
+            }
+        }
+        else if (wall == 'L') {
+            if (rotate == 1) {
+                moveNormalL();
+            }
+            else if (rotate == -1) {
+                moveCounterL();
+            }
+            else {
+                moveDoubleL();
+            }
+        }
+        else if (wall == 'U') {
+            if (rotate == 1) {
+                moveNormalU();
+            }
+            else if (rotate == -1) {
+                moveCounterU();
+            }
+            else {
+                moveDoubleU();
+            }        }
+        else if (wall == 'D') {
+            if (rotate == 1) {
+                moveNormalD();
+            }
+            else if (rotate == -1) {
+                moveCounterD();
+            }
+            else {
+                moveDoubleD();
+            }        }
+        else if (wall == 'F') {
+            if (rotate == 1) {
+                moveNormalF();
+            }
+            else if (rotate == -1) {
+                moveCounterF();
+            }
+            else {
+                moveDoubleF();
+            }        }
+        else if (wall == 'B') {
+            if (rotate == 1) {
+                moveNormalB();
+            }
+            else if (rotate == -1) {
+                moveCounterB();
+            }
+            else {
+                moveDoubleB();
+            }        }
+        else if (wall == 'x') {
+            this.rotateX(rotate);
+        }
+        else if (wall == 'y') {
+            this.rotateY(rotate);
+        }
+        else if (wall == 'z') {
+            this.rotateZ(rotate);
+        }
+    }
+
+    @Override
+    public void moveNormalU() {
+        int temp;
+        temp = array[2][2];
+        array[2][2] = array[3][2];
+        array[3][2] = array[3][3];
+        array[3][3] = array[2][3];
+        array[2][3] = temp;
+
+        temp = array[2][1];
+        array[2][1] = array[4][2];
+        array[4][2] = array[3][4];
+        array[3][4] = array[1][3];
+        array[1][3] = temp;
+
+        temp = array[1][2];
+        array[1][2] = array[3][1];
+        array[3][1] = array[4][3];
+        array[4][3] = array[2][4];
+        array[2][4] = temp;
+    }
+    @Override
+    public void moveCounterU() {
+        int temp;
+        temp = array[2][2];
+        array[2][2] = array[2][3];
+        array[2][3] = array[3][3];
+        array[3][3] = array[3][2];
+        array[3][2] = temp;
+
+        temp = array[2][1];
+        array[2][1] = array[1][3];
+        array[1][3] = array[3][4];
+        array[3][4] = array[4][2];
+        array[4][2] = temp;
+
+        temp = array[1][2];
+        array[1][2] = array[2][4];
+        array[2][4] = array[4][3];
+        array[4][3] = array[3][1];
+        array[3][1] =temp;
+    }
+    @Override
+    public void moveDoubleU() {
+        int temp;
+        temp = array[2][2];
+        array[2][2] = array[3][3];
+        array[3][3] = temp;
+        temp = array[3][2];
+        array[3][2] = array[2][3];
+        array[2][3] = temp;
+
+        temp = array[2][1];
+        array[2][1] = array[3][4];
+        array[3][4] = temp;
+        temp = array[3][1];
+        array[3][1] = array[2][4];
+        array[2][4] = temp;
+
+        temp = array[1][2];
+        array[1][2] = array[4][3];
+        array[4][3] = temp;
+        temp = array[1][3];
+        array[1][3] = array[4][2];
+        array[4][2] = temp;
+    }
+
+    @Override
+    public void moveNormalD() {
+        int temp;
+        temp = array[2][6];
+        array[2][6] = array[3][6];
+        array[3][6] = array[3][7];
+        array[3][7] = array[2][7];
+        array[2][7] = temp;
+
+        temp = array[2][5];
+        array[2][5] = array[5][3];
+        array[5][3] = array[3][0];
+        array[3][0] = array[0][2];
+        array[0][2] = temp;
+
+        temp = array[0][3];
+        array[0][3] = array[3][5];
+        array[3][5] = array[5][2];
+        array[5][2] = array[2][0];
+        array[2][0] = temp;
+    }
+    @Override
+    public void moveCounterD() {
+        int temp;
+        temp = array[2][6];
+        array[2][6] = array[2][7];
+        array[2][7] = array[3][7];
+        array[3][7] = array[3][6];
+        array[3][6] = temp;
+
+        temp = array[2][5];
+        array[2][5] = array[0][2];
+        array[0][2] = array[3][0];
+        array[3][0] = array[5][3];
+        array[5][3] = temp;
+
+        temp = array[0][3];
+        array[0][3] = array[2][0];
+        array[2][0] = array[5][2];
+        array[5][2] = array[3][5];
+        array[3][5] = temp;
+    }
+    @Override
+    public void moveDoubleD() {
+        int temp;
+        temp = array[2][6];
+        array[2][6] = array[3][7];
+        array[3][7] = temp;
+        temp = array[2][7];
+        array[2][7] = array[3][6];
+        array[3][6] = temp;
+
+
+        temp = array[2][5];
+        array[2][5] = array[3][0];
+        array[3][0] = temp;
+        temp = array[0][2];
+        array[0][2] = array[5][3];
+        array[5][3] = temp;
+
+        temp = array[0][3];
+        array[0][3] = array[5][2];
+        array[5][2] = temp;
+        temp = array[2][0];
+        array[2][0] = array[3][5];
+        array[3][5] = temp;
+    }
+
+    @Override
+    public void moveNormalR() {
+        int temp;
+        temp = array[3][4];
+        array[3][4] = array[3][5];
+        array[3][5] = array[2][5];
+        array[2][5] = array[2][4];
+        array[2][4] = temp;
+
+        temp = array[4][3];
+        array[4][3] = array[3][6];
+        array[3][6] = array[0][3];
+        array[0][3] = array[2][3];
+        array[2][3] = temp;
+
+        temp = array[3][3];
+        array[3][3] = array[5][3];
+        array[5][3] = array[2][6];
+        array[2][6] = array[1][3];
+        array[1][3] = temp;
+    }
+    @Override
+    public void moveCounterR() {
+        int temp;
+        temp = array[3][4];
+        array[3][4] = array[2][4];
+        array[2][4] = array[2][5];
+        array[2][5] = array[3][5];
+        array[3][5] = temp;
+
+        temp = array[4][3];
+        array[4][3] = array[2][3];
+        array[2][3] = array[0][3];
+        array[0][3] = array[3][6];
+        array[3][6] = temp;
+
+        temp = array[3][3];
+        array[3][3] = array[1][3];
+        array[1][3] = array[2][6];
+        array[2][6] = array[5][3];
+        array[5][3] = temp;
+    }
+    @Override
+    public void moveDoubleR() {
+        int temp;
+        temp = array[3][4];
+        array[3][4] = array[2][5];
+        array[2][5] = temp;
+        temp = array[3][5];
+        array[3][5] = array[2][4];
+        array[2][4] = temp;
+
+        temp = array[4][3];
+        array[4][3] = array[0][3];
+        array[0][3] = temp;
+        temp = array[3][6];
+        array[3][6] = array[2][3];
+        array[2][3] = temp;
+
+        temp = array[3][3];
+        array[3][3] = array[2][6];
+        array[2][6] = temp;
+        temp = array[5][3];
+        array[5][3] = array[1][3];
+        array[1][3] = temp;
+    }
+
+    @Override
+    public void moveNormalL() {
+        int temp;
+        temp = array[2][1];
+        array[2][1] = array[2][0];
+        array[2][0] = array[3][0];
+        array[3][0] = array[3][1];
+        array[3][1] = temp;
+
+        temp = array[1][2];
+        array[1][2] = array[2][7];
+        array[2][7] = array[5][2];
+        array[5][2] = array[3][2];
+        array[3][2] = temp;
+
+        temp = array[2][2];
+        array[2][2] = array[0][2];
+        array[0][2] = array[3][7];
+        array[3][7] = array[4][2];
+        array[4][2] = temp;
+    }
+    @Override
+    public void moveCounterL() {
+        int temp;
+        temp = array[2][1];
+        array[2][1] = array[3][1];
+        array[3][1] = array[3][0];
+        array[3][0] = array[2][0];
+        array[2][0] = temp;
+
+        temp = array[1][2];
+        array[1][2] = array[3][2];
+        array[3][2] = array[5][2];
+        array[5][2] = array[2][7];
+        array[2][7] = temp;
+
+        temp = array[2][2];
+        array[2][2] = array[4][2];
+        array[4][2] = array[3][7];
+        array[3][7] = array[0][2];
+        array[0][2] = temp;
+    }
+    @Override
+    public void moveDoubleL() {
+        int temp;
+        temp = array[2][1];
+        array[2][1] = array[3][0];
+        array[3][0] = temp;
+        temp = array[2][0];
+        array[2][0] = array[3][1];
+        array[3][1] = temp;
+
+        temp = array[1][2];
+        array[1][2] = array[5][2];
+        array[5][2] = temp;
+        temp = array[2][7];
+        array[2][7] = array[3][2];
+        array[3][2] = temp;
+
+        temp = array[2][2];
+        array[2][2] = array[3][7];
+        array[3][7] = temp;
+        temp = array[0][2];
+        array[0][2] = array[4][2];
+        array[4][2] = temp;
+    }
+
+    @Override
+    public void moveNormalF() {
+        int temp;
+        temp = array[4][2];
+        array[4][2] = array[5][2];
+        array[5][2] = array[5][3];
+        array[5][3] = array[4][3];
+        array[4][3] = temp;
+
+        temp = array[3][1];
+        array[3][1] = array[3][7];
+        array[3][7] = array[3][5];
+        array[3][5] = array[3][3];
+        array[3][3] = temp;
+
+        temp = array[3][2];
+        array[3][2] = array[3][0];
+        array[3][0] = array[3][6];
+        array[3][6] = array[3][4];
+        array[3][4] = temp;
+    }
+    @Override
+    public void moveCounterF() {
+        int temp;
+        temp = array[4][2];
+        array[4][2] = array[4][3];
+        array[4][3] = array[5][3];
+        array[5][3] = array[5][2];
+        array[5][2] = temp;
+
+        temp = array[3][1];
+        array[3][1] = array[3][3];
+        array[3][3] = array[3][5];
+        array[3][5] = array[3][7];
+        array[3][7] = temp;
+
+        temp = array[3][2];
+        array[3][2] = array[3][4];
+        array[3][4] = array[3][6];
+        array[3][6] = array[3][0];
+        array[3][0] = temp;
+    }
+    @Override
+    public void moveDoubleF() {
+        int temp;
+        temp = array[4][2];
+        array[4][2] = array[5][3];
+        array[5][3] = temp;
+        temp = array[5][2];
+        array[5][2] = array[4][3];
+        array[4][3] = temp;
+
+        temp = array[3][1];
+        array[3][1] = array[3][5];
+        array[3][5] = temp;
+        temp = array[3][7];
+        array[3][7] = array[3][3];
+        array[3][3] = temp;
+
+        temp = array[3][2];
+        array[3][2] = array[3][6];
+        array[3][6] = temp;
+        temp = array[3][0];
+        array[3][0] = array[3][4];
+        array[3][4] = temp;
+    }
+
+    @Override
+    public void moveNormalB() {
+        int temp;
+        temp = array[1][3];
+        array[1][3] = array[0][3];
+        array[0][3] = array[0][2];
+        array[0][2] = array[1][2];
+        array[1][2] = temp;
+
+        temp = array[2][4];
+        array[2][4] = array[2][6];
+        array[2][6] = array[2][0];
+        array[2][0] = array[2][2];
+        array[2][2] = temp;
+
+        temp = array[2][3];
+        array[2][3] = array[2][5];
+        array[2][5] = array[2][7];
+        array[2][7] = array[2][1];
+        array[2][1] = temp;
+    }
+    @Override
+    public void moveCounterB() {
+        int temp;
+        temp = array[1][3];
+        array[1][3] = array[1][2];
+        array[1][2] = array[0][2];
+        array[0][2] = array[0][3];
+        array[0][3] = temp;
+
+        temp = array[2][4];
+        array[2][4] = array[2][2];
+        array[2][2] = array[2][0];
+        array[2][0] = array[2][6];
+        array[2][6] = temp;
+
+        temp = array[2][3];
+        array[2][3] = array[2][1];
+        array[2][1] = array[2][7];
+        array[2][7] = array[2][5];
+        array[2][5] = temp;
+    }
+    @Override
+    public void moveDoubleB() {
+        int temp;
+        temp = array[1][3];
+        array[1][3] = array[0][2];
+        array[0][2] = temp;
+        temp = array[0][3];
+        array[0][3] = array[1][2];
+        array[1][2] = temp;
+
+        temp = array[2][4];
+        array[2][4] = array[2][0];
+        array[2][0] = temp;
+        temp  = array[2][6];
+        array[2][6] = array[2][2];
+        array[2][2] = temp;
+
+        temp = array[2][3];
+        array[2][3] = array[2][7];
+        array[2][7] = temp;
+        temp = array[2][5];
+        array[2][5] = array[2][1];
+        array[2][1] = temp;
+    }
+
+    @Override
+    public void rotateX(int rotate) {
+        if (rotate == 1) {
+            moveNormalR();
+            moveCounterL();
+        }
+        else if (rotate == -1) {
+            moveCounterR();
+            moveNormalL();
+        }
+        else {
+            moveDoubleR();
+            moveDoubleL();
+        }
+    }
+    @Override
+    public void rotateY(int rotate) {
+        if (rotate == 1) {
+            moveNormalU();
+            moveCounterD();
+        }
+        else if (rotate == -1) {
+            moveCounterU();
+            moveNormalD();
+        }
+        else {
+            moveDoubleU();
+            moveDoubleD();
+        }
+    }
+    @Override
+    public void rotateZ(int rotate) {
+        if (rotate == 1) {
+            moveNormalF();
+            moveCounterB();
+        }
+        else if (rotate == -1) {
+            moveCounterF();
+            moveNormalB();
+        }
+        else {
+            moveDoubleF();
+            moveDoubleB();
+        }
     }
 }
