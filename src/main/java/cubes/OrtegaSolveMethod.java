@@ -20,7 +20,6 @@ public class OrtegaSolveMethod {
         stringBuilder = new StringBuilder();
     }
 
-    //TODO test
     public String solve() {
         if (cube.isSolved())
             return "";
@@ -77,17 +76,17 @@ public class OrtegaSolveMethod {
                 int c0 = p.getValue1().getValue0();
                 int c1 = p.getValue1().getValue1();
 
-                while (cube.getArray()[3][3] != c0 || cube.getArray()[3][3] != c1) {
+                while (cube.getArray()[3][3] == c0 || cube.getArray()[3][3] == c1) {
                     cube.moveNormalU();
                     stringBuilder.append("U");
                 }
-                while (cube.getArray()[3][6] != c0 || cube.getArray()[3][6] != c1) {
+                while (cube.getArray()[3][6] == c0 || cube.getArray()[3][6] == c1) {
                     cube.moveNormalD();
                     stringBuilder.append("D");
                 }
                 cube.rotateX(1);
                 stringBuilder.append("x");
-                if (cube.getArray()[3][3] != c0 || cube.getArray()[3][3] != c1) {
+                if (cube.getArray()[3][3] == c0 || cube.getArray()[3][3] == c1) {
                     cube.moveCube("y2z");
                     stringBuilder.append("y2z");
                 }
@@ -111,6 +110,7 @@ public class OrtegaSolveMethod {
                 if (pOpt.isPresent()) {
                     Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> p2 = pOpt.get();
                     connectTwoDoubles(p1.getValue0(), p2.getValue0(), p1.getValue1());
+                    orientLastLayer(p1.getValue1().getValue0(), p1.getValue1().getValue1());
                     return;
                 }
             }
@@ -130,7 +130,6 @@ public class OrtegaSolveMethod {
             cube.rotateZ(-1);
             stringBuilder.append("z'");
             orientLastLayer(c0, c1);
-
         }
         else {
             orientLeftWall(0, 5);
@@ -292,31 +291,124 @@ public class OrtegaSolveMethod {
         boolean areParallel = false;
         boolean atLeastOneIsOnTopOrDown = false;
 
-        if ( p1.getValue0()+p2.getValue0()%4==0 && p1.getValue1()+p2.getValue1()%4==0 ){
+        if ( (p1.getValue0()+p2.getValue0())%4==0 && (p1.getValue1()+p2.getValue1())%4==0 ){
             areParallel = true;
         }
-        if (p1 == new Pair<>(2,6) || p2 == new Pair<>(2,6) || p1 == new Pair<>(2,2) || p2 == new Pair<>(2,2)){
+        if (p1.equals(new Pair<>(2, 6)) || p2.equals(new Pair<>(2, 6)) || p1.equals(new Pair<>(2, 2)) || p2.equals(new Pair<>(2, 2))){
             atLeastOneIsOnTopOrDown = true;
         }
 
-        //TODO unless its hard xd
+        HashSet<Integer> colors = new HashSet<>();
+        colors.add(c.getValue0());
+        colors.add(c.getValue1());
+
         if (areParallel){
-            if (atLeastOneIsOnTopOrDown){
-                //are top-down
+            if (!atLeastOneIsOnTopOrDown){
+                // rotate x or z
+                if (p1.equals(new Pair<>(4, 2)) || p2.equals(new Pair<>(4, 2))){
+                    cube.rotateX(1);
+                    stringBuilder.append("x");
+                }
+                else if (p1.equals(new Pair<>(2, 0)) || p2.equals(new Pair<>(2, 0))){
+                    cube.rotateZ(1);
+                    stringBuilder.append("z");
+                }
             }
-            else {
-                // rotate x or y
+            //are top-down, just solve
+            while (colors.contains(cube.getArray()[2][6]) || colors.contains(cube.getArray()[3][6])){
+                cube.moveNormalD();
+                stringBuilder.append("D");
             }
+            while (colors.contains(cube.getArray()[2][2]) || colors.contains(cube.getArray()[3][2])){
+                cube.moveNormalU();
+                stringBuilder.append("U");
+            }
+            cube.moveDoubleR();
+            stringBuilder.append("R2");
         }
         else {
-            if (atLeastOneIsOnTopOrDown){
-                //rotate y until one is front
+            if (!atLeastOneIsOnTopOrDown) {
+                if (p1.equals(new Pair<>(4, 2)) || p2.equals(new Pair<>(4, 2))){
+                    if (p1.equals(new Pair<>(2, 0)) || p2.equals(new Pair<>(2, 0))){
+                        cube.rotateZ(-1);
+                        stringBuilder.append("z'");
+                    }
+                    else {
+                        cube.rotateZ(1);
+                        stringBuilder.append("z");
+                    }
+                }
+                else if (p1.equals(new Pair<>(0, 2)) || p2.equals(new Pair<>(0, 2))){
+                    cube.rotateX(1);
+                    stringBuilder.append("x");
+                    if (p1.equals(new Pair<>(2, 0)) || p2.equals(new Pair<>(2, 0))){
+                        cube.rotateY(-1);
+                        stringBuilder.append("y'");
+                    }
+                    else {
+                        cube.rotateY(1);
+                        stringBuilder.append("y");
+                    }
+                }
             }
             else {
-                //rotate until on is front and x/x'
+                //rotate to front
+                if (p1.equals(new Pair<>(2, 0)) || p2.equals(new Pair<>(2, 0))){
+                    cube.rotateY(-1);
+                    stringBuilder.append("y'");
+                }
+                else if (p1.equals(new Pair<>(0, 2)) || p2.equals(new Pair<>(0, 2))){
+                    cube.rotateY(2);
+                    stringBuilder.append("y2");
+                }
+                else if (p1.equals(new Pair<>(2, 4)) || p2.equals(new Pair<>(2, 4))){
+                    cube.rotateY(1);
+                    stringBuilder.append("y");
+                }
+                if (p1.equals(new Pair<>(2, 2)) || p2.equals(new Pair<>(2, 2))){
+                    cube.rotateZ(2);
+                    stringBuilder.append("z2");
+                }
             }
-        }
 
+            //walls are down and front
+            if (colors.contains(cube.getArray()[3][7]) && colors.contains(cube.getArray()[3][6])){
+                cube.moveDoubleD();
+                stringBuilder.append("D2");
+                //so next if can be done
+            }
+            if (colors.contains(cube.getArray()[2][7]) && colors.contains(cube.getArray()[2][6])){
+                while (!colors.contains(cube.getArray()[4][2]) || !colors.contains(cube.getArray()[4][3])){
+                   cube.moveNormalF();
+                   stringBuilder.append("F");
+               }
+                cube.moveCube("ULF2L'F");
+                stringBuilder.append("ULF2L'F");
+            }
+            else if (colors.contains(cube.getArray()[3][7])){
+                //down left
+                if (colors.contains(cube.getArray()[4][2])){
+                    cube.moveCube("FR2F'R");
+                    stringBuilder.append("FR2F'R");
+                }
+                else {
+                    cube.moveCounterR();
+                    stringBuilder.append("R'");
+                }
+            }
+            else if (colors.contains(cube.getArray()[3][6])){
+                //right
+                if (colors.contains(cube.getArray()[4][3])){
+                    cube.moveCube("F'L2FL'");
+                    stringBuilder.append("F'L2FL'");
+                }
+                else {
+                    cube.moveNormalL();
+                    stringBuilder.append("L");
+                }
+            }
+
+        }
     }
 
     private boolean isWallUniColor(int x, int y) {
@@ -337,25 +429,31 @@ public class OrtegaSolveMethod {
             cube.moveNormalD();
             stringBuilder.append("D");
         }
-        if (cube.getArray()[3][4] == c0 || cube.getArray()[3][4] == c1) {
-            stringBuilder.append(RIGHT_FRONT_UP);
-            cube.moveCube(RIGHT_FRONT_UP);
-        }
-        else if (cube.getArray()[4][3] == c0 || cube.getArray()[4][3] == c1) {
-            stringBuilder.append(FRONT_RIGHT_UP);
-            cube.moveCube(FRONT_RIGHT_UP);
-        }
-        else if (cube.getArray()[3][3] == c0 || cube.getArray()[3][3] == c1) {
-            stringBuilder.append(UP_FRONT_RIGHT);
-            cube.moveCube(UP_FRONT_RIGHT);
-        }
-        else if (cube.getArray()[3][5] == c0 || cube.getArray()[3][5] == c1) {
-            stringBuilder.append(RIGHT_FRONT_DOWN);
-            cube.moveCube(RIGHT_FRONT_DOWN);
-        }
-        else if (cube.getArray()[5][3] == c0 || cube.getArray()[5][3] == c1) {
-            stringBuilder.append(FRONT_RIGHT_DOWN);
-            cube.moveCube(FRONT_RIGHT_DOWN);
+        while (cube.getArray()[3][6]!=c0 && cube.getArray()[3][6]!=c1) {
+            if (cube.getArray()[3][4] == c0 || cube.getArray()[3][4] == c1) {
+                stringBuilder.append(RIGHT_FRONT_UP);
+                cube.moveCube(RIGHT_FRONT_UP);
+            }
+            else if (cube.getArray()[4][3] == c0 || cube.getArray()[4][3] == c1) {
+                stringBuilder.append(FRONT_RIGHT_UP);
+                cube.moveCube(FRONT_RIGHT_UP);
+            }
+            else if (cube.getArray()[3][3] == c0 || cube.getArray()[3][3] == c1) {
+                stringBuilder.append(UP_FRONT_RIGHT);
+                cube.moveCube(UP_FRONT_RIGHT);
+            }
+            else if (cube.getArray()[3][5] == c0 || cube.getArray()[3][5] == c1) {
+                stringBuilder.append(RIGHT_FRONT_DOWN);
+                cube.moveCube(RIGHT_FRONT_DOWN);
+            }
+            else if (cube.getArray()[5][3] == c0 || cube.getArray()[5][3] == c1) {
+                stringBuilder.append(FRONT_RIGHT_DOWN);
+                cube.moveCube(FRONT_RIGHT_DOWN);
+            }
+            else {
+                stringBuilder.append("U");
+                cube.moveNormalU();
+            }
         }
     }
 
@@ -373,10 +471,14 @@ public class OrtegaSolveMethod {
         Set s = new HashSet<Integer>();
         s.add(c0);
         s.add(c1);
+        s.add(5-c0); //in case if two first are the same, what might result in infinite loop
 
         long countUp = topStickers.stream().filter(s::contains).count();
 
-        if (countUp == 0) {
+        if (countUp == 4){
+            return;
+        }
+        else if (countUp == 0) {
             while (true) {
                 if (s.contains(cube.getArray()[1][2]) && s.contains(cube.getArray()[1][3]) && s.contains(cube.getArray()[4][2]) && s.contains(cube.getArray()[4][3])) {
                     stringBuilder.append(OLL_UP_H);
@@ -446,27 +548,27 @@ public class OrtegaSolveMethod {
                     cube.moveCube(DOWN_FRONT_RIGHT);
                     stringBuilder.append(DOWN_FRONT_RIGHT);
                 }
-                else if (cube.getArray()[4][3] == c0 && cube.getArray()[4][3] == c1) {
+                else if (cube.getArray()[4][3] == c0 || cube.getArray()[4][3] == c1) {
                     cube.moveCube(FRONT_UP_RIGHT);
                     stringBuilder.append(FRONT_UP_RIGHT);
                 }
-                else if (cube.getArray()[2][3] == c0 && cube.getArray()[2][3] == c1) {
+                else if (cube.getArray()[2][3] == c0 || cube.getArray()[2][3] == c1) {
                     cube.moveCube(UP_BACK_RIGHT);
                     stringBuilder.append(UP_BACK_RIGHT);
                 }
-                else if (cube.getArray()[1][3] == c0 && cube.getArray()[1][3] == c1) {
+                else if (cube.getArray()[1][3] == c0 || cube.getArray()[1][3] == c1) {
                     cube.moveCube(BACK_UP_RIGHT);
                     stringBuilder.append(BACK_UP_RIGHT);
                 }
-                else if (cube.getArray()[3][3] == c0 && cube.getArray()[3][3] == c1) {
+                else if (cube.getArray()[3][3] == c0 || cube.getArray()[3][3] == c1) {
                     cube.moveCube(UP_FRONT_RIGHT);
                     stringBuilder.append(UP_FRONT_RIGHT);
                 }
-                else if (cube.getArray()[3][2] == c0 && cube.getArray()[3][2] == c1) {
+                else if (cube.getArray()[3][2] == c0 || cube.getArray()[3][2] == c1) {
                     cube.moveCube(UP_FRONT_LEFT);
                     stringBuilder.append(UP_FRONT_LEFT);
                 }
-                else if (cube.getArray()[4][2] == c0 && cube.getArray()[4][2] == c1) {
+                else if (cube.getArray()[4][2] == c0 || cube.getArray()[4][2] == c1) {
                     cube.moveCube(FRONT_UP_LEFT);
                     stringBuilder.append(FRONT_UP_LEFT);
                 }
@@ -484,7 +586,7 @@ public class OrtegaSolveMethod {
         final String OBL_Y_DOWN_T_UP_OPP = "R2DR2DR2";   //are left-fronts opposite
         final String OBL_Y_DOWN_T_UP_SAME = "R2D'R2D'R2";   //are left-fronts same
 
-        int posColor = cube.getArray()[2][2];
+        int posColor = cube.getArray()[2][6];
         int check = 0;
         for (int i = 2; i < 4; i++) {
             for (int j = 2; j < 4; j++) {

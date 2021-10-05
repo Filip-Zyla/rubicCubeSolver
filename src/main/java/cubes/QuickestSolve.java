@@ -7,7 +7,7 @@ import java.util.*;
 //TODO https://www.speedsolving.com/wiki/index.php/Kociemba's_Algorithm
 public class QuickestSolve {
 
-    //TODO test and fix
+    //TODO test and fix, threads
     private final int GODS_NUMBER = 11;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'", "D", "D2", "D'", "L", "L2", "L'", "B", "B2", "B'"};
 
@@ -26,7 +26,8 @@ public class QuickestSolve {
 
     public void findQuickestSolve() {
         //TODO list od solutions?, optimizeAlg?
-        String scramble = Algorithm.randomScramble(5, 7);
+        //String scramble = Algorithm.randomScramble(5, 7);
+        String scramble = Algorithm.randomScramble(15, 20);
         System.out.println(scramble);
         cube.moveCube(scramble);
         String alg = solveFewestMoves();
@@ -68,8 +69,15 @@ public class QuickestSolve {
 
             counter++;
             if (counter % 1_000_000 == 0) {
-                System.out.println((System.currentTimeMillis() - start) / 1000);
-                // 1mln ~16s 15,31,47 then ~8s 8,16,24
+                final long curTime = (System.currentTimeMillis() - start) / 1000;
+                if (curTime>180){
+                    System.out.println("Took more than 3 minutes, aborting...");
+                    break;
+                }
+                System.out.println(curTime);
+                // all combinations is 18 * 12^10 / 10^6 for now 1_114_511 periods
+                // period for 1mln ~16s 15,31,47, after changing moves methods ~4.5 5,9,13
+                // times 69,4
             }
         }
 

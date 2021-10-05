@@ -29,7 +29,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
      * 1 1
      */
 
-    //TODO abstract class, general for cubs  or only NxNxN. loggers everywhere
+    //TODO abstract class, general for cubs  or only NxNxN, loggers everywhere
     public Cube2x2() {
         array = new int[HEIGHT][WIDTH];
         paintCube();
@@ -198,6 +198,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         }
     }
 
+    //move methods
     @Override
     public void moveNormalU() {
         int temp;
