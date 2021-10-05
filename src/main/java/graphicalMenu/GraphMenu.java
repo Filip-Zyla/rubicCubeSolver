@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-//TODO cube moving move by move with delay, animation, perhaps pixel by pixel?, thread fo pixels?
 public class GraphMenu extends JComponent implements ActionListener {
 
     Cube2x2 cube;
