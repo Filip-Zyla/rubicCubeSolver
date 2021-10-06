@@ -4,10 +4,9 @@ import org.javatuples.Pair;
 
 import java.util.*;
 
-//TODO https://www.speedsolving.com/wiki/index.php/Kociemba's_Algorithm
 public class QuickestSolve {
 
-    //TODO test and fix, threads
+    //TODO test and fix, add threads
     private final int GODS_NUMBER = 11;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'", "D", "D2", "D'", "L", "L2", "L'", "B", "B2", "B'"};
 
@@ -25,7 +24,7 @@ public class QuickestSolve {
     }
 
     public void findQuickestSolve() {
-        //TODO list od solutions?, optimizeAlg?
+        //TODO list od solutions?, set new GODS_NUM
         //String scramble = Algorithm.randomScramble(5, 7);
         String scramble = Algorithm.randomScramble(15, 20);
         System.out.println(scramble);
@@ -77,7 +76,7 @@ public class QuickestSolve {
                 System.out.println(curTime);
                 // all combinations is 18 * 12^10 / 10^6 for now 1_114_511 periods
                 // period for 1mln ~16s 15,31,47, after changing moves methods ~4.5 5,9,13
-                // times 69,4
+                // times 69, 4
             }
         }
 

@@ -190,7 +190,7 @@ public class Algorithm {
         }
     }
 
-    private static LinkedList<String> algToList(String alg) {
+    public static LinkedList<String> algToList(String alg) {
         LinkedList<String> movesList = new LinkedList<>();
         String[] array = alg.split("");
         int i = 0;

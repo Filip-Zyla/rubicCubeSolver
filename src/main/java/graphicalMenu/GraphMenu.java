@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class GraphMenu extends JComponent implements ActionListener {
 
@@ -183,4 +184,29 @@ public class GraphMenu extends JComponent implements ActionListener {
             jPanel.repaint();
         }
     }
+
+    //TODO cube moving move by move with delay
+    private void animation(String alg) {
+        final LinkedList<String> algList = Algorithm.algToList(alg);
+        for (String move:algList){
+            Timer t = new Timer(500, e -> {
+                cube.moveCube(move);
+                repaintCube();
+            });
+            t.setRepeats(false);
+            t.start();
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
