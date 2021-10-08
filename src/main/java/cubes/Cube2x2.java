@@ -34,6 +34,13 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         paintCube();
     }
 
+    public Cube2x2(Cube2x2 cube) {
+        array = new int[HEIGHT][WIDTH];
+        for (int i = 0; i < cube.getArray().length; i++) {
+            array[i] = Arrays.copyOf(cube.getArray()[i], cube.getArray()[i].length);
+        }
+    }
+
     private void paintCube() {
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {

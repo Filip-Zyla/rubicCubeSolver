@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -18,7 +19,10 @@ public class GraphMenu extends JComponent implements ActionListener {
     JTextArea jta2, jta3, jta4, jta5;
     JFrame window;
     JCheckBox cb51, cb52;
+    JSpinner spinner;
+    JLabel jl1;
     ArrayList<JPanel> jp = new ArrayList<>();
+    private volatile boolean flag = true;
 
     public GraphMenu(Cube2x2 cube) {
         this.cube = cube;
@@ -32,6 +36,14 @@ public class GraphMenu extends JComponent implements ActionListener {
         b1.setBounds(810, 40, 110, 40);
         window.add(b1);
         b1.addActionListener(this);
+
+        spinner = new JSpinner(new SpinnerNumberModel(0.1, 0, 5, 0.1));
+        spinner.setBounds(970, 40, 50, 40);
+        window.add(spinner);
+
+        jl1 = new JLabel("Duration of moves");
+        jl1.setBounds(1025, 40, 110, 40);
+        window.add(jl1);
 
         b2 = new JButton("Scramble");
         b2.setBounds(810, 120, 110, 40);
@@ -121,6 +133,8 @@ public class GraphMenu extends JComponent implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == b1) {
+            flag=false;
+            spinner.setValue(0.1);
             cube = new Cube2x2();
             repaintCube();
             jta2.setText(null);
@@ -130,29 +144,29 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
         else if (e.getSource() == b2) {
             String sc = Algorithm.randomScramble(15,20);
-            System.out.println(sc);
-            boolean b = cube.moveCube(sc);
-            if (!b){
+            if (!sc.equals("") && Algorithm.checkIsAlgProper(sc)) {
+                animation(sc);
+            }else {
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
             }
             jta2.setText(sc);
-            repaintCube();
         }
         else if (e.getSource() == b3) {
             String sc = jta3.getText();
-            if (!sc.equals("")) {
-                boolean b = cube.moveCube(sc);
-                if (!b) {
-                    JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
-
-                }
-                repaintCube();
+            if (!sc.equals("") && Algorithm.checkIsAlgProper(sc)) {
+                animation(sc);
+            }else {
+                JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         else if (e.getSource() == b4) {
-            OrtegaSolveMethod method = new OrtegaSolveMethod(cube);
+            Cube2x2 tempCube = new Cube2x2(this.cube);
+
+            OrtegaSolveMethod method = new OrtegaSolveMethod(tempCube);
             String solveAlg = method.solve();
-            repaintCube();
+
+            animation(solveAlg);
+
             jta4.setText(solveAlg);
         }
         else if (e.getSource() == b5){
@@ -185,28 +199,35 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
     }
 
-    //TODO cube moving move by move with delay
     private void animation(String alg) {
-        final LinkedList<String> algList = Algorithm.algToList(alg);
-        for (String move:algList){
-            Timer t = new Timer(500, e -> {
-                cube.moveCube(move);
-                repaintCube();
-            });
-            t.setRepeats(false);
-            t.start();
+        int T = 100;
+        try {
+            spinner.commitEdit();
+            //to milliseconds
+            T = (int)((double) spinner.getValue() *1000);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+
+        final int finalT = T;
+        final LinkedList<String> algList = Algorithm.algToList(alg);
+        flag = true;
+
+        Thread t = new Thread(() -> {
+            for (String move : algList) {
+                if (!flag){
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                cube.moveCube(move);
+                this.repaintCube();
+                try {
+                    Thread.sleep(finalT);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
