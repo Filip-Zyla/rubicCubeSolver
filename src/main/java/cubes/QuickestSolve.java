@@ -4,12 +4,15 @@ import org.javatuples.Pair;
 
 import java.util.*;
 
-//TODO list od solutions
+//TODO list od solutions, several for one GODS_NUM
 //TODO test and fix, add threads
-//TODO change cuba to use only R adn U moves
+//TODO clear movesDone, or start alg with previous solve minus its last move
+//TODO change points for entropy
+//TODO counter delete/strip
+//TODO GODS_NUMBER from 0 to 11?
 public class QuickestSolve {
 
-    private final int GODS_NUMBER = 11;
+    private int GODS_NUMBER = 1;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
 
     private Cube2x2 cube;
@@ -27,10 +30,21 @@ public class QuickestSolve {
 
     public void findQuickestSolve() {
         String scramble = Algorithm.randomScramble(12, 15);
-        System.out.println(scramble);
+        System.out.println("Scramble = "+scramble);
         cube.moveCube(scramble);
-        String alg = solveFewestMoves();
-        System.out.println(alg);
+        while (GODS_NUMBER<12) {
+            String alg = solveFewestMoves();
+            System.out.println("Solution for "+GODS_NUMBER+" moves: "+alg);
+
+            currentLength=0;
+            GODS_NUMBER++;
+            cube = new Cube2x2();
+            cube.moveCube(scramble);
+            movesDone.clear();
+            for (int i = 1; i <= GODS_NUMBER; i++) {
+                movesDone.put(i, new HashSet<>());
+            }
+        }
     }
 
     private String solveFewestMoves() {
@@ -40,15 +54,18 @@ public class QuickestSolve {
         long start = System.currentTimeMillis();
 
         while (!cube.isSolved()) {
-            if (currentLength == GODS_NUMBER) {
-                /**
-                 * if god's number reached and movesDone(GOD_NUM) is not-full just try another move
-                 */
+            System.out.println(builder);
+            if (currentLength==0 &&  movesDone.get(1).size()==9 ){
+                //all possible combination are checked
+                return null;
+            }
+            else if (currentLength == GODS_NUMBER) {
+                //if god's number reached and movesDone(GOD_NUM) is not-full just try another move
                 deleteLatestMove(builder);
                 currentLength--;
             }
             else if (builder.length() > 0 && movesDone.get(currentLength + 1).size() == ALL_POSSIBLE_MOVES.length - 3) {
-                /**
+                /*
                  * currentLength is n, n+1 moves were all used
                  * clear array of current move looked for, n+1
                  * undo last move and delete from builder at n
@@ -66,17 +83,15 @@ public class QuickestSolve {
                 movesDone.get(currentLength).add(curMove);
             }
 
-
             counter++;
             if (counter % 1_000_000 == 0) {
+                // all combinations is 9 * 6^10 = 550mln combinations, period last ~2.2, maxTime = 550*2.2=1210sec
                 final long curTime = (System.currentTimeMillis() - start) / 1000;
                 System.out.println(curTime);
-                if (curTime>120){
-                    System.out.println("Took more than 2 minutes, aborting...");
-                    break;
+                if (curTime>60){
+                    System.out.println("Took more than minute, aborting...");
+                    return null;
                 }
-                // all combinations is 18 * 12^10
-                // 10^6 for now 1_114_511 periods, period last ~2.2
             }
         }
         return builder.toString();
@@ -139,7 +154,6 @@ public class QuickestSolve {
             return alg.substring(alg.length() - 1);
     }
 
-    //TODO change points?, arrangement
     private int calculateEntropy(Cube2x2 cube2x2) {
         int entropy = 0;
         /**               1st     2nd
