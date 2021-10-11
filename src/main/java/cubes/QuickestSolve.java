@@ -4,12 +4,11 @@ import org.javatuples.Pair;
 
 import java.util.*;
 
-//TODO list od solutions, several for one GODS_NUM
-//TODO test and fix, add threads
-//TODO clear movesDone, or start alg with previous solve minus its last move
-//TODO change points for entropy
+//TODO add to graphic
 //TODO counter delete/strip
-//TODO GODS_NUMBER from 0 to 11?
+//TODO test and fix, add threads
+//TODO change points for entropy
+//TODO GODS_NUMBER from 11 to 0, then start alg with previous solve minus its last move
 public class QuickestSolve {
 
     private int GODS_NUMBER = 1;
@@ -32,8 +31,9 @@ public class QuickestSolve {
         String scramble = Algorithm.randomScramble(12, 15);
         System.out.println("Scramble = "+scramble);
         cube.moveCube(scramble);
-        while (GODS_NUMBER<12) {
-            String alg = solveFewestMoves();
+        String alg = null;
+        while (GODS_NUMBER<12 && alg==null) {
+            alg = solveFewestMoves();
             System.out.println("Solution for "+GODS_NUMBER+" moves: "+alg);
 
             currentLength=0;
