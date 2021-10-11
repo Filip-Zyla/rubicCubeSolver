@@ -4,9 +4,10 @@ import org.javatuples.Pair;
 
 import java.util.*;
 
+//TODO list od solutions
+//TODO test and fix, add threads
 public class QuickestSolve {
 
-    //TODO test and fix, add threads
     private final int GODS_NUMBER = 11;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'", "D", "D2", "D'", "L", "L2", "L'", "B", "B2", "B'"};
 
@@ -24,8 +25,6 @@ public class QuickestSolve {
     }
 
     public void findQuickestSolve() {
-        //TODO list od solutions?, set new GODS_NUM
-        //String scramble = Algorithm.randomScramble(5, 7);
         String scramble = Algorithm.randomScramble(15, 20);
         System.out.println(scramble);
         cube.moveCube(scramble);
@@ -40,24 +39,25 @@ public class QuickestSolve {
         long start = System.currentTimeMillis();
 
         while (!cube.isSolved()) {
-            if (currentLength == 11) {
+            if (currentLength == GODS_NUMBER) {
                 /**
-                 * if god's number reached and movesDone(11) is not-full just try another move
+                 * if god's number reached and movesDone(GOD_NUM) is not-full just try another move
                  */
                 deleteLatestMove(builder);
-            } else if (builder.length() > 0 && movesDone.get(currentLength + 1).size() == ALL_POSSIBLE_MOVES.length - 6) {
+                currentLength--;
+            }
+            else if (builder.length() > 0 && movesDone.get(currentLength + 1).size() == ALL_POSSIBLE_MOVES.length - 6) {
                 /**
-                 * TODO getMoveWitheBestEntropy just return "" ???
-                 * current length of alg is n, n+1 moves ware all were used
-                 * clear array of current move looked for
-                 * undo last move and delete from builder
+                 * currentLength is n, n+1 moves were all used
+                 * clear array of current move looked for, n+1
+                 * undo last move and delete from builder at n
                  */
                 movesDone.get(currentLength + 1).clear();
                 deleteLatestMove(builder);
+                currentLength--;
             }
             else {
                 String curMove = getMoveWitheBestEntropy(builder.toString());
-
 
                 cube.moveCube(curMove);
                 builder.append(curMove);
@@ -69,17 +69,15 @@ public class QuickestSolve {
             counter++;
             if (counter % 1_000_000 == 0) {
                 final long curTime = (System.currentTimeMillis() - start) / 1000;
+                System.out.println(curTime);
                 if (curTime>180){
                     System.out.println("Took more than 3 minutes, aborting...");
                     break;
                 }
-                System.out.println(curTime);
-                // all combinations is 18 * 12^10 / 10^6 for now 1_114_511 periods
-                // period for 1mln ~16s 15,31,47, after changing moves methods ~4.5 5,9,13
-                // times 69, 4
+                // all combinations is 18 * 12^10
+                // 10^6 for now 1_114_511 periods, period last ~4.5
             }
         }
-
         return builder.toString();
     }
 
@@ -92,12 +90,11 @@ public class QuickestSolve {
             reverseMove(builder.substring(lastIndex));
             builder.deleteCharAt(lastIndex);
         }
-        currentLength--;
     }
 
     private void reverseMove(String rev) {
         /**
-         * rev is moved that have been done
+         * rev is move that have been done
          */
         if (rev.contains("2")) {
         } else if (rev.contains("'")) {
@@ -113,13 +110,13 @@ public class QuickestSolve {
         String move = "";
         String end = getLastMove(alg);
         for (String m : ALL_POSSIBLE_MOVES) {
-            if (end.contains(String.valueOf(m.charAt(0)))) {
-                // if are like U - U2 etc.
-            } else if (areMovesParallel(m, end)) {
-                // if are like R' - L2 etc.
-            } else if (movesDone.get(currentLength + 1).contains(m)) {
+            if (movesDone.get(currentLength + 1).contains(m)) {
                 // if move already done
-            } else {
+            }
+            else if (areMovesParallel(m, end)) {
+                // if are like R' - L2 etc.
+            }
+            else {
                 cube.moveCube(m);
                 int curE = calculateEntropy(cube);
                 if (curE > entropy) {
@@ -148,7 +145,9 @@ public class QuickestSolve {
         HashSet<Character> set = new HashSet<>();
         set.add(m.charAt(0));
         set.add(end.charAt(0));
-        if (set.contains('R') && set.contains('L')) {
+        if (set.size()==1){
+            return true;
+        }else if (set.contains('R') && set.contains('L')) {
             return true;
         } else if (set.contains('U') && set.contains('D')) {
             return true;
@@ -159,7 +158,7 @@ public class QuickestSolve {
     }
 
     private int calculateEntropy(Cube2x2 cube2x2) {
-        int entropy = 0;
+        int entropy = -1;
         //TODO change points???
         /**               1st     2nd
          * fullWallUni  = 6       6
@@ -179,6 +178,7 @@ public class QuickestSolve {
             int[] wall = {cube[x][y], cube[x][y + 1], cube[x + 1][y + 1], cube[x + 1][y]};
 
             for (Pair c : colors) {
+
                 int c0 = (int) c.getValue0();
                 int c1 = (int) c.getValue1();
                 List<Integer> numOfStickersC0 = new ArrayList<>();
@@ -197,22 +197,21 @@ public class QuickestSolve {
                 }
 
                 if (numOfStickersC0.size() == 4 || numOfStickersC1.size() == 4) {
-                    entropy += 6;
+                    entropy += 6; // fullWallUni
                 } else if (numOfStickersC0.size() == 3 || numOfStickersC1.size() == 3) {
-                    entropy += 3;
+                    entropy += 3; // threeWallUni
                 }
-
                 if (numOfStickers.size() == 4) {
-                    entropy += 3;
+                    entropy += 3; // fullWall
                 } else if (numOfStickers.size() == 3) {
-                    entropy += 2;
+                    entropy += 2; // threeWall
                 } else if (numOfStickers.size() == 2 && Math.abs(numOfStickers.get(0) - numOfStickers.get(1)) != 2) {
                     if (wall[numOfStickers.get(0)] == c0 && wall[numOfStickers.get(1)] == c0) {
-                        entropy += 4;
+                        entropy += 4; // twoWallUni
                     } else if (wall[numOfStickers.get(0)] == c1 && wall[numOfStickers.get(1)] == c1) {
-                        entropy += 4;
+                        entropy += 4; // twoWallUni
                     } else {
-                        entropy += 1;
+                        entropy += 1; // twoWall
                     }
                 }
             }
