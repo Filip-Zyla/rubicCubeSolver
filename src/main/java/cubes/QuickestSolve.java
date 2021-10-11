@@ -9,7 +9,7 @@ import java.util.*;
 public class QuickestSolve {
 
     private final int GODS_NUMBER = 11;
-    private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'", "D", "D2", "D'", "L", "L2", "L'", "B", "B2", "B'"};
+    private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
 
     private Cube2x2 cube;
     private int currentLength;
@@ -46,7 +46,7 @@ public class QuickestSolve {
                 deleteLatestMove(builder);
                 currentLength--;
             }
-            else if (builder.length() > 0 && movesDone.get(currentLength + 1).size() == ALL_POSSIBLE_MOVES.length - 6) {
+            else if (builder.length() > 0 && movesDone.get(currentLength + 1).size() == ALL_POSSIBLE_MOVES.length - 3) {
                 /**
                  * currentLength is n, n+1 moves were all used
                  * clear array of current move looked for, n+1
@@ -70,12 +70,12 @@ public class QuickestSolve {
             if (counter % 1_000_000 == 0) {
                 final long curTime = (System.currentTimeMillis() - start) / 1000;
                 System.out.println(curTime);
-                if (curTime>180){
-                    System.out.println("Took more than 3 minutes, aborting...");
+                if (curTime>120){
+                    System.out.println("Took more than 2 minutes, aborting...");
                     break;
                 }
                 // all combinations is 18 * 12^10
-                // 10^6 for now 1_114_511 periods, period last ~4.5
+                // 10^6 for now 1_114_511 periods, period last ~2.2
             }
         }
         return builder.toString();
@@ -113,8 +113,8 @@ public class QuickestSolve {
             if (movesDone.get(currentLength + 1).contains(m)) {
                 // if move already done
             }
-            else if (areMovesParallel(m, end)) {
-                // if are like R' - L2 or R - R2 etc.
+            else if (!end.equals("") && m.charAt(0)==end.charAt(0)) {
+                // if are like or R - R2 etc.
             }
             else {
                 cube.moveCube(m);
@@ -138,28 +138,9 @@ public class QuickestSolve {
             return alg.substring(alg.length() - 1);
     }
 
-    private boolean areMovesParallel(String m, String end) {
-        if (end.length() == 0 || m.length() == 0) {
-            return false;
-        }
-        HashSet<Character> set = new HashSet<>();
-        set.add(m.charAt(0));
-        set.add(end.charAt(0));
-        if (set.size()==1){
-            return true;
-        }else if (set.contains('R') && set.contains('L')) {
-            return true;
-        } else if (set.contains('U') && set.contains('D')) {
-            return true;
-        } else if (set.contains('F') && set.contains('B')) {
-            return true;
-        } else
-            return false;
-    }
-
+    //TODO change points?, arrangement
     private int calculateEntropy(Cube2x2 cube2x2) {
         int entropy = 0;
-        //TODO change points???
         /**               1st     2nd
          * fullWallUni  = 6       6
          * fullWall     = 5       5
