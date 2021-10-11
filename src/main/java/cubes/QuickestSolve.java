@@ -25,7 +25,7 @@ public class QuickestSolve {
     }
 
     public void findQuickestSolve() {
-        String scramble = Algorithm.randomScramble(15, 20);
+        String scramble = Algorithm.randomScramble(12, 15);
         System.out.println(scramble);
         cube.moveCube(scramble);
         String alg = solveFewestMoves();
@@ -114,7 +114,7 @@ public class QuickestSolve {
                 // if move already done
             }
             else if (areMovesParallel(m, end)) {
-                // if are like R' - L2 etc.
+                // if are like R' - L2 or R - R2 etc.
             }
             else {
                 cube.moveCube(m);
@@ -158,7 +158,7 @@ public class QuickestSolve {
     }
 
     private int calculateEntropy(Cube2x2 cube2x2) {
-        int entropy = -1;
+        int entropy = 0;
         //TODO change points???
         /**               1st     2nd
          * fullWallUni  = 6       6
