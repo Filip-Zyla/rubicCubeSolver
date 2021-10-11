@@ -54,7 +54,6 @@ public class QuickestSolve {
         long start = System.currentTimeMillis();
 
         while (!cube.isSolved()) {
-            System.out.println(builder);
             if (currentLength==0 &&  movesDone.get(1).size()==9 ){
                 //all possible combination are checked
                 return null;
