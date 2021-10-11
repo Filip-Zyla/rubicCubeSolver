@@ -6,6 +6,7 @@ import java.util.*;
 
 //TODO list od solutions
 //TODO test and fix, add threads
+//TODO change cuba to use only R adn U moves
 public class QuickestSolve {
 
     private final int GODS_NUMBER = 11;
