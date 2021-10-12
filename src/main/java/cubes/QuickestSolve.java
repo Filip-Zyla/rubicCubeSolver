@@ -5,7 +5,7 @@ import org.javatuples.Pair;
 import java.util.*;
 
 //TODO counter delete/strip
-//TODO test and fix, add threads
+//TODO fix, add threads
 //TODO change points for entropy
 //TODO GODS_NUMBER from 11 to 0, then start alg with previous solve minus its last move
 public class QuickestSolve {
@@ -30,7 +30,7 @@ public class QuickestSolve {
 
     public String findQuickestSolve() {
         String alg = null;
-        while (GODS_NUMBER<12 && alg==null) {
+        while (GODS_NUMBER<11 && alg==null) {
             alg = solveFewestMoves();
             System.out.println("Solution for "+GODS_NUMBER+" moves: "+alg);
 
@@ -42,12 +42,7 @@ public class QuickestSolve {
                 movesDone.put(i, new HashSet<>());
             }
         }
-        if (alg!=null){
-            return alg;
-        }
-        else {
-            return "Error";
-        }
+        return Objects.requireNonNullElse(alg, "Error");
     }
 
     private String solveFewestMoves() {
