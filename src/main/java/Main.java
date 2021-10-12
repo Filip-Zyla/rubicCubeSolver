@@ -3,11 +3,11 @@ import cubes.*;
 import graphicalMenu.GraphMenu;
 
 //TODO abstract class, general for cubs  or only NxNxN
-//TODO loggers everywhere, tests everywhere
+//TODO loggers everywhere, tests everywhere, change graphics
 public class Main {
 
     public static void main(String[] args) {
-        q();
+        g();
     }
 
     private static void q() {

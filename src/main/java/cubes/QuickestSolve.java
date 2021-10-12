@@ -4,7 +4,6 @@ import org.javatuples.Pair;
 
 import java.util.*;
 
-//TODO add to graphic
 //TODO counter delete/strip
 //TODO test and fix, add threads
 //TODO change points for entropy
@@ -14,12 +13,14 @@ public class QuickestSolve {
     private int GODS_NUMBER = 1;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
 
+    private final Cube2x2 initialCube;
     private Cube2x2 cube;
     private int currentLength;
     private HashMap<Integer, HashSet<String>> movesDone;
 
     public QuickestSolve(Cube2x2 cube) {
-        this.cube = cube;
+        this.initialCube = cube;
+        this.cube = new Cube2x2(initialCube);
         currentLength = 0;
         movesDone = new HashMap<>();
         for (int i = 1; i <= GODS_NUMBER; i++) {
@@ -27,10 +28,7 @@ public class QuickestSolve {
         }
     }
 
-    public void findQuickestSolve() {
-        String scramble = Algorithm.randomScramble(12, 15);
-        System.out.println("Scramble = "+scramble);
-        cube.moveCube(scramble);
+    public String findQuickestSolve() {
         String alg = null;
         while (GODS_NUMBER<12 && alg==null) {
             alg = solveFewestMoves();
@@ -38,12 +36,17 @@ public class QuickestSolve {
 
             currentLength=0;
             GODS_NUMBER++;
-            cube = new Cube2x2();
-            cube.moveCube(scramble);
+            cube = new Cube2x2(initialCube);
             movesDone.clear();
             for (int i = 1; i <= GODS_NUMBER; i++) {
                 movesDone.put(i, new HashSet<>());
             }
+        }
+        if (alg!=null){
+            return alg;
+        }
+        else {
+            return "Error";
         }
     }
 
