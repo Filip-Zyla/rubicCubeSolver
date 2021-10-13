@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 public class Main {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        g();
+
     }
 
     private static void t() throws ExecutionException, InterruptedException {

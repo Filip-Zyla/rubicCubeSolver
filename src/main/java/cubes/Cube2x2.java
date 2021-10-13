@@ -108,7 +108,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
     }
 
     public boolean moveCube(String alg) {
-        if (!Algorithm.checkIsAlgProper(alg)) {
+        if (!Algorithm.checkIfProper(alg)) {
             return false;
         }
 

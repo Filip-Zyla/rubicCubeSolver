@@ -164,7 +164,7 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
         else if (e.getSource() == b2) {
             String sc = Algorithm.randomScramble(15,20);
-            if (!sc.equals("") && Algorithm.checkIsAlgProper(sc)) {
+            if (!sc.equals("") && Algorithm.checkIfProper(sc)) {
                 animation(sc);
             }else {
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
@@ -173,7 +173,7 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
         else if (e.getSource() == b3) {
             String sc = jta3.getText();
-            if (!sc.equals("") && Algorithm.checkIsAlgProper(sc)) {
+            if (!sc.equals("") && Algorithm.checkIfProper(sc)) {
                 animation(sc);
             }else {
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
@@ -209,7 +209,7 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
         else if (e.getSource() == b6){
             String alg = jta6.getText();
-            if (!Algorithm.checkIsAlgProper(alg)){
+            if (!Algorithm.checkIfProper(alg)){
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
             }
             else if(!cb61.isSelected() && !cb62.isSelected()){
@@ -248,7 +248,7 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
 
         final int finalT = T;
-        final LinkedList<String> algList = Algorithm.algToList(alg);
+        final LinkedList<String> algList = Algorithm.toList(alg);
         flag = true;
 
         Thread t = new Thread(() -> {

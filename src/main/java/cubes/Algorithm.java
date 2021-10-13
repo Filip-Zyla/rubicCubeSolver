@@ -60,7 +60,7 @@ public class Algorithm {
         return builder.toString();
     }
 
-    public static boolean checkIsAlgProper(String alg) {
+    public static boolean checkIfProper(String alg) {
         if (alg.isEmpty())
             return false;
         String poll = "xyzUDRLFB";
@@ -80,10 +80,60 @@ public class Algorithm {
         return true;
     }
 
+    public static LinkedList<String> toList(String alg){
+        if (!checkIfProper(alg)){
+            return null;
+        }
+        LinkedList<String> movesList = new LinkedList<>();
+        int i=0;
+        final int length = alg.length();
+        while (i<length){
+            if (i+1 == length){
+                movesList.add(String.valueOf(alg.charAt(i)));
+                break;
+            }
+            else if (alg.charAt(i+1)=='2' || alg.charAt(i+1)=='\''){
+                movesList.add(alg.substring(i,i+2));
+                i=i+2;
+            }
+            else {
+                movesList.add(String.valueOf(alg.charAt(i)));
+                i++;
+            }
+        }
+        return movesList;
+    }
+
+    public static int algLength(String alg){
+        // Simpler but ~4x slower Algorithm.toList(alg).size()
+        if (!checkIfProper(alg)){
+            return -1;
+        }
+        int i=0;
+        int counter = 0;
+        final int length = alg.length();
+        while (i<length){
+            if (i+1 == length){
+                counter++;
+                break;
+            }
+            if (alg.charAt(i+1)=='2' || alg.charAt(i+1)=='\''){
+                i=i+2;
+                counter++;
+            }
+            else {
+                i++;
+                counter++;
+            }
+        }
+        return counter;
+    }
+
     public static String optimizeAlg(String alg) {
-        if (!checkIsAlgProper(alg))
+        if (!checkIfProper(alg))
             return "Alg is not proper: " + alg;
-        LinkedList<String> movesList = algToList(alg);
+
+        LinkedList<String> movesList = toList(alg);
 
         int j = 0;
         while (j < movesList.size()) {
@@ -177,29 +227,8 @@ public class Algorithm {
         }
     }
 
-    public static LinkedList<String> algToList(String alg) {
-        LinkedList<String> movesList = new LinkedList<>();
-        String[] array = alg.split("");
-        int i = 0;
-        while (i < alg.length()) {
-            if (i + 1 == alg.length()) {
-                movesList.add(array[i]);
-                i++;
-            }
-            else if (array[i + 1].matches("[A-Za-z]")) {
-                movesList.add(array[i]);
-                i++;
-            }
-            else {
-                movesList.add(array[i] + array[i + 1]);
-                i += 2;
-            }
-        }
-        return movesList;
-    }
-
     public static String skipRotation(String alg) {
-        LinkedList<String> algToHandle = algToList(alg);
+        LinkedList<String> algToHandle = toList(alg);
         skipRotation(algToHandle);
         final String join = String.join("", algToHandle);
         return optimizeAlg(join);
@@ -299,27 +328,7 @@ public class Algorithm {
         return rotationsTable;
     }
 
-    public static int algLength(String alg){
-        if (!checkIsAlgProper(alg)){
-            return -1;
-        }
-        int i=0;
-        int counter = 0;
-        final int length = alg.length();
-        while (i<length){
-            if (i+1 == length){
-                counter++;
-                break;
-            }
-            if (alg.charAt(i+1)=='2' || alg.charAt(i+1)=='\''){
-                i=i+2;
-                counter++;
-            }
-            else {
-                i++;
-                counter++;
-            }
-        }
-        return counter;
-    }
+
+
+
 }
