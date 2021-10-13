@@ -130,104 +130,111 @@ public class Algorithm {
     }
 
     public static String optimizeAlg(String alg) {
-        if (!checkIfProper(alg))
+        if (!checkIfProper(alg)) {
             return "Alg is not proper: " + alg;
+        }
 
         LinkedList<String> movesList = toList(alg);
 
-        int j = 0;
-        while (j < movesList.size()) {
-            if (j + 1 == movesList.size()) {
+        int i = 0;
+        while (i < movesList.size()) {
+            if (i + 1 == movesList.size()) {
                 break;
             }
-            String cur = movesList.get(j);
-            String nex = movesList.get(j + 1);
+            String cur = movesList.get(i);
+            String nex = movesList.get(i + 1);
             if (cur.charAt(0) == nex.charAt(0)) {
                 // repetitions DD D'D etc.
                 String combined = (cur + nex).replaceAll("[A-Za-z]", "");
-                String s = String.valueOf(movesList.get(j).charAt(0));
+                String s = String.valueOf(movesList.get(i).charAt(0));
                 switch (combined) {
                     case "", "''" -> {
-                        movesList.set(j, s + "2");
-                        movesList.remove(j + 1);
+                        movesList.set(i, s + "2");
+                        movesList.remove(i + 1);
                     }
                     case "'", "22" -> {
-                        movesList.remove(j + 1);
-                        movesList.remove(j);
+                        movesList.remove(i + 1);
+                        movesList.remove(i);
                     }
                     case "2" -> {
-                        movesList.set(j, s + "'");
-                        movesList.remove(j + 1);
+                        movesList.set(i, s + "'");
+                        movesList.remove(i + 1);
                     }
                     case "2'", "'2" -> {
-                        movesList.set(j, s);
-                        movesList.remove(j + 1);
+                        movesList.set(i, s);
+                        movesList.remove(i + 1);
                     }
                 }
-                if (j > 0) {
-                    j--;
+                if (i > 0) {
+                    i--;
                 }
             }
             else if (cur.charAt(0) != nex.charAt(0)) {
                 // parallel moves changed to rotation+move
+                // sum is m1+m2
                 final int sum = cur.charAt(0) + nex.charAt(0);
                 if (sum == 158)
-                    eliminateParallelMoves(cur, nex, "R", "L", "x", movesList, j);
+                    eliminateParallelMoves(cur, nex, "R", "L", "x", movesList, i);
                 else if (sum == 153)
-                    eliminateParallelMoves(cur, nex, "U", "D", "y", movesList, j);
+                    eliminateParallelMoves(cur, nex, "U", "D", "y", movesList, i);
                 else if (sum == 136)
-                    eliminateParallelMoves(cur, nex, "F", "B", "z", movesList, j);
-                else j++;
+                    eliminateParallelMoves(cur, nex, "F", "B", "z", movesList, i);
+                else i++;
             }
-            else j++;
+            else i++;
         }
         return String.join("", movesList);
     }
 
-    private static void eliminateParallelMoves(String cur, String nex, String m1, String m2, String r, LinkedList<String> movesList, int j) {
+    private static void eliminateParallelMoves(String cur, String nex, String m1, String m2, String r, LinkedList<String> movesList, int i) {
+        // cur & nex are changed to mix of r & (m1||m2) with (2, ') as in cur & nex
+        // ex. L2R' || R'L2 to x'L
         final int size = movesList.size();
         if (cur.equals(m1) && nex.equals(m2) || cur.equals(m2) && nex.equals(m1)) {
-            movesList.set(j, r + "'");
-            movesList.set(j + 1, m1 + "2");
+            movesList.set(i, r + "'");
+            movesList.set(i + 1, m1 + "2");
         }
         else if (cur.equals(m1) && nex.equals(m2 + "'") || cur.equals(m2 + "'") && nex.equals(m1)) {
-            movesList.set(j, r);
-            movesList.remove(j + 1);
+            movesList.set(i, r);
+            movesList.remove(i + 1);
         }
         else if (cur.equals(m1) && nex.equals(m2 + "2") || cur.equals(m2 + "2") && nex.equals(m1)) {
-            movesList.set(j, r);
-            movesList.set(j + 1, m2 + "'");
+            movesList.set(i, r);
+            movesList.set(i + 1, m2 + "'");
         }
         else if (cur.equals(m1 + "'") && nex.equals(m2) || cur.equals(m2) && nex.equals(m1 + "'")) {
-            movesList.set(j, r + "'");
-            movesList.remove(j + 1);
+            movesList.set(i, r + "'");
+            movesList.remove(i + 1);
         }
         else if (cur.equals(m1 + "'") && nex.equals(m2 + "'") || cur.equals(m2 + "'") && nex.equals(m1 + "'")) {
-            movesList.set(j, r);
-            movesList.set(j + 1, m1 + "2");
+            movesList.set(i, r);
+            movesList.set(i + 1, m1 + "2");
         }
         else if (cur.equals(m1 + "'") && nex.equals(m2 + "2") || cur.equals(m2 + "2") && nex.equals(m1 + "'")) {
-            movesList.set(j, r + "'");
-            movesList.set(j + 1, m2);
+            movesList.set(i, r + "'");
+            movesList.set(i + 1, m2);
         }
         else if (cur.equals(m1 + "2") && nex.equals(m2) || cur.equals(m2) && nex.equals(m1 + "2")) {
-            movesList.set(j, r + "'");
-            movesList.set(j + 1, m1 + "'");
+            movesList.set(i, r + "'");
+            movesList.set(i + 1, m1 + "'");
         }
         else if (cur.equals(m1 + "2") && nex.equals(m2 + "'") || cur.equals(m2 + "'") && nex.equals(m1 + "2")) {
-            movesList.set(j, r);
-            movesList.set(j + 1, m1);
+            movesList.set(i, r);
+            movesList.set(i + 1, m1);
         }
         else if (cur.equals(m1 + "2") && nex.equals(m2 + "2") || cur.equals(m2 + "2") && nex.equals(m1 + "2")) {
-            movesList.set(j, r + "2");
-            movesList.remove(j + 1);
+            movesList.set(i, r + "2");
+            movesList.remove(i + 1);
         }
-        if (j > 0 && size > movesList.size()) {
-            j--;
+        if (i > 0 && size > movesList.size()) {
+            i--;
         }
     }
 
     public static String skipRotation(String alg) {
+        if (!checkIfProper(alg)) {
+            return "Alg is not proper: " + alg;
+        }
         LinkedList<String> algToHandle = toList(alg);
         skipRotation(algToHandle);
         final String join = String.join("", algToHandle);
@@ -249,31 +256,26 @@ public class Algorithm {
          *
          * if ' or 2 then add it
          */
-        Set rotations = new HashSet<Character>(Arrays.asList('x', 'y', 'z'));
+        Set rotations = new HashSet<>(Arrays.asList('x', 'y', 'z'));
         if (alg.size() < 2) {
             return;
         }
         for (int i = alg.size() - 1; i >= 0; i--) {
             if (rotations.contains(alg.get(i).charAt(0))) {
-                if (alg.get(i).contains("2")) {
-                    alg.set(i, String.valueOf(alg.get(i).charAt(0)));
-                    alg.add(i, String.valueOf(alg.get(i).charAt(0)));
-                    i++;
+                if (i + 1 >= alg.size()) {
+                    alg.remove(i);
                 }
-                skipRotation(alg, i);
+                else
+                    skipRotation(alg, i);
             }
         }
     }
 
     private static void skipRotation(LinkedList<String> alg, int i) {
-        if (i + 1 >= alg.size()) {
-            alg.remove(i);
-            return;
-        }
         String rotation = alg.get(i);
         for (int j = i + 1; j < alg.size(); j++) {
             String toReplace;
-            if (alg.get(j).length() > 1) {
+            if (alg.get(j).length() == 2) {
                 // yR2 -> yR + 2 -> B + 2 -> B2
                 toReplace = rotationsTable.get(rotation, String.valueOf(alg.get(j).charAt(0))) + alg.get(j).charAt(1);
             }
@@ -301,6 +303,12 @@ public class Algorithm {
         rotationsTable.put("y'", "D", "D");
         rotationsTable.put("y'", "F", "L");
         rotationsTable.put("y'", "B", "R");
+        rotationsTable.put("y2", "R", "L");
+        rotationsTable.put("y2", "L", "R");
+        rotationsTable.put("y2", "U", "U");
+        rotationsTable.put("y2", "D", "D");
+        rotationsTable.put("y2", "F", "B");
+        rotationsTable.put("y2", "B", "F");
         rotationsTable.put("x", "R", "R");
         rotationsTable.put("x", "L", "L");
         rotationsTable.put("x", "U", "F");
@@ -313,6 +321,12 @@ public class Algorithm {
         rotationsTable.put("x'", "D", "F");
         rotationsTable.put("x'", "F", "U");
         rotationsTable.put("x'", "B", "D");
+        rotationsTable.put("x2", "R", "R");
+        rotationsTable.put("x2", "L", "L");
+        rotationsTable.put("x2", "U", "D");
+        rotationsTable.put("x2", "D", "U");
+        rotationsTable.put("x2", "F", "B");
+        rotationsTable.put("x2", "B", "F");
         rotationsTable.put("z", "R", "U");
         rotationsTable.put("z", "L", "D");
         rotationsTable.put("z", "U", "L");
@@ -325,10 +339,12 @@ public class Algorithm {
         rotationsTable.put("z'", "D", "L");
         rotationsTable.put("z'", "F", "F");
         rotationsTable.put("z'", "B", "B");
+        rotationsTable.put("z2", "R", "L");
+        rotationsTable.put("z2", "L", "R");
+        rotationsTable.put("z2", "U", "D");
+        rotationsTable.put("z2", "D", "U");
+        rotationsTable.put("z2", "F", "F");
+        rotationsTable.put("z2", "B", "B");
         return rotationsTable;
     }
-
-
-
-
 }
