@@ -1,4 +1,7 @@
-package cubes;
+package solving;
+
+import cubes.Algorithm;
+import cubes.Cube2x2;
 
 import java.util.*;
 import java.util.concurrent.*;

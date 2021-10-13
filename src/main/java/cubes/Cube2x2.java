@@ -97,7 +97,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         return Arrays.equals(this.array, cube.array);
     }
 
-    boolean isSolved() {
+    public boolean isSolved() {
         if (this.array[2][2] != this.array[2][3] || this.array[3][2] != this.array[3][3] || this.array[2][2] != this.array[3][3])
             return false;
         if (this.array[2][4] != this.array[2][5] || this.array[3][4] != this.array[3][5] || this.array[2][4] != this.array[3][5])

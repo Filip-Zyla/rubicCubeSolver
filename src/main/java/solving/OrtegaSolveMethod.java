@@ -1,5 +1,7 @@
-package cubes;
+package solving;
 
+import cubes.Algorithm;
+import cubes.Cube2x2;
 import org.javatuples.Pair;
 
 import java.util.*;

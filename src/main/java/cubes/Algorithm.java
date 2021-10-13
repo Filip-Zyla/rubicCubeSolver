@@ -1,7 +1,6 @@
 package cubes;
 
 import com.google.common.collect.HashBasedTable;
-
 import java.util.*;
 
 public class Algorithm {
@@ -64,27 +63,15 @@ public class Algorithm {
     public static boolean checkIsAlgProper(String alg) {
         if (alg.isEmpty())
             return false;
-        String poll = "xyzUDRLFB2'";
+        String poll = "xyzUDRLFB";
         char[] array = alg.toCharArray();
         int i = 0;
         while (i < array.length) {
             if (poll.indexOf(array[i]) == -1) {
-                System.err.println("Char " + array[i] + " at index " + i + " cannot be in alg");
+                System.err.println("Char \"" + array[i] + "\" at index " + i + " cannot be in alg");
                 return false;
             }
-            else if (Character.isDigit(array[i])) {
-                System.err.println("Char " + array[i] + " at index " + i + " is repeated num");
-                return false;
-            }
-            else if (array[i] == 39) {
-                System.err.println("Char " + array[i] + " at index " + i + " is repeated coma");
-                return false;
-            }
-            if (i + 1 < array.length && (array[i + 1] == 39 || Character.isDigit(array[i + 1]))) {
-                if (Character.isDigit(array[i + 1]) && Character.getNumericValue(array[i + 1]) != 2) {
-                    System.err.println("Char " + array[i+1] + " at index " + i+1 + " is wrong num");
-                    return false;
-                }
+            else if (i + 1 < array.length && (array[i + 1] == 39 || array[i + 1] == 50)) {
                 i = i + 2;
             }
             else i++;

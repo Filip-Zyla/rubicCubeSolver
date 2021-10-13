@@ -1,9 +1,9 @@
 
 import cubes.*;
 import graphicalMenu.GraphMenu;
+import solving.QuickestSolveThreads;
 
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO abstract class, general for cubs  or only NxNxN
 //TODO loggers everywhere, tests everywhere, change graphics

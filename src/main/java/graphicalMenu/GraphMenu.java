@@ -1,7 +1,8 @@
 package graphicalMenu;
 
 import cubes.*;
-import lombok.SneakyThrows;
+import solving.OrtegaSolveMethod;
+import solving.QuickestSolveThreads;
 
 import javax.swing.*;
 import java.awt.*;
@@ -143,7 +144,6 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
     }
 
-    @SneakyThrows
     public void actionPerformed(ActionEvent e) {
         if (fwmThread!= null && fwmThread.isAlive() && e.getSource()!=b0){
             return;
