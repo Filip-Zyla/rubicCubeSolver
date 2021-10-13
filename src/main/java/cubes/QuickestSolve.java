@@ -6,8 +6,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO counter delete/strip
-//TODO fix, add threads, implements callable?
-//TODO change points for entropy
+//TODO fix, add threads, implements callable?, change points for entropy
 //TODO GODS_NUMBER from 11 to 0, then start alg with previous solve minus its last move
 public class QuickestSolve {
 

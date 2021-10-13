@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
 
 public class GraphMenu extends JComponent implements ActionListener {
 
@@ -21,7 +22,9 @@ public class GraphMenu extends JComponent implements ActionListener {
     JSpinner spinner;
     JLabel jl1;
     ArrayList<JPanel> jp = new ArrayList<>();
+
     private volatile boolean flag = true;
+    Thread fwmThread;
 
     public GraphMenu(Cube2x2 cube) {
         this.cube = cube;
@@ -142,7 +145,13 @@ public class GraphMenu extends JComponent implements ActionListener {
 
     @SneakyThrows
     public void actionPerformed(ActionEvent e) {
+        if (fwmThread!= null && fwmThread.isAlive() && e.getSource()!=b0){
+            return;
+        }
         if (e.getSource() == b1) {
+            if (fwmThread!= null && fwmThread.isAlive()){
+                return;
+            }
             flag=false;
             spinner.setValue(0.1);
             cube = new Cube2x2();
@@ -181,12 +190,22 @@ public class GraphMenu extends JComponent implements ActionListener {
             jta4.setText(solveAlg);
         }
         else if (e.getSource() == b5){
-            QuickestSolveThreads threads = new QuickestSolveThreads(cube);
+            jta5.setText("Computing...");
 
-            String solveAlg = threads.findQuickestSolutions();
+            fwmThread = new Thread(() -> {
+                QuickestSolveThreads threads = new QuickestSolveThreads(cube);
+                String solveAlg;
+                try {
+                    solveAlg = threads.findQuickestSolutions();
+                    animation(solveAlg);
+                    jta5.setText(solveAlg);
+                } catch (ExecutionException | InterruptedException ex) {
+                    ex.printStackTrace();
+                    jta5.setText("Error");
+                }
 
-            animation(solveAlg);
-            jta5.setText(solveAlg);
+            });
+            fwmThread.start();
         }
         else if (e.getSource() == b6){
             String alg = jta6.getText();

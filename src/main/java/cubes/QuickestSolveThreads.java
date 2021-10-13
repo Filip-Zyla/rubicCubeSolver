@@ -5,14 +5,13 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO nThread?
-//TODO initialMove part of QuickestSolve?
 public class QuickestSolveThreads {
 
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
 
     private Cube2x2 cube;
     private ExecutorService executorService;
-    private int nThreads = 4;
+    private int nThreads = 3;
     private AtomicInteger godsNumber = new AtomicInteger(11);
     private Map<String, Future<String>> resultList;
     private Set<String> solves;
