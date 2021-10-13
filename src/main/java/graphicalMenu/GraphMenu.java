@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GraphMenu extends JComponent implements ActionListener {
 
@@ -183,7 +184,7 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
         else if (e.getSource() == b5){
             Cube2x2 tempCube = new Cube2x2(this.cube);
-            QuickestSolve fwm = new QuickestSolve(tempCube);
+            QuickestSolve fwm = new QuickestSolve(tempCube, new AtomicInteger(12));
 
             String solveAlg = fwm.findQuickestSolve();
 

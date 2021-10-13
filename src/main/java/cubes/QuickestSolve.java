@@ -3,6 +3,7 @@ package cubes;
 import org.javatuples.Pair;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO counter delete/strip
 //TODO fix, add threads, implements callable?
@@ -17,8 +18,9 @@ public class QuickestSolve {
     private Cube2x2 cube;
     private int currentLength;
     private HashMap<Integer, HashSet<String>> movesDone;
+    private AtomicInteger atomic;
 
-    public QuickestSolve(Cube2x2 cube) {
+    public QuickestSolve(Cube2x2 cube, AtomicInteger atomicInteger) {
         this.initialCube = cube;
         this.cube = new Cube2x2(initialCube);
         currentLength = 0;
@@ -26,13 +28,14 @@ public class QuickestSolve {
         for (int i = 1; i <= GODS_NUMBER; i++) {
             movesDone.put(i, new HashSet<>());
         }
+
+        atomic = atomicInteger;
     }
 
     public String findQuickestSolve() {
         String alg = null;
-        while (GODS_NUMBER<11 && alg==null) {
+        while (GODS_NUMBER<atomic.get() && alg==null) {
             alg = solveFewestMoves();
-            System.out.println(Thread.currentThread().getName()+ " Solution for "+GODS_NUMBER+" moves: "+alg);
 
             currentLength=0;
             GODS_NUMBER++;
@@ -41,6 +44,14 @@ public class QuickestSolve {
             for (int i = 1; i <= GODS_NUMBER; i++) {
                 movesDone.put(i, new HashSet<>());
             }
+        }
+
+        if (alg!=null){
+            atomic.set(GODS_NUMBER);
+            System.out.println(Thread.currentThread().getName() + " returning solve, atomicLength is " + atomic.get() + " " + alg);
+        }
+        else {
+            System.out.println(Thread.currentThread().getName() + " returning null, atomicLength is " + atomic.get());
         }
         return Objects.requireNonNullElse(alg, "Error");
     }

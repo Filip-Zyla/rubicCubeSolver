@@ -3,6 +3,7 @@ import cubes.*;
 import graphicalMenu.GraphMenu;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO abstract class, general for cubs  or only NxNxN
 //TODO loggers everywhere, tests everywhere, change graphics
@@ -10,16 +11,10 @@ import java.util.concurrent.*;
 public class Main {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        String scramble = Algorithm.randomScramble(13,15);
+        String scramble = Algorithm.randomScramble(13, 15);
         System.out.println(scramble);
         QuickestSolveThreads quickestSolveThreads = new QuickestSolveThreads(scramble);
-        System.out.println(quickestSolveThreads.findQuickestSolutions());
-    }
-
-    private static void q() {
-        Cube2x2 cube2x2 = new Cube2x2();
-        QuickestSolve solve = new QuickestSolve(cube2x2);
-        solve.findQuickestSolve();
+        quickestSolveThreads.findQuickestSolutions();
     }
 
     private static void g(){

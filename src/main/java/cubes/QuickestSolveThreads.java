@@ -43,7 +43,7 @@ public class QuickestSolveThreads {
         for (String s : ALL_POSSIBLE_MOVES) {
             Cube2x2 cubeTemp = new Cube2x2(cube);
             cubeTemp.moveCube(s);
-            Future future = executorService.submit((Callable) () -> new QuickestSolve(cubeTemp).findQuickestSolve());
+            Future future = executorService.submit((Callable) () -> new QuickestSolve(cubeTemp, godsNumber).findQuickestSolve());
             resultList.put(s, future);
         }
 
