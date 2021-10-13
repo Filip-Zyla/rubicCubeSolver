@@ -311,4 +311,28 @@ public class Algorithm {
         rotationsTable.put("z'", "B", "B");
         return rotationsTable;
     }
+
+    public static int algLength(String alg){
+        if (!checkIsAlgProper(alg)){
+            return -1;
+        }
+        int i=0;
+        int counter = 0;
+        final int length = alg.length();
+        while (i<length){
+            if (i+1 == length){
+                counter++;
+                break;
+            }
+            if (alg.charAt(i+1)=='2' || alg.charAt(i+1)=='\''){
+                i=i+2;
+                counter++;
+            }
+            else {
+                i++;
+                counter++;
+            }
+        }
+        return counter;
+    }
 }

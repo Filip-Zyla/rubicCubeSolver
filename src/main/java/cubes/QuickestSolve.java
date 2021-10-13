@@ -32,7 +32,7 @@ public class QuickestSolve {
         String alg = null;
         while (GODS_NUMBER<11 && alg==null) {
             alg = solveFewestMoves();
-            System.out.println("Solution for "+GODS_NUMBER+" moves: "+alg);
+            System.out.println(Thread.currentThread().getName()+ " Solution for "+GODS_NUMBER+" moves: "+alg);
 
             currentLength=0;
             GODS_NUMBER++;
