@@ -13,7 +13,7 @@ public class Main {
         String scramble = Algorithm.randomScramble(13,15);
         System.out.println(scramble);
         QuickestSolveThreads quickestSolveThreads = new QuickestSolveThreads(scramble);
-        quickestSolveThreads.findBestSolutions();
+        System.out.println(quickestSolveThreads.findQuickestSolutions());
     }
 
     private static void q() {

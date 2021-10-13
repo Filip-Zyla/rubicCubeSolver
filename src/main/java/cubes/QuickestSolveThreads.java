@@ -20,19 +20,24 @@ public class QuickestSolveThreads {
 
     public QuickestSolveThreads(Cube2x2 cube2x2) {
         this.cube = cube2x2;
-        executorService = Executors.newFixedThreadPool(nThreads);
-        resultList = new HashMap<>();
-        solves = new HashSet<>();
+
     }
 
     public QuickestSolveThreads(String scramble) {
         this.cube = new Cube2x2(scramble);
+    }
+
+    public String findQuickestSolutions() throws ExecutionException, InterruptedException {
         executorService = Executors.newFixedThreadPool(nThreads);
         resultList = new HashMap<>();
         solves = new HashSet<>();
+
+        String sol = findBestSolutions();
+
+        return sol;
     }
 
-    public void findBestSolutions() throws ExecutionException, InterruptedException {
+    private String findBestSolutions() throws ExecutionException, InterruptedException {
         long start = System.currentTimeMillis();
 
         for (String s : ALL_POSSIBLE_MOVES) {
@@ -55,8 +60,10 @@ public class QuickestSolveThreads {
         }
 
         Optional optional = solves.stream().min(Comparator.comparingInt(Algorithm::algLength));
+        String sol = "Error";
         if (optional.isPresent()) {
             System.out.println("Best solution: " + optional.get());
+            sol = (String) optional.get();
         }
         else {
             System.out.println("No solution");
@@ -65,5 +72,7 @@ public class QuickestSolveThreads {
         long end = System.currentTimeMillis();
         long time = (end-start)/1000;
         System.out.println("Time is " + time);
+
+        return sol;
     }
 }
