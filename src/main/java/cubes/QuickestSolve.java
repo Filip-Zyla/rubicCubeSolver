@@ -63,7 +63,10 @@ public class QuickestSolve {
         long start = System.currentTimeMillis();
 
         while (!cube.isSolved()) {
-            if (currentLength==0 &&  movesDone.get(1).size()==9 ){
+            if(currentLength+1>=atomic.get()){
+                return null;
+            }
+            else if (currentLength==0 &&  movesDone.get(1).size()==9 ){
                 //all possible combination are checked
                 return null;
             }

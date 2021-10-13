@@ -11,6 +11,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Main {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        g();
+    }
+
+    private static void t() throws ExecutionException, InterruptedException {
         String scramble = Algorithm.randomScramble(13, 15);
         System.out.println(scramble);
         QuickestSolveThreads quickestSolveThreads = new QuickestSolveThreads(scramble);

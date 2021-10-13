@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO nThread?
 //TODO initialMove part of QuickestSolve?
-//TODO atomicInt change in threads
 public class QuickestSolveThreads {
 
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
@@ -20,7 +19,6 @@ public class QuickestSolveThreads {
 
     public QuickestSolveThreads(Cube2x2 cube2x2) {
         this.cube = cube2x2;
-
     }
 
     public QuickestSolveThreads(String scramble) {

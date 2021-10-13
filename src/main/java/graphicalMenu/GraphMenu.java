@@ -1,9 +1,7 @@
 package graphicalMenu;
 
-import cubes.Algorithm;
-import cubes.Cube2x2;
-import cubes.OrtegaSolveMethod;
-import cubes.QuickestSolve;
+import cubes.*;
+import lombok.SneakyThrows;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GraphMenu extends JComponent implements ActionListener {
 
@@ -143,6 +140,7 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
     }
 
+    @SneakyThrows
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == b1) {
             flag=false;
@@ -183,10 +181,9 @@ public class GraphMenu extends JComponent implements ActionListener {
             jta4.setText(solveAlg);
         }
         else if (e.getSource() == b5){
-            Cube2x2 tempCube = new Cube2x2(this.cube);
-            QuickestSolve fwm = new QuickestSolve(tempCube, new AtomicInteger(12));
+            QuickestSolveThreads threads = new QuickestSolveThreads(cube);
 
-            String solveAlg = fwm.findQuickestSolve();
+            String solveAlg = threads.findQuickestSolutions();
 
             animation(solveAlg);
             jta5.setText(solveAlg);
