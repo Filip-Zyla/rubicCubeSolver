@@ -5,7 +5,7 @@ import org.javatuples.Pair;
 import java.util.*;
 
 //TODO counter delete/strip
-//TODO fix, add threads
+//TODO fix, add threads, implements callable?
 //TODO change points for entropy
 //TODO GODS_NUMBER from 11 to 0, then start alg with previous solve minus its last move
 public class QuickestSolve {
@@ -85,8 +85,8 @@ public class QuickestSolve {
                 // all combinations is 9 * 6^10 = 550mln combinations, period last ~2.2, maxTime = 550*2.2=1210sec
                 final long curTime = (System.currentTimeMillis() - start) / 1000;
                 System.out.println(curTime);
-                if (curTime>60){
-                    System.out.println("Took more than minute, aborting...");
+                if (curTime>30){
+                    System.out.println("Took more than 30s, aborting...");
                     return null;
                 }
             }
