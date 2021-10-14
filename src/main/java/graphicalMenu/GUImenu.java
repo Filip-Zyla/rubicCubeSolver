@@ -13,22 +13,21 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutionException;
 
-//TODO log hisotry on right
-public class GraphMenu extends JComponent implements ActionListener {
+public class GUImenu extends JComponent implements ActionListener {
 
-    Cube2x2 cube;
-    JButton b1, b2, b3, b4, b5, b6, b0;
-    JTextArea jta2, jta3, jta4, jta5, jta6;
-    JFrame window;
-    JCheckBox cb61, cb62;
-    JSpinner spinner;
-    JLabel jl1;
-    ArrayList<JPanel> jp = new ArrayList<>();
+    private Cube2x2 cube;
+    private JButton b1, b2, b3, b4, b5, b6, b0;
+    private JTextArea jta2, jta3, jta4, jta5, jta6;
+    private JFrame window;
+    private JCheckBox cb6;
+    private JSpinner spinner;
+    private JLabel jl1;
+    private ArrayList<JPanel> jp = new ArrayList<>();
 
     private volatile boolean flag = true;
-    Thread fwmThread;
+    private Thread fwmThread;
 
-    public GraphMenu(Cube2x2 cube) {
+    public GUImenu(Cube2x2 cube) {
         this.cube = cube;
         window = new JFrame();
         window.setSize(1250, 635);
@@ -42,11 +41,11 @@ public class GraphMenu extends JComponent implements ActionListener {
         b1.addActionListener(this);
 
         spinner = new JSpinner(new SpinnerNumberModel(0.1, 0, 5, 0.1));
-        spinner.setBounds(995, 30, 50, 40);
+        spinner.setBounds(950, 30, 50, 40);
         window.add(spinner);
 
         jl1 = new JLabel("Duration of moves");
-        jl1.setBounds(1050, 30, 110, 40);
+        jl1.setBounds(1005, 30, 110, 40);
         window.add(jl1);
 
         b2 = new JButton("Scramble");
@@ -75,7 +74,7 @@ public class GraphMenu extends JComponent implements ActionListener {
         b4.addActionListener(this);
 
         jta4 = new JTextArea(2,20);
-        jta4.setBounds(950, 240, 250, 50);
+        jta4.setBounds(950, 240, 250, 40);
         jta4.setLineWrap(true);
         window.add(jta4);
 
@@ -99,15 +98,10 @@ public class GraphMenu extends JComponent implements ActionListener {
         jta6.setLineWrap(true);
         window.add(jta6);
 
-        cb61 = new JCheckBox("Optimize");
-        cb61.setBounds(950, 420, 80, 20);
-        window.add(cb61);
-        cb61.addActionListener(this);
-
-        cb62 = new JCheckBox("Rotations");
-        cb62.setBounds(1040, 420, 80, 20);
-        window.add(cb62);
-        cb62.addActionListener(this);
+        cb6 = new JCheckBox("Delete rotations");
+        cb6.setBounds(950, 420, 120, 20);
+        window.add(cb6);
+        cb6.addActionListener(this);
 
         b0 = new JButton("Exit");
         b0.setBounds(810, 520, 110, 40);
@@ -145,6 +139,13 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
     }
 
+    private void repaintCube() {
+        paintCube(cube);
+        for (JPanel jPanel : jp) {
+            jPanel.repaint();
+        }
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (fwmThread!= null && fwmThread.isAlive() && e.getSource()!=b0){
             return;
@@ -165,29 +166,22 @@ public class GraphMenu extends JComponent implements ActionListener {
         }
         else if (e.getSource() == b2) {
             String sc = Algorithm.randomScramble(15,20);
-            if (!sc.equals("") && Algorithm.checkIfProper(sc)) {
-                animation(sc);
-            }else {
-                JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
-            }
+            animation(sc);
             jta2.setText(sc);
         }
         else if (e.getSource() == b3) {
             String sc = jta3.getText();
-            if (!sc.equals("") && Algorithm.checkIfProper(sc)) {
+            if (Algorithm.checkIfProper(sc)) {
                 animation(sc);
             }else {
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         else if (e.getSource() == b4) {
-            Cube2x2 tempCube = new Cube2x2(this.cube);
-
-            OrtegaSolveMethod method = new OrtegaSolveMethod(tempCube);
+            OrtegaSolveMethod method = new OrtegaSolveMethod(cube);
             String solveAlg = method.solve();
 
             animation(solveAlg);
-
             jta4.setText(solveAlg);
         }
         else if (e.getSource() == b5){
@@ -213,28 +207,18 @@ public class GraphMenu extends JComponent implements ActionListener {
             if (!Algorithm.checkIfProper(alg)){
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
             }
-            else if(!cb61.isSelected() && !cb62.isSelected()){
-                JOptionPane.showMessageDialog(null, "Chose one of options", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
-            }
             else {
-                if (cb61.isSelected()){
-                    alg = Algorithm.optimizeAlg(alg);
-                }
-                if (cb62.isSelected()) {
+                if (cb6.isSelected()) {
                     alg = Algorithm.skipRotation(alg);
+                }
+                else {
+                    alg = Algorithm.optimizeAlg(alg);
                 }
                 jta6.setText(alg);
             }
         }
         else if (e.getSource() == b0) {
             System.exit(0);
-        }
-    }
-
-    private void repaintCube() {
-        paintCube(cube);
-        for (JPanel jPanel : jp) {
-            jPanel.repaint();
         }
     }
 
@@ -248,25 +232,29 @@ public class GraphMenu extends JComponent implements ActionListener {
             e.printStackTrace();
         }
 
-        final int finalT = T;
-        final LinkedList<String> algList = Algorithm.toList(alg);
-        flag = true;
-
-        Thread t = new Thread(() -> {
-            for (String move : algList) {
-                if (!flag){
-                    Thread.currentThread().interrupt();
-                    break;
+        if (T>0){
+            final int finalT = T;
+            final LinkedList<String> algList = Algorithm.toList(alg);
+            flag = true;
+            new Thread(() -> {
+                for (String move : algList) {
+                    if (!flag){
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                    cube.move(move);
+                    this.repaintCube();
+                    try {
+                        Thread.sleep(finalT);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-                cube.move(move);
-                this.repaintCube();
-                try {
-                    Thread.sleep(finalT);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        t.start();
+            }).start();
+        }
+        else {
+            cube.move(alg);
+            repaintCube();
+        }
     }
 }

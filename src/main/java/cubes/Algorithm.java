@@ -61,8 +61,10 @@ public class Algorithm {
     }
 
     public static boolean checkIfProper(String alg) {
-        if (alg.isEmpty())
+        if (alg.isEmpty()) {
+            System.err.println("Alg is empty");
             return false;
+        }
         String poll = "xyzUDRLFB";
         char[] array = alg.toCharArray();
         int i = 0;

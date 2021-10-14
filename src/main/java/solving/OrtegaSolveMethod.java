@@ -18,7 +18,7 @@ public class OrtegaSolveMethod {
     private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> twoWallAll = new ArrayList<>();
 
     public OrtegaSolveMethod(Cube2x2 cube2x2){
-        this.cube=cube2x2;
+        this.cube=new Cube2x2(cube2x2);
         stringBuilder = new StringBuilder();
     }
 
