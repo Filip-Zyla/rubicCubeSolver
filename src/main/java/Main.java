@@ -13,11 +13,13 @@ import java.util.concurrent.*;
 //TODO FewestMoves: solveFewestMoves and inner methods & change points for entropy or method
 //TODO FewestMoves: GODS_NUMBER from 11 to 0, then start alg with previous solve minus its last move
 //TODO history window, button, logs inside
-//TODO skipRotations: from start, recursion, "xURyF2"
 public class Main {
 
+
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        t();
+        final String alg = "zRUxDFz2U2R'y";
+        System.out.println(alg);
+        System.out.println(Algorithm.skipRotation(alg));
     }
 
     private static void t() throws ExecutionException, InterruptedException {

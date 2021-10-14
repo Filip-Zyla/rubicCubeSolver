@@ -238,12 +238,10 @@ public class Algorithm {
             return "Alg is not proper: " + alg;
         }
         LinkedList<String> algToHandle = toList(alg);
-        skipRotation(algToHandle);
-        final String join = String.join("", algToHandle);
-        return optimizeAlg(join);
+        return String.join("", skipRotation(algToHandle));
     }
 
-    private static void skipRotation(LinkedList<String> alg) {
+    private static LinkedList skipRotation(LinkedList<String> alg) {
         /**
          *      y   y'   x   x'   z   z'
          *
@@ -259,34 +257,29 @@ public class Algorithm {
          * if ' or 2 then add it
          */
         Set rotations = new HashSet<>(Arrays.asList('x', 'y', 'z'));
-        if (alg.size() < 2) {
-            return;
-        }
-        for (int i = alg.size() - 1; i >= 0; i--) {
-            if (rotations.contains(alg.get(i).charAt(0))) {
-                if (i + 1 >= alg.size()) {
-                    alg.remove(i);
-                }
-                else
-                    skipRotation(alg, i);
-            }
-        }
-    }
+        LinkedList<String> xyz = new LinkedList<>();
 
-    private static void skipRotation(LinkedList<String> alg, int i) {
-        String rotation = alg.get(i);
-        for (int j = i + 1; j < alg.size(); j++) {
-            String toReplace;
-            if (alg.get(j).length() == 2) {
-                // yR2 -> yR + 2 -> B + 2 -> B2
-                toReplace = rotationsTable.get(rotation, String.valueOf(alg.get(j).charAt(0))) + alg.get(j).charAt(1);
+        for (int i=0; i<alg.size(); i++){
+            if (rotations.contains(alg.get(i).charAt(0))){
+                xyz.add(alg.get(i));
+                alg.remove(i);
+                i--;
             }
             else {
-                toReplace = rotationsTable.get(rotation, alg.get(j));
+                for (int j=xyz.size()-1; j>=0; j--){
+                    String toReplace = alg.get(i);
+                    if (alg.get(i).length() == 2) {
+                        // yR2 -> yR + 2 -> B + 2 -> B2
+                        toReplace = rotationsTable.get(xyz.get(j), String.valueOf(toReplace.charAt(0))) + toReplace.charAt(1);
+                    }
+                    else {
+                        toReplace = rotationsTable.get(xyz.get(j), toReplace);
+                    }
+                    alg.set(i, toReplace);
+                }
             }
-            alg.set(j, toReplace);
         }
-        alg.remove(i);
+        return alg;
     }
 
     private static HashBasedTable<String, String, String> rotationsTable = createTable();
