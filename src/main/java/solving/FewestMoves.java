@@ -4,9 +4,10 @@ import cubes.Cube2x2;
 import org.javatuples.Pair;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class FewestMoves {
+public class FewestMoves implements Callable {
 
     private int GODS_NUMBER = 1;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
@@ -28,10 +29,11 @@ public class FewestMoves {
         this.actualLength = actualLength;
     }
 
-    public String findQuickestSolve() {
+    @Override
+    public String call() {
         String alg = null;
         while (GODS_NUMBER < actualLength.get() && alg == null) {
-            alg = solveFewestMoves();
+            alg = findFewestMoves();
 
             currentLength = 0;
             GODS_NUMBER++;
@@ -48,7 +50,7 @@ public class FewestMoves {
         return Objects.requireNonNullElse(alg, "Error");
     }
 
-    private String solveFewestMoves() {
+    private String findFewestMoves() {
         StringBuilder builder = new StringBuilder();
 
         long counter = 0;

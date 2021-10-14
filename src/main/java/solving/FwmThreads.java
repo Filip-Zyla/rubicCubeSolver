@@ -35,7 +35,8 @@ public class FwmThreads {
         for (String s : ALL_POSSIBLE_MOVES) {
             Cube2x2 cubeTemp = new Cube2x2(cube);
             cubeTemp.move(s);
-            Future future = executorService.submit((Callable) () -> new FewestMoves(cubeTemp, currentGodsNumber).findQuickestSolve());
+            Callable call = new FewestMoves(cubeTemp, currentGodsNumber);
+            Future future = executorService.submit(call);
             resultList.put(s, future);
         }
 
@@ -53,7 +54,7 @@ public class FwmThreads {
 
         long time = (System.currentTimeMillis()-start)/1000;
         System.out.println("Time is " + time);
-
+        executorService.shutdown();
         return solves.stream().min(Comparator.comparingInt(Algorithm::algLength)).get();
     }
 }
