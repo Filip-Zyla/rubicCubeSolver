@@ -1,7 +1,7 @@
 package graphicalMenu;
 
 import cubes.*;
-import solving.OrtegaSolveMethod;
+import solving.OrtegaMethod;
 import solving.QuickestSolveThreads;
 
 import javax.swing.*;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutionException;
 
-public class GUImenu extends JComponent implements ActionListener {
+public class GuiMenu extends JComponent implements ActionListener {
 
     private Cube2x2 cube;
     private JButton b1, b2, b3, b4, b5, b6, b0;
@@ -27,7 +27,7 @@ public class GUImenu extends JComponent implements ActionListener {
     private volatile boolean flag = true;
     private Thread fwmThread;
 
-    public GUImenu(Cube2x2 cube) {
+    public GuiMenu(Cube2x2 cube) {
         this.cube = cube;
         window = new JFrame();
         window.setSize(1250, 635);
@@ -178,7 +178,7 @@ public class GUImenu extends JComponent implements ActionListener {
             }
         }
         else if (e.getSource() == b4) {
-            OrtegaSolveMethod method = new OrtegaSolveMethod(cube);
+            OrtegaMethod method = new OrtegaMethod(cube);
             String solveAlg = method.solve();
 
             animation(solveAlg);

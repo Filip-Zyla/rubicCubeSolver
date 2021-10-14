@@ -1,6 +1,6 @@
 
 import cubes.*;
-import graphicalMenu.GUImenu;
+import graphicalMenu.GuiMenu;
 import solving.QuickestSolveThreads;
 
 import java.util.concurrent.*;
@@ -26,7 +26,7 @@ public class Main {
 
     private static void g(){
         Cube2x2 cube2x2 = new Cube2x2();
-        new GUImenu(cube2x2);
+        new GuiMenu(cube2x2);
     }
 
 }

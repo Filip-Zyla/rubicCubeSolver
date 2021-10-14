@@ -6,7 +6,7 @@ import org.javatuples.Pair;
 
 import java.util.*;
 
-public class OrtegaSolveMethod {
+public class OrtegaMethod {
 
     private Cube2x2 cube;
     private StringBuilder stringBuilder;
@@ -17,7 +17,7 @@ public class OrtegaSolveMethod {
     private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> threeWallAll = new ArrayList<>();
     private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> twoWallAll = new ArrayList<>();
 
-    public OrtegaSolveMethod(Cube2x2 cube2x2){
+    public OrtegaMethod(Cube2x2 cube2x2){
         this.cube=new Cube2x2(cube2x2);
         stringBuilder = new StringBuilder();
     }
@@ -62,7 +62,7 @@ public class OrtegaSolveMethod {
             }
         }
         else if (!fullWall.isEmpty()){
-            Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> p = getParallelWalls(fullWall);
+            Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> p = getOneParallelWall(fullWall);
             if(p!=null){
                 givenWallToDown(p.getValue0().getValue0(), p.getValue0().getValue1());
             }
@@ -72,7 +72,7 @@ public class OrtegaSolveMethod {
             }
         }
         else if (!threeWallAll.isEmpty()) {
-            Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> p = getParallelWalls(threeWallAll);
+            Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> p = getOneParallelWall(threeWallAll);
             if (p != null) {
                 givenWallToDown(p.getValue0().getValue0(), p.getValue0().getValue1());
                 int c0 = p.getValue1().getValue0();
@@ -106,7 +106,7 @@ public class OrtegaSolveMethod {
             }
         }
         else if (!twoWallAll.isEmpty()) {
-            Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> p1 = getSimilarWalls(twoWallAll);
+            Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> p1 = getOneSimilarWall(twoWallAll);
             if (p1 != null && twoWallAll.size() > 1) {
                 Optional<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> pOpt = twoWallAll.stream().filter(pf1 -> !pf1.equals(p1) && pf1.getValue1() == p1.getValue1()).findFirst();
                 if (pOpt.isPresent()) {
@@ -261,7 +261,7 @@ public class OrtegaSolveMethod {
         }
     }
 
-    private Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> getParallelWalls(List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> list){
+    private Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> getOneParallelWall(List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> list){
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.size(); j++) {
                 if (i!=j && list.get(i).getValue1() == list.get(j).getValue1()){
@@ -278,7 +278,7 @@ public class OrtegaSolveMethod {
         return null;
     }
 
-    private Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> getSimilarWalls(List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> list){
+    private Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> getOneSimilarWall(List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> list){
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.size(); j++) {
                 if (i!=j && list.get(i).getValue1() == list.get(j).getValue1()){
@@ -290,15 +290,9 @@ public class OrtegaSolveMethod {
     }
 
     private void connectTwoDoubles(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, Pair<Integer, Integer> c) {
-        boolean areParallel = false;
-        boolean atLeastOneIsOnTopOrDown = false;
 
-        if ( (p1.getValue0()+p2.getValue0())%4==0 && (p1.getValue1()+p2.getValue1())%4==0 ){
-            areParallel = true;
-        }
-        if (p1.equals(new Pair<>(2, 6)) || p2.equals(new Pair<>(2, 6)) || p1.equals(new Pair<>(2, 2)) || p2.equals(new Pair<>(2, 2))){
-            atLeastOneIsOnTopOrDown = true;
-        }
+        boolean areParallel = areParallel(p1, p2);
+        boolean atLeastOneIsOnTopOrDown = isAtLeastOneOnTopDown(p1, p2);
 
         HashSet<Integer> colors = new HashSet<>();
         colors.add(c.getValue0());
@@ -413,6 +407,14 @@ public class OrtegaSolveMethod {
         }
     }
 
+    private boolean isAtLeastOneOnTopDown(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2) {
+        return p1.equals(new Pair<>(2, 6)) || p2.equals(new Pair<>(2, 6)) || p1.equals(new Pair<>(2, 2)) || p2.equals(new Pair<>(2, 2));
+    }
+
+    private boolean areParallel(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2) {
+        return (p1.getValue0() + p2.getValue0()) % 4 == 0 && (p1.getValue1() + p2.getValue1()) % 4 == 0;
+    }
+
     private boolean isWallUniColor(int x, int y) {
         return cube.getArray()[x][y] == cube.getArray()[x + 1][y + 1] && cube.getArray()[x + 1][y] == cube.getArray()[x][y + 1] && cube.getArray()[x][y] == cube.getArray()[x][y + 1];
     }
@@ -468,13 +470,12 @@ public class OrtegaSolveMethod {
         final String OLL_UP_A_COUNTER = "RUR'URU2R'";   //up on front-left
         final String OLL_UP_A_CLOCK = "RU2R'U'RU'R'";   //up on back-right
 
-        List<Integer> topStickers = Arrays.asList(cube.getArray()[2][2], cube.getArray()[2][3], cube.getArray()[3][2], cube.getArray()[3][3]);
-
         Set s = new HashSet<Integer>();
         s.add(c0);
         s.add(c1);
         s.add(5-c0); //in case if two first are the same, what might result in infinite loop
 
+        List<Integer> topStickers = Arrays.asList(cube.getArray()[2][2], cube.getArray()[2][3], cube.getArray()[3][2], cube.getArray()[3][3]);
         long countUp = topStickers.stream().filter(s::contains).count();
 
         if (countUp == 4){
@@ -588,7 +589,7 @@ public class OrtegaSolveMethod {
         final String OBL_Y_DOWN_T_UP_OPP = "R2DR2DR2";   //are left-fronts opposite
         final String OBL_Y_DOWN_T_UP_SAME = "R2D'R2D'R2";   //are left-fronts same
 
-        int posColor = cube.getArray()[2][6];
+        int posColor = cube.getArray()[3][7];
         int check = 0;
         for (int i = 2; i < 4; i++) {
             for (int j = 2; j < 4; j++) {
@@ -757,7 +758,7 @@ public class OrtegaSolveMethod {
     }
 
     private boolean isWall_Y_Perm(int y) {
-        // up and down only, y matters!
+        // up and down, only y matters!
         if (y == 2) {
             return cube.getArray()[2][1] + cube.getArray()[3][1] == cube.getArray()[2][4] + cube.getArray()[3][4];
         }
@@ -768,7 +769,7 @@ public class OrtegaSolveMethod {
     }
 
     private boolean isWallPermute(int y) {
-        // up and down only, y matters!
+        // up and down, only y matters!
         if (y == 2) {
             return cube.getArray()[2][1] == cube.getArray()[3][1] && cube.getArray()[2][4] == cube.getArray()[3][4];
         }
