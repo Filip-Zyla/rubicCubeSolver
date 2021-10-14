@@ -6,10 +6,7 @@ import org.javatuples.Pair;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//TODO counter delete/strip
-//TODO fix, add threads, implements callable?, change points for entropy
-//TODO GODS_NUMBER from 11 to 0, then start alg with previous solve minus its last move
-public class QuickestSolve {
+public class FewestMoves {
 
     private int GODS_NUMBER = 1;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
@@ -18,26 +15,25 @@ public class QuickestSolve {
     private Cube2x2 cube;
     private int currentLength;
     private HashMap<Integer, HashSet<String>> movesDone;
-    private AtomicInteger atomic;
+    private AtomicInteger actualLength;
 
-    public QuickestSolve(Cube2x2 cube, AtomicInteger atomicInteger) {
+    public FewestMoves(Cube2x2 cube, AtomicInteger actualLength) {
         this.initialCube = cube;
-        this.cube = new Cube2x2(initialCube);
+        this.cube = new Cube2x2(cube);
         currentLength = 0;
         movesDone = new HashMap<>();
         for (int i = 1; i <= GODS_NUMBER; i++) {
             movesDone.put(i, new HashSet<>());
         }
-
-        atomic = atomicInteger;
+        this.actualLength = actualLength;
     }
 
     public String findQuickestSolve() {
         String alg = null;
-        while (GODS_NUMBER<atomic.get() && alg==null) {
+        while (GODS_NUMBER < actualLength.get() && alg == null) {
             alg = solveFewestMoves();
 
-            currentLength=0;
+            currentLength = 0;
             GODS_NUMBER++;
             cube = new Cube2x2(initialCube);
             movesDone.clear();
@@ -46,13 +42,9 @@ public class QuickestSolve {
             }
         }
 
-        if (alg!=null){
-            atomic.set(GODS_NUMBER);
-            System.out.println(Thread.currentThread().getName() + " returning solve, atomicLength is " + atomic.get() + " " + alg);
-        }
-        else {
-            System.out.println(Thread.currentThread().getName() + " returning null, atomicLength is " + atomic.get());
-        }
+        actualLength.set(GODS_NUMBER);
+        System.out.println(Thread.currentThread().getName() + " atomicLength is, alg: " + actualLength.get() + " " + alg);
+
         return Objects.requireNonNullElse(alg, "Error");
     }
 
@@ -63,10 +55,10 @@ public class QuickestSolve {
         long start = System.currentTimeMillis();
 
         while (!cube.isSolved()) {
-            if(currentLength+1>=atomic.get()){
+            if (currentLength + 1 >= actualLength.get()) {
                 return null;
             }
-            else if (currentLength==0 &&  movesDone.get(1).size()==9 ){
+            else if (currentLength == 0 && movesDone.get(1).size() == 9) {
                 //all possible combination are checked
                 return null;
             }
@@ -99,7 +91,7 @@ public class QuickestSolve {
                 // all combinations is 9 * 6^10 = 550mln combinations, period last ~2.2, maxTime = 550*2.2=1210sec
                 final long curTime = (System.currentTimeMillis() - start) / 1000;
                 System.out.println(curTime);
-                if (curTime>30){
+                if (curTime > 30) {
                     System.out.println("Took more than 30s, aborting...");
                     return null;
                 }
@@ -113,7 +105,8 @@ public class QuickestSolve {
         if (!Character.isLetter(builder.charAt(lastIndex))) {
             reverseMove(builder.substring(lastIndex - 1));
             builder.delete(lastIndex - 1, lastIndex + 1);
-        } else {
+        }
+        else {
             reverseMove(builder.substring(lastIndex));
             builder.deleteCharAt(lastIndex);
         }
@@ -124,9 +117,11 @@ public class QuickestSolve {
          * rev is move that have been done
          */
         if (rev.contains("2")) {
-        } else if (rev.contains("'")) {
+        }
+        else if (rev.contains("'")) {
             rev = rev.substring(0, 1);
-        } else {
+        }
+        else {
             rev += "'";
         }
         cube.move(rev);
@@ -140,7 +135,7 @@ public class QuickestSolve {
             if (movesDone.get(currentLength + 1).contains(m)) {
                 // if move already done
             }
-            else if (!end.equals("") && m.charAt(0)==end.charAt(0)) {
+            else if (!end.equals("") && m.charAt(0) == end.charAt(0)) {
                 // if are like or R - R2 etc.
             }
             else {
@@ -159,9 +154,11 @@ public class QuickestSolve {
     private String getLastMove(String alg) {
         if (alg.length() == 0) {
             return "";
-        } else if (alg.endsWith("'") || alg.endsWith("2")) {
+        }
+        else if (alg.endsWith("'") || alg.endsWith("2")) {
             return alg.substring(alg.length() - 2);
-        } else
+        }
+        else
             return alg.substring(alg.length() - 1);
     }
 
@@ -205,19 +202,24 @@ public class QuickestSolve {
 
                 if (numOfStickersC0.size() == 4 || numOfStickersC1.size() == 4) {
                     entropy += 6; // fullWallUni
-                } else if (numOfStickersC0.size() == 3 || numOfStickersC1.size() == 3) {
+                }
+                else if (numOfStickersC0.size() == 3 || numOfStickersC1.size() == 3) {
                     entropy += 3; // threeWallUni
                 }
                 if (numOfStickers.size() == 4) {
                     entropy += 3; // fullWall
-                } else if (numOfStickers.size() == 3) {
+                }
+                else if (numOfStickers.size() == 3) {
                     entropy += 2; // threeWall
-                } else if (numOfStickers.size() == 2 && Math.abs(numOfStickers.get(0) - numOfStickers.get(1)) != 2) {
+                }
+                else if (numOfStickers.size() == 2 && Math.abs(numOfStickers.get(0) - numOfStickers.get(1)) != 2) {
                     if (wall[numOfStickers.get(0)] == c0 && wall[numOfStickers.get(1)] == c0) {
                         entropy += 4; // twoWallUni
-                    } else if (wall[numOfStickers.get(0)] == c1 && wall[numOfStickers.get(1)] == c1) {
+                    }
+                    else if (wall[numOfStickers.get(0)] == c1 && wall[numOfStickers.get(1)] == c1) {
                         entropy += 4; // twoWallUni
-                    } else {
+                    }
+                    else {
                         entropy += 1; // twoWall
                     }
                 }

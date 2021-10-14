@@ -2,7 +2,7 @@ package graphicalMenu;
 
 import cubes.*;
 import solving.OrtegaMethod;
-import solving.QuickestSolveThreads;
+import solving.FwmThreads;
 
 import javax.swing.*;
 import java.awt.*;
@@ -188,10 +188,10 @@ public class GuiMenu extends JComponent implements ActionListener {
             jta5.setText("Computing...");
 
             fwmThread = new Thread(() -> {
-                QuickestSolveThreads threads = new QuickestSolveThreads(cube);
+                FwmThreads threads = new FwmThreads(cube);
                 String solveAlg;
                 try {
-                    solveAlg = threads.findQuickestSolutions();
+                    solveAlg = threads.fewestMoves();
                     animation(solveAlg);
                     jta5.setText(solveAlg);
                 } catch (ExecutionException | InterruptedException ex) {
