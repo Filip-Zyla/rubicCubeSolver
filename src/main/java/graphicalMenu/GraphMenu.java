@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutionException;
 
+//TODO log hisotry on right
 public class GraphMenu extends JComponent implements ActionListener {
 
     Cube2x2 cube;
@@ -257,7 +258,7 @@ public class GraphMenu extends JComponent implements ActionListener {
                     Thread.currentThread().interrupt();
                     break;
                 }
-                cube.moveCube(move);
+                cube.move(move);
                 this.repaintCube();
                 try {
                     Thread.sleep(finalT);

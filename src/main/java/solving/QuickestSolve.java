@@ -88,7 +88,7 @@ public class QuickestSolve {
             else {
                 String curMove = getMoveWitheBestEntropy(builder.toString());
 
-                cube.moveCube(curMove);
+                cube.move(curMove);
                 builder.append(curMove);
                 currentLength++;
                 movesDone.get(currentLength).add(curMove);
@@ -129,7 +129,7 @@ public class QuickestSolve {
         } else {
             rev += "'";
         }
-        cube.moveCube(rev);
+        cube.move(rev);
     }
 
     private String getMoveWitheBestEntropy(String alg) {
@@ -144,7 +144,7 @@ public class QuickestSolve {
                 // if are like or R - R2 etc.
             }
             else {
-                cube.moveCube(m);
+                cube.move(m);
                 int curE = calculateEntropy(cube);
                 if (curE > entropy) {
                     entropy = curE;

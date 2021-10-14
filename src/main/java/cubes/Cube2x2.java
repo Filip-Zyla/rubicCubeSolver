@@ -10,7 +10,6 @@ import java.util.*;
 @Setter
 public class Cube2x2 implements moveOneWallInterface, rotateInterface {
 
-    private final int NUMBER_OF_WALLS = 6;
     private final int DEGREE_OF_CUBE = 2;
     private final int HEIGHT = DEGREE_OF_CUBE * 3;
     private final int WIDTH = DEGREE_OF_CUBE * 4;
@@ -21,12 +20,13 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
      * white=0 yellow=5
      * red=1 orange=4
      * blue=2 green=3
-     * 4 4
-     * 4 4
+     * black = 9/-
+     * - -  4 4  - -  - -
+     * - -  4 4  - -  - -
      * 3 3  0 0  2 2  5 5
      * 3 3  0 0  2 2  5 5
-     * 1 1
-     * 1 1
+     * - -  1 1  - -  - -
+     * - -  1 1  - -  - -
      */
 
     public Cube2x2() {
@@ -37,13 +37,13 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
     public Cube2x2(String scramble) {
         array = new int[HEIGHT][WIDTH];
         paintCube();
-        this.moveCube(scramble);
+        move(scramble);
     }
 
     public Cube2x2(Cube2x2 cube) {
-        array = new int[HEIGHT][WIDTH];
+        this.array = new int[HEIGHT][WIDTH];
         for (int i = 0; i < cube.getArray().length; i++) {
-            array[i] = Arrays.copyOf(cube.getArray()[i], cube.getArray()[i].length);
+            this.array[i] = Arrays.copyOf(cube.getArray()[i], cube.getArray()[i].length);
         }
     }
 
@@ -90,7 +90,8 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o)
+            return true;
         if (o == null || getClass() != o.getClass())
             return false;
         Cube2x2 cube = (Cube2x2) o;
@@ -98,40 +99,43 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
     }
 
     public boolean isSolved() {
-        if (this.array[2][2] != this.array[2][3] || this.array[3][2] != this.array[3][3] || this.array[2][2] != this.array[3][3])
+        if (array[2][2] != array[2][3] || array[3][2] != array[3][3] || array[2][2] != array[3][3])
             return false;
-        if (this.array[2][4] != this.array[2][5] || this.array[3][4] != this.array[3][5] || this.array[2][4] != this.array[3][5])
+        if (array[2][4] != array[2][5] || array[3][4] != array[3][5] || array[2][4] != array[3][5])
             return false;
-        if (this.array[4][2] != this.array[4][3] || this.array[5][2] != this.array[5][3] || this.array[4][2] != this.array[5][3])
+        if (array[4][2] != array[4][3] || array[5][2] != array[5][3] || array[4][2] != array[5][3])
             return false;
         return true;
     }
 
-    public boolean moveCube(String alg) {
+    public boolean move(String alg) {
         if (!Algorithm.checkIfProper(alg)) {
             return false;
         }
 
         char[] array = alg.toCharArray();
         int index = 0;
-        while (index < array.length) {
-            if (index + 1 < array.length && Character.isDigit(array[index + 1])) {
+        final int length = array.length - 1;
+        while (index < length) {
+            if (array[index + 1] == 50) {
                 // double move
-                moveOneWall(array[index], Character.getNumericValue(array[index + 1]));
+                moveOneWall(array[index], 2);
+                index += 2;
+            }
+            else if ( array[index + 1] == 39) {
+                // counter clockwise
+                moveOneWall(array[index], -1);
                 index += 2;
             }
             else {
-                if (index + 1 < array.length && array[index + 1] == 39) {
-                    // counter clockwise
-                    moveOneWall(array[index], -1);
-                    index += 2;
-                }
-                else {
-                    // clockwise
-                    moveOneWall(array[index], 1);
-                    index += 1;
-                }
+                // clockwise
+                moveOneWall(array[index], 1);
+                index += 1;
             }
+        }
+        if (index == length){
+            // avoid checking index of possible 2/' OutOfBound...
+            moveOneWall(array[index], 1);
         }
         return true;
     }
@@ -168,7 +172,8 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
             }
             else {
                 moveDoubleU();
-            }        }
+            }
+        }
         else if (wall == 'D') {
             if (rotate == 1) {
                 moveNormalD();
@@ -178,7 +183,8 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
             }
             else {
                 moveDoubleD();
-            }        }
+            }
+        }
         else if (wall == 'F') {
             if (rotate == 1) {
                 moveNormalF();
@@ -188,7 +194,8 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
             }
             else {
                 moveDoubleF();
-            }        }
+            }
+        }
         else if (wall == 'B') {
             if (rotate == 1) {
                 moveNormalB();
@@ -198,19 +205,20 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
             }
             else {
                 moveDoubleB();
-            }        }
+            }
+        }
         else if (wall == 'x') {
-            this.rotateX(rotate);
+            rotateX(rotate);
         }
         else if (wall == 'y') {
-            this.rotateY(rotate);
+            rotateY(rotate);
         }
         else if (wall == 'z') {
-            this.rotateZ(rotate);
+            rotateZ(rotate);
         }
     }
 
-    //move methods
+    // ========== move methods ==========
     @Override
     public void moveNormalU() {
         int temp;
@@ -232,6 +240,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[4][3] = array[2][4];
         array[2][4] = temp;
     }
+
     @Override
     public void moveCounterU() {
         int temp;
@@ -251,8 +260,9 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[1][2] = array[2][4];
         array[2][4] = array[4][3];
         array[4][3] = array[3][1];
-        array[3][1] =temp;
+        array[3][1] = temp;
     }
+
     @Override
     public void moveDoubleU() {
         int temp;
@@ -299,6 +309,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[5][2] = array[2][0];
         array[2][0] = temp;
     }
+
     @Override
     public void moveCounterD() {
         int temp;
@@ -320,6 +331,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[5][2] = array[3][5];
         array[3][5] = temp;
     }
+
     @Override
     public void moveDoubleD() {
         int temp;
@@ -367,6 +379,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[2][6] = array[1][3];
         array[1][3] = temp;
     }
+
     @Override
     public void moveCounterR() {
         int temp;
@@ -388,6 +401,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[2][6] = array[5][3];
         array[5][3] = temp;
     }
+
     @Override
     public void moveDoubleR() {
         int temp;
@@ -434,6 +448,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[3][7] = array[4][2];
         array[4][2] = temp;
     }
+
     @Override
     public void moveCounterL() {
         int temp;
@@ -455,6 +470,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[3][7] = array[0][2];
         array[0][2] = temp;
     }
+
     @Override
     public void moveDoubleL() {
         int temp;
@@ -501,6 +517,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[3][6] = array[3][4];
         array[3][4] = temp;
     }
+
     @Override
     public void moveCounterF() {
         int temp;
@@ -522,6 +539,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[3][6] = array[3][0];
         array[3][0] = temp;
     }
+
     @Override
     public void moveDoubleF() {
         int temp;
@@ -568,6 +586,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[2][7] = array[2][1];
         array[2][1] = temp;
     }
+
     @Override
     public void moveCounterB() {
         int temp;
@@ -589,6 +608,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         array[2][7] = array[2][5];
         array[2][5] = temp;
     }
+
     @Override
     public void moveDoubleB() {
         int temp;
@@ -602,7 +622,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         temp = array[2][4];
         array[2][4] = array[2][0];
         array[2][0] = temp;
-        temp  = array[2][6];
+        temp = array[2][6];
         array[2][6] = array[2][2];
         array[2][2] = temp;
 
@@ -629,6 +649,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
             moveDoubleL();
         }
     }
+
     @Override
     public void rotateY(int rotate) {
         if (rotate == 1) {
@@ -644,6 +665,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
             moveDoubleD();
         }
     }
+
     @Override
     public void rotateZ(int rotate) {
         if (rotate == 1) {
@@ -659,4 +681,5 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
             moveDoubleB();
         }
     }
+    // ======== move methods END ========
 }
