@@ -9,7 +9,7 @@ public class HistoryFile {
     private final static String fileName = "history.txt";
 
     public static void createFile(){
-        Path path = Paths.get("src/main/resources/"+fileName);
+        Path path = Paths.get(fileName);
         File file = new File(path.toString());
         if (file.exists()){
             file.delete();
@@ -23,7 +23,7 @@ public class HistoryFile {
     }
 
     public static void saveToHistory(String s) {
-        File file = new File("src/main/resources/"+fileName);
+        File file = new File(fileName);
 
         FileWriter fileWriter = null;
         try {
@@ -40,7 +40,7 @@ public class HistoryFile {
     }
 
     public static String printHistory() {
-        File file = new File("src/main/resources/"+fileName);
+        File file = new File(fileName);
 
         StringBuffer stringBuffer = new StringBuffer();
         BufferedReader bufferedReader = null;
