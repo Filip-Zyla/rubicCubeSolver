@@ -1,6 +1,8 @@
 package cubes;
 
 import com.google.common.collect.HashBasedTable;
+import files.HistoryFile;
+
 import java.util.*;
 
 public class Algorithm {
@@ -65,7 +67,6 @@ public class Algorithm {
 
     public static boolean checkIfProper(String alg) {
         if (alg.isEmpty()) {
-            System.err.println("Alg is empty");
             return false;
         }
         String poll = "xyzUDRLFB";
@@ -73,7 +74,7 @@ public class Algorithm {
         int i = 0;
         while (i < array.length) {
             if (poll.indexOf(array[i]) == -1) {
-                System.err.println("Char \"" + array[i] + "\" at index " + i + " cannot be in alg");
+                HistoryFile.saveToHistory("Char \"" + array[i] + "\" at index " + i + " cannot be in alg: " + alg);
                 return false;
             }
             else if (i + 1 < array.length && (array[i + 1] == 39 || array[i + 1] == 50)) {
@@ -81,7 +82,6 @@ public class Algorithm {
             }
             else i++;
         }
-
         return true;
     }
 

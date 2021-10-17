@@ -1,5 +1,6 @@
 
 import cubes.*;
+import files.HistoryFile;
 import graphicalMenu.GuiMenu;
 import solving.FwmThreads;
 
@@ -10,9 +11,10 @@ import java.util.concurrent.*;
 //TODO Fwm's: delete? counters, timers and sout's
 //TODO FwmThreads: nThreads
 //TODO FewestMoves: solveFewestMoves and inner methods & change points for entropy or method
-//TODO history window, button, logs inside
 public class Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        HistoryFile.createFile();
+        g();
     }
 
     private static void t() throws ExecutionException, InterruptedException {

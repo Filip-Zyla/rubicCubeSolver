@@ -1,6 +1,7 @@
 package graphicalMenu;
 
 import cubes.*;
+import files.HistoryFile;
 import solving.OrtegaMethod;
 import solving.FwmThreads;
 
@@ -16,9 +17,9 @@ import java.util.concurrent.ExecutionException;
 public class GuiMenu extends JComponent implements ActionListener {
 
     private Cube2x2 cube;
-    private JButton b1, b2, b3, b4, b5, b6, b0;
-    private JTextArea jta2, jta3, jta4, jta5, jta6;
-    private JFrame window;
+    private JButton b1, b2, b3, b4, b5, b6, b7, b0;
+    private JTextArea jta2, jta3, jta4, jta5, jta6, historyArea;
+    private JFrame window, history;
     private JCheckBox cb6;
     private JSpinner spinner;
     private JLabel jl1;
@@ -31,7 +32,7 @@ public class GuiMenu extends JComponent implements ActionListener {
         this.cube = cube;
         window = new JFrame();
         window.setSize(1250, 635);
-        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         paintCube(cube);
 
@@ -103,6 +104,11 @@ public class GuiMenu extends JComponent implements ActionListener {
         window.add(cb6);
         cb6.addActionListener(this);
 
+        b7 = new JButton("History");
+        b7.setBounds(810, 450, 110, 40);
+        window.add(b7);
+        b7.addActionListener(this);
+
         b0 = new JButton("Exit");
         b0.setBounds(810, 520, 110, 40);
         window.add(b0);
@@ -163,16 +169,19 @@ public class GuiMenu extends JComponent implements ActionListener {
             jta4.setText(null);
             jta5.setText(null);
             jta6.setText(null);
+            HistoryFile.saveToHistory("Reset program");
         }
         else if (e.getSource() == b2) {
             String sc = Algorithm.randomScramble(15,20);
             animation(sc);
             jta2.setText(sc);
+            HistoryFile.saveToHistory("Scramble: "+sc);
         }
         else if (e.getSource() == b3) {
             String sc = jta3.getText();
             if (Algorithm.checkIfProper(sc)) {
                 animation(sc);
+                HistoryFile.saveToHistory("Move: "+sc);
             }else {
                 JOptionPane.showMessageDialog(null, "Not proper alg", "Warning: ", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -182,6 +191,7 @@ public class GuiMenu extends JComponent implements ActionListener {
             String solveAlg = method.solve();
 
             animation(solveAlg);
+            HistoryFile.saveToHistory("Ortega solve: "+solveAlg);
             jta4.setText(solveAlg);
         }
         else if (e.getSource() == b5){
@@ -193,6 +203,7 @@ public class GuiMenu extends JComponent implements ActionListener {
                 try {
                     solveAlg = threads.fewestMoves();
                     animation(solveAlg);
+                    HistoryFile.saveToHistory("FWM: "+solveAlg);
                     jta5.setText(solveAlg);
                 } catch (ExecutionException | InterruptedException ex) {
                     ex.printStackTrace();
@@ -214,8 +225,22 @@ public class GuiMenu extends JComponent implements ActionListener {
                 else {
                     alg = Algorithm.optimizeAlg(alg);
                 }
+                HistoryFile.saveToHistory("Optimize: "+alg);
                 jta6.setText(alg);
             }
+        }
+        else if (e.getSource() == b7){
+            history = new JFrame();
+            history.setSize(400, 500);
+            history.setLocation(500,100);
+            history.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            history.setVisible(true);
+
+            historyArea = new JTextArea();
+            historyArea.setLineWrap(true);
+            historyArea.setVisible(true);
+            history.add(historyArea);
+            historyArea.setText(HistoryFile.printHistory());
         }
         else if (e.getSource() == b0) {
             System.exit(0);
