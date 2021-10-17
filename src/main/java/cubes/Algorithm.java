@@ -6,6 +6,9 @@ import java.util.*;
 public class Algorithm {
 
     public static String randomScramble(int min, int max) {
+        if (max<min){
+            return "";
+        }
         final String POLL_ALL = "URFDLB";
         final String POLL_U_D = "RFLB";
         final String POLL_R_L = "UFDB";
