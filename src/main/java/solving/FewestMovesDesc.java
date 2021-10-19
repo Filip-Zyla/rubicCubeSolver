@@ -7,33 +7,33 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//TODO is 9 0 0 0 all moves???
-public class ThreadDesc   {
+public class FewestMovesDesc implements Callable {
 
-    private int GODS_NUMBER = 11;
+    private int GODS_NUMBER = 10;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
 
-    private final Cube2x2 initialCube;
     private Cube2x2 cube;
     private int currentLength;
     private HashMap<Integer, HashSet<String>> movesDone;
+    private AtomicInteger actualLength;
     StringBuilder builder = new StringBuilder();
 
-    public ThreadDesc(Cube2x2 cube) {
-        this.initialCube = cube;
+    public FewestMovesDesc(Cube2x2 cube, AtomicInteger actualLength) {
         this.cube = new Cube2x2(cube);
         currentLength = 0;
         movesDone = new HashMap<>();
         for (int i = 1; i <= GODS_NUMBER; i++) {
             movesDone.put(i, new HashSet<>());
         }
+        this.actualLength = actualLength;
     }
 
-    public String solve() {
+    @Override
+    public String call() {
         String alg = null;
-        while (GODS_NUMBER>0) {
+        while (GODS_NUMBER < actualLength.get() && GODS_NUMBER>0) {
             String tempAlg = findFewestMoves();
-            System.out.println("Ending at length " + GODS_NUMBER + ", alg is " + alg);
+            System.out.println("Ending at length " + GODS_NUMBER + ", alg is " + tempAlg);
             for (int i=1; i<=movesDone.size(); i++){
                 System.out.print(movesDone.get(i).size() + " ");
             }
@@ -48,6 +48,10 @@ public class ThreadDesc   {
             movesDone.remove(GODS_NUMBER);
             GODS_NUMBER--;
         }
+
+        actualLength.set(GODS_NUMBER);
+        System.out.println(Thread.currentThread().getName() + " atomicLength is, alg: " + actualLength.get() + " " + alg);
+
         return Objects.requireNonNullElse(alg, "Error");
     }
 
@@ -57,7 +61,10 @@ public class ThreadDesc   {
         long start = System.currentTimeMillis();
 
         while (!cube.isSolved()) {
-            if (currentLength == 0 && movesDone.get(1).size() == 9) {
+            if (currentLength + 1 > actualLength.get()) {
+                return null;
+            }
+            else if (currentLength == 0 && movesDone.get(1).size() == 9) {
                 //all possible combination are checked
                 return null;
             }

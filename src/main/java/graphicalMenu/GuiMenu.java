@@ -198,7 +198,7 @@ public class GuiMenu extends JComponent implements ActionListener {
             jta5.setText("Computing...");
 
             fwmThread = new Thread(() -> {
-                FwmThreads threads = new FwmThreads(cube);
+                FwmThreads threads = new FwmThreads(cube, 4);
                 String solveAlg;
                 try {
                     solveAlg = threads.fewestMoves();
