@@ -9,8 +9,8 @@ import solving.FwmThreadsDesc;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//TODO another cubes nxn, pyraminx, square-1
 //TODO tests
-//TODO Cube2x2: abstract class, general for cubs  or only NxNxN
 //TODO Fwm's: delete? counters, timers and sout's
 //TODO FwmThreads: nThreads
 //TODO FewestMoves: solveFewestMoves and inner methods & change points for entropy or method
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 //TODO is 9 0 0 0 all moves???
 public class Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        tDesc();
+        g();
     }
 
     private static void tDesc() {

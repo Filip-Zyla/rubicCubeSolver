@@ -1,6 +1,6 @@
 package moveInterfaces;
 
-public interface moveOneWallInterface {
+public interface MoveOneWallInterface {
 
     void moveNormalU();
     void moveCounterU();

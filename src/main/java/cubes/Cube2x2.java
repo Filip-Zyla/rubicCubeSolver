@@ -1,20 +1,11 @@
 package cubes;
 
 import lombok.*;
-import moveInterfaces.moveOneWallInterface;
-import moveInterfaces.rotateInterface;
-
 import java.util.*;
 
 @Getter
 @Setter
-public class Cube2x2 implements moveOneWallInterface, rotateInterface {
-
-    private final int DEGREE_OF_CUBE = 2;
-    private final int HEIGHT = DEGREE_OF_CUBE * 3;
-    private final int WIDTH = DEGREE_OF_CUBE * 4;
-
-    private int[][] array;
+public class Cube2x2 extends Cube {
 
     /**
      * white=0 yellow=5
@@ -30,49 +21,15 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
      */
 
     public Cube2x2() {
-        array = new int[HEIGHT][WIDTH];
-        paintCube();
+        super();
     }
 
     public Cube2x2(String scramble) {
-        array = new int[HEIGHT][WIDTH];
-        paintCube();
-        move(scramble);
+        super(scramble);
     }
 
     public Cube2x2(Cube2x2 cube) {
-        this.array = new int[HEIGHT][WIDTH];
-        for (int i = 0; i < cube.getArray().length; i++) {
-            this.array[i] = Arrays.copyOf(cube.getArray()[i], cube.getArray()[i].length);
-        }
-    }
-
-    private void paintCube() {
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
-                if ((i < DEGREE_OF_CUBE || i >= DEGREE_OF_CUBE * 2) && (j < DEGREE_OF_CUBE || j >= DEGREE_OF_CUBE * 2)) {
-                    array[i][j] = 9;
-                }
-                else if (i < DEGREE_OF_CUBE) {
-                    array[i][j] = 4;
-                }
-                else if (i >= DEGREE_OF_CUBE * 2) {
-                    array[i][j] = 1;
-                }
-                else if (j < DEGREE_OF_CUBE) {
-                    array[i][j] = 3;
-                }
-                else if (j < DEGREE_OF_CUBE * 2) {
-                    array[i][j] = 0;
-                }
-                else if (j < DEGREE_OF_CUBE * 3) {
-                    array[i][j] = 2;
-                }
-                else {
-                    array[i][j] = 5;
-                }
-            }
-        }
+        super(cube);
     }
 
     @Override
@@ -98,6 +55,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         return Arrays.equals(this.array, cube.array);
     }
 
+    @Override
     public boolean isSolved() {
         if (array[2][2] != array[2][3] || array[3][2] != array[3][3] || array[2][2] != array[3][3])
             return false;
@@ -108,6 +66,7 @@ public class Cube2x2 implements moveOneWallInterface, rotateInterface {
         return true;
     }
 
+    @Override
     public boolean move(String alg) {
         if (!Algorithm.checkIfProper(alg)) {
             return false;

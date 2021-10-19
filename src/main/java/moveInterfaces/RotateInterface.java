@@ -1,6 +1,6 @@
 package moveInterfaces;
 
-public interface rotateInterface {
+public interface RotateInterface {
 
     void rotateX(int rotate);
     void rotateY(int rotate);
