@@ -7,64 +7,58 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class FewestMoves implements Callable {
+public class FewestMovesAsc implements Callable {
 
-    private int GODS_NUMBER = 1;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
 
     private final Cube2x2 initialCube;
-    private Cube2x2 cube;
+    private Cube2x2 tempCube;
+    private int godsNumber = 1;
     private int currentLength;
     private HashMap<Integer, HashSet<String>> movesDone;
-    private AtomicInteger actualLength;
+    private AtomicInteger expectedLength; // of whole alg, with initial move
 
-    public FewestMoves(Cube2x2 cube, AtomicInteger actualLength) {
+    FewestMovesAsc(Cube2x2 cube, AtomicInteger expectedLength) {
+        this.tempCube = new Cube2x2(cube);
         this.initialCube = cube;
-        this.cube = new Cube2x2(cube);
         currentLength = 0;
         movesDone = new HashMap<>();
-        for (int i = 1; i <= GODS_NUMBER; i++) {
-            movesDone.put(i, new HashSet<>());
-        }
-        this.actualLength = actualLength;
+        movesDone.put(1, new HashSet<>());
+        this.expectedLength = expectedLength;
     }
 
     @Override
     public String call() {
         String alg = null;
-        while (GODS_NUMBER < actualLength.get() && alg == null) {
+        while (godsNumber < expectedLength.get() && alg == null) {
             alg = findFewestMoves();
-
+            //System.out.println("ASC= godsN: " + godsNumber + ", expL: "+expectedLength.get()+" alg: " + alg);
             currentLength = 0;
-            GODS_NUMBER++;
-            cube = new Cube2x2(initialCube);
+            godsNumber++;
+            tempCube = new Cube2x2(initialCube);
             movesDone.clear();
-            for (int i = 1; i <= GODS_NUMBER; i++) {
+            for (int i = 1; i <= godsNumber; i++) {
                 movesDone.put(i, new HashSet<>());
             }
         }
+        if (alg!=null)
+            expectedLength.set(godsNumber--);
 
-        actualLength.set(GODS_NUMBER);
-        System.out.println(Thread.currentThread().getName() + " atomicLength is, alg: " + actualLength.get() + " " + alg);
-
+        System.out.println("ENDING ASC "+Thread.currentThread().getName()+" "+alg);
         return Objects.requireNonNullElse(alg, "Error");
     }
 
     private String findFewestMoves() {
         StringBuilder builder = new StringBuilder();
-
         long counter = 0;
         long start = System.currentTimeMillis();
 
-        while (!cube.isSolved()) {
-            if (currentLength + 1 >= actualLength.get()) {
+        while (!tempCube.isSolved()) {
+            if (currentLength >= expectedLength.get() || (currentLength == 0 && movesDone.get(1).size() == 9)) {
+                // faster solution already found or all combinations checked
                 return null;
             }
-            else if (currentLength == 0 && movesDone.get(1).size() == 9) {
-                //all possible combination are checked
-                return null;
-            }
-            else if (currentLength == GODS_NUMBER) {
+            else if (currentLength == godsNumber) {
                 //if god's number reached and movesDone(GOD_NUM) is not-full just try another move
                 deleteLatestMove(builder);
                 currentLength--;
@@ -80,12 +74,14 @@ public class FewestMoves implements Callable {
                 currentLength--;
             }
             else {
-                String curMove = getMoveWitheBestEntropy(builder.toString());
-
-                cube.move(curMove);
-                builder.append(curMove);
-                currentLength++;
-                movesDone.get(currentLength).add(curMove);
+                while (currentLength< godsNumber) {
+                    String curMove = getMoveWitheBestEntropy(builder.toString());
+                    tempCube.move(curMove);
+                    builder.append(curMove);
+                    if (curMove!=null)
+                        currentLength++;
+                    movesDone.get(currentLength).add(curMove);
+                }
             }
 
             counter++;
@@ -126,7 +122,7 @@ public class FewestMoves implements Callable {
         else {
             rev += "'";
         }
-        cube.move(rev);
+        tempCube.move(rev);
     }
 
     private String getMoveWitheBestEntropy(String alg) {
@@ -141,8 +137,8 @@ public class FewestMoves implements Callable {
                 // if are like or R - R2 etc.
             }
             else {
-                cube.move(m);
-                int curE = calculateEntropy(cube);
+                tempCube.move(m);
+                int curE = calculateEntropy(tempCube);
                 if (curE > entropy) {
                     entropy = curE;
                     move = m;

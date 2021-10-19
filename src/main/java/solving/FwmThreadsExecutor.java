@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class FwmThreads {
+public class FwmThreadsExecutor {
 
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
 
@@ -18,7 +18,7 @@ public class FwmThreads {
     private Map<String, Future<String>> resultList;
     private Set<String> solves;
 
-    public FwmThreads(Cube2x2 cube2x2, int threads) {
+    public FwmThreadsExecutor(Cube2x2 cube2x2, int threads) {
         this.cube = cube2x2;
         this.nThreads = threads;
         executorService = Executors.newFixedThreadPool(nThreads);
@@ -33,23 +33,43 @@ public class FwmThreads {
     private String findBestSolutions() throws ExecutionException, InterruptedException {
         long start = System.currentTimeMillis();
 
-        for (String s : ALL_POSSIBLE_MOVES) {
-            Cube2x2 cubeTempAsc = new Cube2x2(cube);
-            Cube2x2 cubeTempDesc = new Cube2x2(cube);
-            cubeTempAsc.move(s);
-            cubeTempDesc.move(s);
+//        for (String s : ALL_POSSIBLE_MOVES) {
+//            Cube2x2 cubeTempAsc = new Cube2x2(cube);
+//            cubeTempAsc.move(s);
+//            Cube2x2 cubeTempDesc = new Cube2x2(cube);
+//            cubeTempDesc.move(s);
+//
+//            Callable callAsc = new FewestMovesAsc(cubeTempAsc, currentGodsNumber);
+//            Future futureAsc = executorService.submit(callAsc);
+//            resultList.put(s, futureAsc);
+//
+//            Callable callDesc = new FewestMovesDesc(cubeTempDesc, currentGodsNumber);
+//            Future futureDesc = executorService.submit(callDesc);
+//            resultList.put(s, futureDesc);
+//        }
 
-            Callable callAsc = new FewestMoves(cubeTempAsc, currentGodsNumber);
-            Callable callDesc = new FewestMoves(cubeTempDesc, currentGodsNumber);
-
-            Future futureAsc = executorService.submit(callAsc);
-            Future futureDesc = executorService.submit(callDesc);
-            resultList.put(s, futureAsc);
-            resultList.put(s, futureDesc);
+        for (int i = 0; i < ALL_POSSIBLE_MOVES.length * 2; i++) {
+            if (i%2==0){
+                Cube2x2 cubeTempAsc = new Cube2x2(cube);
+                cubeTempAsc.move(ALL_POSSIBLE_MOVES[i/2]);
+                Callable callAsc = new FewestMovesAsc(cubeTempAsc, currentGodsNumber);
+                Future futureAsc = executorService.submit(callAsc);
+                resultList.put(ALL_POSSIBLE_MOVES[i/2], futureAsc);
+            }
+            else {
+                Cube2x2 cubeTempDesc = new Cube2x2(cube);
+                cubeTempDesc.move(ALL_POSSIBLE_MOVES[i/2]);
+                Callable callDesc = new FewestMovesDesc(cubeTempDesc, currentGodsNumber);
+                Future futureDesc = executorService.submit(callDesc);
+                resultList.put(ALL_POSSIBLE_MOVES[i/2], futureDesc);
+            }
         }
 
         for (String s : resultList.keySet()){
             Future f = resultList.get(s);
+            while (!f.isDone()){
+
+            }
             if (!f.get().equals("Error")){
                 solves.add(Algorithm.optimizeAlg(s+f.get()));
             }

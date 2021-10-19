@@ -9,66 +9,66 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class FewestMovesDesc implements Callable {
 
-    private int GODS_NUMBER = 10;
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
 
     private Cube2x2 cube;
+    private int godsNumber = 10;
     private int currentLength;
     private HashMap<Integer, HashSet<String>> movesDone;
-    private AtomicInteger actualLength;
+    private AtomicInteger expectedLength; // of whole alg, with initial move
     StringBuilder builder = new StringBuilder();
 
-    public FewestMovesDesc(Cube2x2 cube, AtomicInteger actualLength) {
+    FewestMovesDesc(Cube2x2 cube, AtomicInteger expectedLength) {
         this.cube = new Cube2x2(cube);
         currentLength = 0;
         movesDone = new HashMap<>();
-        for (int i = 1; i <= GODS_NUMBER; i++) {
+        for (int i = 1; i <= godsNumber; i++) {
             movesDone.put(i, new HashSet<>());
         }
-        this.actualLength = actualLength;
+        this.expectedLength = expectedLength;
     }
 
     @Override
     public String call() {
         String alg = null;
-        while (GODS_NUMBER < actualLength.get() && GODS_NUMBER>0) {
+        godsNumber = expectedLength.get()-1;
+        while (godsNumber < expectedLength.get() && godsNumber >0) {
             String tempAlg = findFewestMoves();
-            System.out.println("Ending at length " + GODS_NUMBER + ", alg is " + tempAlg);
-            for (int i=1; i<=movesDone.size(); i++){
-                System.out.print(movesDone.get(i).size() + " ");
-            }
-            System.out.println();
-            if(tempAlg!=null){
+            //System.out.println("DESC= godsN: " + godsNumber + ", expL: "+expectedLength.get()+" alg: " + tempAlg);
+            if(tempAlg!=null && currentLength<expectedLength.get()){
                 alg=tempAlg;
-            }
-            if (currentLength==GODS_NUMBER){
+                expectedLength.set(currentLength);
+                for (int i = currentLength; i <= godsNumber; i++) {
+                    movesDone.remove(i);
+                }
                 currentLength--;
                 deleteLatestMove(builder);
+                godsNumber=currentLength;
             }
-            movesDone.remove(GODS_NUMBER);
-            GODS_NUMBER--;
+            else if (tempAlg==null && currentLength>0){
+                movesDone.get(godsNumber).clear();
+                currentLength--;
+                deleteLatestMove(builder);
+                godsNumber=currentLength;
+            }
+            else {
+                break;
+            }
         }
-
-        actualLength.set(GODS_NUMBER);
-        System.out.println(Thread.currentThread().getName() + " atomicLength is, alg: " + actualLength.get() + " " + alg);
-
+        System.out.println("ENDING DESC "+Thread.currentThread().getName()+" "+alg);
         return Objects.requireNonNullElse(alg, "Error");
     }
 
     private String findFewestMoves() {
-
         long counter = 0;
         long start = System.currentTimeMillis();
 
         while (!cube.isSolved()) {
-            if (currentLength + 1 > actualLength.get()) {
+            if (currentLength >= expectedLength.get() || (currentLength == 0 && movesDone.get(1).size() == 9)) {
+                // faster solution already found or all combinations checked
                 return null;
             }
-            else if (currentLength == 0 && movesDone.get(1).size() == 9) {
-                //all possible combination are checked
-                return null;
-            }
-            else if (currentLength == GODS_NUMBER) {
+            else if (currentLength == godsNumber) {
                 //if god's number reached and movesDone(GOD_NUM) is not-full just try another move
                 deleteLatestMove(builder);
                 currentLength--;
@@ -85,19 +85,19 @@ public class FewestMovesDesc implements Callable {
             }
             else {
                 String curMove = getMoveWitheBestEntropy(builder.toString());
-
                 cube.move(curMove);
                 builder.append(curMove);
-                currentLength++;
+                if (curMove!=null)
+                    currentLength++;
                 movesDone.get(currentLength).add(curMove);
             }
             counter++;
             if (counter % 1_000_000 == 0) {
                 // all combinations is 9 * 6^10 = 550mln combinations, period last ~2.2, maxTime = 550*2.2=1210sec
                 final long curTime = (System.currentTimeMillis() - start) / 1000;
-                //System.out.println(curTime);
-                if (curTime > 300) {
-                    System.out.println("Took more than 300s, aborting...");
+                System.out.println(curTime);
+                if (curTime > 30) {
+                    System.out.println("Took more than 30s, aborting...");
                     return null;
                 }
             }

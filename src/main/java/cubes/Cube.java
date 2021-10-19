@@ -11,6 +11,19 @@ import java.util.Arrays;
 @Getter
 abstract class Cube extends Puzzle implements MoveOneWallInterface, RotateInterface {
 
+    /**
+     * white=0 yellow=5
+     * red=1 orange=4
+     * blue=2 green=3
+     * black = 9/-
+     * - -  4 4  - -  - -
+     * - -  4 4  - -  - -
+     * 3 3  0 0  2 2  5 5
+     * 3 3  0 0  2 2  5 5
+     * - -  1 1  - -  - -
+     * - -  1 1  - -  - -
+     */
+
     private final int DEGREE_OF_CUBE = 2;
     final int HEIGHT = DEGREE_OF_CUBE * 3;
     final int WIDTH = DEGREE_OF_CUBE * 4;

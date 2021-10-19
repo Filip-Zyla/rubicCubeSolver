@@ -1,24 +1,8 @@
 package cubes;
 
-import lombok.*;
 import java.util.*;
 
-@Getter
-@Setter
 public class Cube2x2 extends Cube {
-
-    /**
-     * white=0 yellow=5
-     * red=1 orange=4
-     * blue=2 green=3
-     * black = 9/-
-     * - -  4 4  - -  - -
-     * - -  4 4  - -  - -
-     * 3 3  0 0  2 2  5 5
-     * 3 3  0 0  2 2  5 5
-     * - -  1 1  - -  - -
-     * - -  1 1  - -  - -
-     */
 
     public Cube2x2() {
         super();
