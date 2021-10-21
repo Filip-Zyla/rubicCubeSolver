@@ -33,37 +33,36 @@ public class FwmThreadsExecutor {
     private String findBestSolutions() throws ExecutionException, InterruptedException {
         long start = System.currentTimeMillis();
 
-//        for (String s : ALL_POSSIBLE_MOVES) {
-//            Cube2x2 cubeTempAsc = new Cube2x2(cube);
-//            cubeTempAsc.move(s);
-//            Cube2x2 cubeTempDesc = new Cube2x2(cube);
-//            cubeTempDesc.move(s);
-//
-//            Callable callAsc = new FewestMovesAsc(cubeTempAsc, currentGodsNumber);
-//            Future futureAsc = executorService.submit(callAsc);
-//            resultList.put(s, futureAsc);
-//
-//            Callable callDesc = new FewestMovesDesc(cubeTempDesc, currentGodsNumber);
-//            Future futureDesc = executorService.submit(callDesc);
-//            resultList.put(s, futureDesc);
-//        }
+        for (String s : ALL_POSSIBLE_MOVES) {
+            Cube2x2 cubeTempAsc = new Cube2x2(cube);
+            cubeTempAsc.move(s);
+            Callable callAsc = new FewestMovesAsc(cubeTempAsc, currentGodsNumber);
+            Future futureAsc = executorService.submit(callAsc);
+            resultList.put(s, futureAsc);
 
-        for (int i = 0; i < ALL_POSSIBLE_MOVES.length * 2; i++) {
-            if (i%2==0){
-                Cube2x2 cubeTempAsc = new Cube2x2(cube);
-                cubeTempAsc.move(ALL_POSSIBLE_MOVES[i/2]);
-                Callable callAsc = new FewestMovesAsc(cubeTempAsc, currentGodsNumber);
-                Future futureAsc = executorService.submit(callAsc);
-                resultList.put(ALL_POSSIBLE_MOVES[i/2], futureAsc);
-            }
-            else {
-                Cube2x2 cubeTempDesc = new Cube2x2(cube);
-                cubeTempDesc.move(ALL_POSSIBLE_MOVES[i/2]);
-                Callable callDesc = new FewestMovesDesc(cubeTempDesc, currentGodsNumber);
-                Future futureDesc = executorService.submit(callDesc);
-                resultList.put(ALL_POSSIBLE_MOVES[i/2], futureDesc);
-            }
+            Cube2x2 cubeTempDesc = new Cube2x2(cube);
+            cubeTempDesc.move(s);
+            Callable callDesc = new FewestMovesDesc(cubeTempDesc, currentGodsNumber);
+            Future futureDesc = executorService.submit(callDesc);
+            resultList.put(s, futureDesc);
         }
+
+//        for (int i = 0; i < ALL_POSSIBLE_MOVES.length * 2; i++) {
+//            if (i%2==0){
+//                Cube2x2 cubeTempAsc = new Cube2x2(cube);
+//                cubeTempAsc.move(ALL_POSSIBLE_MOVES[i/2]);
+//                Callable callAsc = new FewestMovesAsc(cubeTempAsc, currentGodsNumber);
+//                Future futureAsc = executorService.submit(callAsc);
+//                resultList.put(ALL_POSSIBLE_MOVES[i/2], futureAsc);
+//            }
+//            else {
+//                Cube2x2 cubeTempDesc = new Cube2x2(cube);
+//                cubeTempDesc.move(ALL_POSSIBLE_MOVES[i/2]);
+//                Callable callDesc = new FewestMovesDesc(cubeTempDesc, currentGodsNumber);
+//                Future futureDesc = executorService.submit(callDesc);
+//                resultList.put(ALL_POSSIBLE_MOVES[i/2], futureDesc);
+//            }
+//        }
 
         for (String s : resultList.keySet()){
             Future f = resultList.get(s);

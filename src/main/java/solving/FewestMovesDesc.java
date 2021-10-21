@@ -16,9 +16,9 @@ public class FewestMovesDesc implements Callable {
     private int currentLength;
     private HashMap<Integer, HashSet<String>> movesDone;
     private AtomicInteger expectedLength; // of whole alg, with initial move
-    StringBuilder builder = new StringBuilder();
+    private StringBuilder builder = new StringBuilder();
 
-    FewestMovesDesc(Cube2x2 cube, AtomicInteger expectedLength) {
+    public FewestMovesDesc(Cube2x2 cube, AtomicInteger expectedLength) {
         this.cube = new Cube2x2(cube);
         currentLength = 0;
         movesDone = new HashMap<>();
