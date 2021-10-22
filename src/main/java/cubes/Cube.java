@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 @Setter
 @Getter
-abstract class Cube extends Puzzle implements MoveOneWallInterface, RotateInterface {
+public abstract class Cube extends Puzzle implements MoveOneWallInterface, RotateInterface {
 
     /**
      * white=0 yellow=5

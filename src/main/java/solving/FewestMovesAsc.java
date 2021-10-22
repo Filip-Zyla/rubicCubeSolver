@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FewestMovesAsc implements Callable {
 
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
+    private final Set finalEntropy = new HashSet<>(Arrays.asList(4, 12, 14, 18, 20, 22, 26, 30, 32, 36, 42, 44));
 
     private final Cube2x2 initialCube;
     private Cube2x2 tempCube;
@@ -18,7 +19,7 @@ public class FewestMovesAsc implements Callable {
     private HashMap<Integer, HashSet<String>> movesDone;
     private AtomicInteger expectedLength; // of whole alg, with initial move
 
-    FewestMovesAsc(Cube2x2 cube, AtomicInteger expectedLength) {
+    public FewestMovesAsc(Cube2x2 cube, AtomicInteger expectedLength) {
         this.tempCube = new Cube2x2(cube);
         this.initialCube = cube;
         currentLength = 0;
@@ -32,7 +33,6 @@ public class FewestMovesAsc implements Callable {
         String alg = null;
         while (godsNumber < expectedLength.get() && alg == null) {
             alg = findFewestMoves();
-            //System.out.println("ASC= godsN: " + godsNumber + ", expL: "+expectedLength.get()+" alg: " + alg);
             currentLength = 0;
             godsNumber++;
             tempCube = new Cube2x2(initialCube);
@@ -44,7 +44,7 @@ public class FewestMovesAsc implements Callable {
         if (alg!=null)
             expectedLength.set(godsNumber--);
 
-        System.out.println("ENDING ASC "+Thread.currentThread().getName()+" "+alg);
+        System.out.println("ASC "+Thread.currentThread().getName()+" "+alg);
         return Objects.requireNonNullElse(alg, "Error");
     }
 
@@ -58,7 +58,7 @@ public class FewestMovesAsc implements Callable {
                 // faster solution already found or all combinations checked
                 return null;
             }
-            else if (currentLength == godsNumber) {
+            else if ((currentLength>0 && godsNumber-currentLength<=3 && !finalEntropy.contains(calculateEntropy())) || currentLength == godsNumber) {
                 //if god's number reached and movesDone(GOD_NUM) is not-full just try another move
                 deleteLatestMove(builder);
                 currentLength--;
@@ -74,20 +74,18 @@ public class FewestMovesAsc implements Callable {
                 currentLength--;
             }
             else {
-                while (currentLength< godsNumber) {
-                    String curMove = getMoveWitheBestEntropy(builder.toString());
-                    tempCube.move(curMove);
-                    builder.append(curMove);
-                    if (curMove!=null)
-                        currentLength++;
-                    movesDone.get(currentLength).add(curMove);
-                }
+                String curMove = getMoveWitheBestEntropy(builder.toString());
+                tempCube.move(curMove);
+                builder.append(curMove);
+                if (curMove != null)
+                    currentLength++;
+                movesDone.get(currentLength).add(curMove);
             }
 
             counter++;
             if (counter % 1_000_000 == 0) {
                 // all combinations is 9 * 6^10 = 550mln combinations, period last ~2.2, maxTime = 550*2.2=1210sec
-                final long curTime = (System.currentTimeMillis() - start) / 1000;
+                final double curTime = (System.currentTimeMillis() - start) / 1000.0;
                 System.out.println(curTime);
                 if (curTime > 30) {
                     System.out.println("Took more than 30s, aborting...");
@@ -138,7 +136,7 @@ public class FewestMovesAsc implements Callable {
             }
             else {
                 tempCube.move(m);
-                int curE = calculateEntropy(tempCube);
+                int curE = calculateEntropy();
                 if (curE > entropy) {
                     entropy = curE;
                     move = m;
@@ -160,8 +158,7 @@ public class FewestMovesAsc implements Callable {
             return alg.substring(alg.length() - 1);
     }
 
-    private int calculateEntropy(Cube2x2 cube2x2) {
-        int entropy = 0;
+    private int calculateEntropy() {
         /**               1st     2nd
          * fullWallUni  = 6       6
          * fullWall     = 5       5
@@ -170,54 +167,55 @@ public class FewestMovesAsc implements Callable {
          * twoWallUni   = 2       4
          * twoWall      = 1       1
          */
-        int[][] cube = cube2x2.getArray();
+        int entropy = 0;
+        int[][] array = tempCube.getArray();
         List<Pair<Integer, Integer>> walls = Arrays.asList(new Pair<>(0, 2), new Pair<>(2, 0), new Pair<>(2, 2), new Pair<>(2, 4), new Pair<>(2, 6), new Pair<>(4, 2));
         List<Pair<Integer, Integer>> colors = Arrays.asList(new Pair<>(0, 5), new Pair<>(1, 4), new Pair<>(2, 3));
 
         for (Pair w : walls) {
             int x = (int) w.getValue0();
             int y = (int) w.getValue1();
-            int[] wall = {cube[x][y], cube[x][y + 1], cube[x + 1][y + 1], cube[x + 1][y]};
+            int[] wall = {array[x][y], array[x][y + 1], array[x + 1][y + 1], array[x + 1][y]};
 
             for (Pair c : colors) {
 
                 int c0 = (int) c.getValue0();
                 int c1 = (int) c.getValue1();
-                List<Integer> numOfStickersC0 = new ArrayList<>();
-                List<Integer> numOfStickersC1 = new ArrayList<>();
-                List<Integer> numOfStickers = new ArrayList<>();
+                int stickersC0 = 0;
+                int stickersC1 = 0;
+                int stickersC = 0;
+                int stickersSumC=0;
 
                 for (int i = 0; i < wall.length; i++) {
                     if (wall[i] == c0) {
-                        numOfStickersC0.add(i);
-                        numOfStickers.add(i);
+                        stickersC0++;
+                        stickersC++;
+                        stickersSumC+=i;
                     }
                     if (wall[i] == c1) {
-                        numOfStickersC1.add(i);
-                        numOfStickers.add(i);
+                        stickersC1++;
+                        stickersC++;
+                        stickersSumC+=i;
                     }
                 }
 
-                if (numOfStickersC0.size() == 4 || numOfStickersC1.size() == 4) {
+                if (stickersC0 == 4 || stickersC1 == 4) {
                     entropy += 6; // fullWallUni
                 }
-                else if (numOfStickersC0.size() == 3 || numOfStickersC1.size() == 3) {
+                else if (stickersC == 4) {
+                    entropy += 5; // fullWall
+                }
+                else if (stickersC0 == 3 || stickersC1 == 3) {
                     entropy += 3; // threeWallUni
                 }
-                if (numOfStickers.size() == 4) {
-                    entropy += 3; // fullWall
-                }
-                else if (numOfStickers.size() == 3) {
+                else if (stickersC == 3) {
                     entropy += 2; // threeWall
                 }
-                else if (numOfStickers.size() == 2 && Math.abs(numOfStickers.get(0) - numOfStickers.get(1)) != 2) {
-                    if (wall[numOfStickers.get(0)] == c0 && wall[numOfStickers.get(1)] == c0) {
+                else if (stickersSumC%2 == 1) {
+                    if (stickersC0 == 2 || stickersC1 == 2) {
                         entropy += 4; // twoWallUni
                     }
-                    else if (wall[numOfStickers.get(0)] == c1 && wall[numOfStickers.get(1)] == c1) {
-                        entropy += 4; // twoWallUni
-                    }
-                    else {
+                    else if (stickersC == 2) {
                         entropy += 1; // twoWall
                     }
                 }
