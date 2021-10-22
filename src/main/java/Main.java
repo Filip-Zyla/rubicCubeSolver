@@ -1,34 +1,41 @@
 
 import cubes.*;
-import org.javatuples.Pair;
-import solving.FewestMovesAsc;
-import solving.FewestMovesDesc;
-import solving.FwmThreadsExecutor;
+import files.HistoryFile;
+import graphicalMenu.GuiMenu;
+import solving2x2.FwmDesc;
+import solving2x2.FwmExecutor;
 
-import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//TODO another cubes nxn, pyraminx, square-1
-//TODO tests
-//TODO Fwm's: delete? counters, timers and sout's, nThreads
-//TODO FewestMoves: methods
 public class Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        t();
+        run();
     }
+
+    private static void run() {
+        HistoryFile.createFile();
+        new GuiMenu(new Cube2x2());
+    }
+
+    //TODO another cubes NxN, pyraminx, square-1, using abstract classes
+    //TODO tests
+    //TODO delete: executor ending/timer
+    //TODO executor waiting for all, returning not null
+    //TODO asc and desc not doing same pre-moves && nThreads
+    //TODO FwmAsc/Desc: methods
 
     private static void test() {
         String scramble = Algorithm.randomScramble(15, 16);
         System.out.println(scramble);
-        FewestMovesDesc test = new FewestMovesDesc(new Cube2x2(scramble), new AtomicInteger(12));
+        FwmDesc test = new FwmDesc(new Cube2x2(scramble), new AtomicInteger(12));
         System.out.println(test.call());
     }
 
     private static void t() throws ExecutionException, InterruptedException {
         String scramble = Algorithm.randomScramble(13, 15);
         System.out.println(scramble);
-        FwmThreadsExecutor quickestSolveThreads = new FwmThreadsExecutor(new Cube2x2(scramble), 4);
+        FwmExecutor quickestSolveThreads = new FwmExecutor(new Cube2x2(scramble), 4);
         System.out.println(quickestSolveThreads.fewestMoves());
     }
 

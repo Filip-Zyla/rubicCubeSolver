@@ -5,15 +5,13 @@ import java.util.*;
 public class Cube2x2 extends Cube {
 
     public Cube2x2() {
-        super();
+        super(2);
     }
-
     public Cube2x2(String scramble) {
-        super(scramble);
+        super(2, scramble);
     }
-
     public Cube2x2(Cube2x2 cube) {
-        super(cube);
+        super(2, cube);
     }
 
     @Override

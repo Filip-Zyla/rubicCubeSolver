@@ -1,9 +1,8 @@
-package solving;
+package solving2x2;
 
 import cubes.Algorithm;
 import cubes.Cube2x2;
 import org.javatuples.Pair;
-
 import java.util.*;
 
 public class OrtegaMethod {
@@ -25,11 +24,9 @@ public class OrtegaMethod {
     public String solve() {
         if (cube.isSolved())
             return "";
-
         ortegaFirstStep();
         orientBothLayers();
         permuteBothLayers();
-
         if (cube.isSolved())
             return Algorithm.optimizeAlg(stringBuilder.toString());
         else
@@ -38,7 +35,6 @@ public class OrtegaMethod {
 
     private void ortegaFirstStep() {
         inspectWalls();
-
         if (!fullWallUniColor.isEmpty()) {
             if (fullWallUniColor.size() == 1) {
                 givenWallToDown(fullWallUniColor.get(0).getValue0().getValue0(), fullWallUniColor.get(0).getValue0().getValue1());
@@ -154,40 +150,43 @@ public class OrtegaMethod {
             for (Pair c : colors) {
                 int c0 = (int) c.getValue0();
                 int c1 = (int) c.getValue1();
-                List<Integer> numOfStickersC0 = new ArrayList<>();
-                List<Integer> numOfStickersC1 = new ArrayList<>();
-                List<Integer> numOfStickers = new ArrayList<>();
+                int stickersC0 = 0;
+                int stickersC1 = 0;
+                int stickersC = 0;
+                int stickersSumC=0;
 
                 for (int i = 0; i < wall.length; i++) {
                     if (wall[i] == c0) {
-                        numOfStickersC0.add(i);
-                        numOfStickers.add(i);
+                        stickersC0++;
+                        stickersC++;
+                        stickersSumC+=i;
                     }
                     if (wall[i] == c1) {
-                        numOfStickersC1.add(i);
-                        numOfStickers.add(i);
+                        stickersC1++;
+                        stickersC++;
+                        stickersSumC+=i;
                     }
                 }
 
-                if (numOfStickers.size() == 4) {
+                if (stickersC == 4) {
                     fullWall.add(new Pair<>(w, c));
                 }
-                if (numOfStickersC0.size() == 4) {
+                if (stickersC0 == 4) {
                     fullWallUniColor.add(new Pair<>(w, new Pair<>(c0,c0)));
                 }
-                else if (numOfStickersC1.size() == 4) {
+                else if (stickersC1 == 4) {
                     fullWallUniColor.add(new Pair<>(w, new Pair<>(c1,c1)));
                 }
-                else if (numOfStickersC0.size() == 3) {
+                else if (stickersC0 == 3) {
                     threeWallAll.add(new Pair<>(w, new Pair<>(c0,c0)));
                 }
-                else if (numOfStickersC1.size() == 3) {
+                else if (stickersC1 == 3) {
                     threeWallAll.add(new Pair<>(w, new Pair<>(c1,c1)));
                 }
-                else if (numOfStickers.size() == 3){
+                else if (stickersC == 3){
                     threeWallAll.add(new Pair<>(w, c));
                 }
-                else if (numOfStickers.size() == 2 && Math.abs(numOfStickers.get(0) - numOfStickers.get(1)) != 2) {
+                else if (stickersC == 2 && stickersSumC%2 == 1) {
                     twoWallAll.add(new Pair<>(w, c));
                 }
             }
@@ -208,7 +207,6 @@ public class OrtegaMethod {
                 cube.rotateZ(1);
                 stringBuilder.append("z");
             }
-
         }
         else if (y == 2) {
             if (x == 0) {
@@ -236,7 +234,6 @@ public class OrtegaMethod {
                 cube.rotateZ(1);
                 stringBuilder.append("z");
             }
-
         }
         else if (y == 2) {
             if (x == 0) {
@@ -403,7 +400,6 @@ public class OrtegaMethod {
                     stringBuilder.append("L");
                 }
             }
-
         }
     }
 

@@ -1,7 +1,6 @@
-package moveInterfaces;
+package cubeInterfaces;
 
 public interface MoveOneWallInterface {
-
     void moveNormalU();
     void moveCounterU();
     void moveDoubleU();

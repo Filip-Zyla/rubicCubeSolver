@@ -2,15 +2,13 @@ package cubes;
 
 import lombok.Getter;
 import lombok.Setter;
-import moveInterfaces.MoveOneWallInterface;
-import moveInterfaces.RotateInterface;
-
+import cubeInterfaces.MoveOneWallInterface;
+import cubeInterfaces.RotateInterface;
 import java.util.Arrays;
 
 @Setter
 @Getter
-public abstract class Cube extends Puzzle implements MoveOneWallInterface, RotateInterface {
-
+abstract class Cube extends Puzzle implements MoveOneWallInterface, RotateInterface {
     /**
      * white=0 yellow=5
      * red=1 orange=4
@@ -24,25 +22,25 @@ public abstract class Cube extends Puzzle implements MoveOneWallInterface, Rotat
      * - -  1 1  - -  - -
      */
 
-    private final int DEGREE_OF_CUBE = 2;
-    final int HEIGHT = DEGREE_OF_CUBE * 3;
-    final int WIDTH = DEGREE_OF_CUBE * 4;
+    private final int DEGREE_OF_CUBE;
+    final int HEIGHT;
+    final int WIDTH;
 
     int[][] array;
 
-    Cube() {
+    Cube(int degree) {
+        this.DEGREE_OF_CUBE=degree;
+        HEIGHT = DEGREE_OF_CUBE * 3;
+        WIDTH = DEGREE_OF_CUBE * 4;
         array = new int[HEIGHT][WIDTH];
         paintCube();
     }
-
-    Cube(String scramble) {
-        array = new int[HEIGHT][WIDTH];
-        paintCube();
+    Cube(int degree, String scramble) {
+        this(degree);
         move(scramble);
     }
-
-    Cube(Cube2x2 cube) {
-        this.array = new int[HEIGHT][WIDTH];
+    Cube(int degree, Cube2x2 cube) {
+        this(degree);
         for (int i = 0; i < cube.array.length; i++) {
             this.array[i] = Arrays.copyOf(cube.array[i], cube.array[i].length);
         }

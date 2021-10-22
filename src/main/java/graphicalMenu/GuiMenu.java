@@ -2,8 +2,8 @@ package graphicalMenu;
 
 import cubes.*;
 import files.HistoryFile;
-import solving.OrtegaMethod;
-import solving.FwmThreadsExecutor;
+import solving2x2.OrtegaMethod;
+import solving2x2.FwmExecutor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +25,7 @@ public class GuiMenu extends JComponent implements ActionListener {
     private JLabel jl1;
     private ArrayList<JPanel> jp = new ArrayList<>();
 
-    private volatile boolean flag = true;
+    private volatile boolean animationFlag = true;
     private Thread fwmThread;
 
     public GuiMenu(Cube2x2 cube) {
@@ -160,7 +160,7 @@ public class GuiMenu extends JComponent implements ActionListener {
             if (fwmThread!= null && fwmThread.isAlive()){
                 return;
             }
-            flag=false;
+            animationFlag =false;
             spinner.setValue(0.1);
             cube = new Cube2x2();
             repaintCube();
@@ -189,16 +189,14 @@ public class GuiMenu extends JComponent implements ActionListener {
         else if (e.getSource() == b4) {
             OrtegaMethod method = new OrtegaMethod(cube);
             String solveAlg = method.solve();
-
             animation(solveAlg);
             HistoryFile.saveToHistory("Ortega solve: "+solveAlg);
             jta4.setText(solveAlg);
         }
         else if (e.getSource() == b5){
             jta5.setText("Computing...");
-
             fwmThread = new Thread(() -> {
-                FwmThreadsExecutor threads = new FwmThreadsExecutor(cube, 4);
+                FwmExecutor threads = new FwmExecutor(cube, 4);
                 String solveAlg;
                 try {
                     solveAlg = threads.fewestMoves();
@@ -235,7 +233,6 @@ public class GuiMenu extends JComponent implements ActionListener {
             history.setLocation(500,100);
             history.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             history.setVisible(true);
-
             historyArea = new JTextArea();
             historyArea.setLineWrap(true);
             historyArea.setVisible(true);
@@ -260,10 +257,10 @@ public class GuiMenu extends JComponent implements ActionListener {
         if (T>0){
             final int finalT = T;
             final LinkedList<String> algList = Algorithm.toList(alg);
-            flag = true;
+            animationFlag = true;
             new Thread(() -> {
                 for (String move : algList) {
-                    if (!flag){
+                    if (!animationFlag){
                         Thread.currentThread().interrupt();
                         break;
                     }

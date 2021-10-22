@@ -1,7 +1,6 @@
 package files;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class HistoryFile {
@@ -9,8 +8,7 @@ public class HistoryFile {
     private final static String fileName = "history.txt";
 
     public static void createFile(){
-        Path path = Paths.get(fileName);
-        File file = new File(path.toString());
+        File file = new File(Paths.get(fileName).toString());
         if (file.exists()){
             file.delete();
         }
@@ -19,13 +17,11 @@ public class HistoryFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public static void saveToHistory(String s) {
         File file = new File(fileName);
-
-        FileWriter fileWriter = null;
+        FileWriter fileWriter;
         try {
             fileWriter = new FileWriter(file, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -36,14 +32,12 @@ public class HistoryFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public static String printHistory() {
         File file = new File(fileName);
-
         StringBuffer stringBuffer = new StringBuffer();
-        BufferedReader bufferedReader = null;
+        BufferedReader bufferedReader;
         try {
             bufferedReader = new BufferedReader(new FileReader(file));
             bufferedReader.lines().forEach(s -> stringBuffer.append(s).append("\n"));

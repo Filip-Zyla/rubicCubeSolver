@@ -2,7 +2,6 @@ package cubes;
 
 import com.google.common.collect.HashBasedTable;
 import files.HistoryFile;
-
 import java.util.*;
 
 public class Algorithm {
@@ -110,7 +109,7 @@ public class Algorithm {
     }
 
     public static int algLength(String alg){
-        // Simpler but ~4x slower Algorithm.toList(alg).size()
+        // simpler but ~4x slower: Algorithm.toList(alg).size()
         if (!checkIfProper(alg)){
             return -1;
         }
@@ -140,7 +139,6 @@ public class Algorithm {
         }
 
         LinkedList<String> movesList = toList(alg);
-
         int i = 0;
         while (i < movesList.size()) {
             if (i + 1 == movesList.size()) {
@@ -261,7 +259,6 @@ public class Algorithm {
          */
         Set rotations = new HashSet<>(Arrays.asList('x', 'y', 'z'));
         LinkedList<String> xyz = new LinkedList<>();
-
         for (int i=0; i<alg.size(); i++){
             if (rotations.contains(alg.get(i).charAt(0))){
                 xyz.add(alg.get(i));
