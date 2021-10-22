@@ -2,6 +2,7 @@
 import cubes.*;
 import files.HistoryFile;
 import graphicalMenu.GuiMenu;
+import solving2x2.FwmAsc;
 import solving2x2.FwmDesc;
 import solving2x2.FwmExecutor;
 
@@ -10,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        run();
+        t();
     }
 
     private static void run() {
@@ -20,22 +21,14 @@ public class Main {
 
     //TODO another cubes NxN, pyraminx, square-1, using abstract classes
     //TODO tests
-    //TODO delete: executor ending/timer
-    //TODO executor waiting for all, returning not null
-    //TODO asc and desc not doing same pre-moves && nThreads
-    //TODO FwmAsc/Desc: methods
-
-    private static void test() {
-        String scramble = Algorithm.randomScramble(15, 16);
-        System.out.println(scramble);
-        FwmDesc test = new FwmDesc(new Cube2x2(scramble), new AtomicInteger(12));
-        System.out.println(test.call());
-    }
+    //TODO nThreads && moves_poss
+    //TODO getMoveWitheBestEntropy reutrn move at first  curE > entropy && entropy points
+    //TODO lastMoce?
 
     private static void t() throws ExecutionException, InterruptedException {
         String scramble = Algorithm.randomScramble(13, 15);
         System.out.println(scramble);
-        FwmExecutor quickestSolveThreads = new FwmExecutor(new Cube2x2(scramble), 4);
+        FwmExecutor quickestSolveThreads = new FwmExecutor(new Cube2x2(scramble), 3);
         System.out.println(quickestSolveThreads.fewestMoves());
     }
 

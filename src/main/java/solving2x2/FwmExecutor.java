@@ -30,20 +30,23 @@ public class FwmExecutor {
     }
 
     private String findBestSolutions() throws ExecutionException, InterruptedException {
-        long start = System.currentTimeMillis();
 
-        for (String s : ALL_POSSIBLE_MOVES) {
-            Cube2x2 cubeAsc = new Cube2x2(cube);
-            cubeAsc.move(s);
-            Callable callAsc = new FwmAsc(cubeAsc, currentGodsNumber);
-            Future futureAsc = executorService.submit(callAsc);
-            resultList.put(s, futureAsc);
+        for (int i=0; i<ALL_POSSIBLE_MOVES.length; i++) {
+            if (i%2==0) {
+                Cube2x2 cubeAsc = new Cube2x2(cube);
+                cubeAsc.move(ALL_POSSIBLE_MOVES[i]);
+                Callable callAsc = new FwmAsc(cubeAsc, currentGodsNumber);
+                Future futureAsc = executorService.submit(callAsc);
+                resultList.put(ALL_POSSIBLE_MOVES[i], futureAsc);
+            }
+            else {
 
-            Cube2x2 cubeTempDesc = new Cube2x2(cube);
-            cubeTempDesc.move(s);
-            Callable callDesc = new FwmDesc(cubeTempDesc, currentGodsNumber);
-            Future futureDesc = executorService.submit(callDesc);
-            resultList.put(s, futureDesc);
+                Cube2x2 cubeTempDesc = new Cube2x2(cube);
+                cubeTempDesc.move(ALL_POSSIBLE_MOVES[i]);
+                Callable callDesc = new FwmDesc(cubeTempDesc, currentGodsNumber);
+                Future futureDesc = executorService.submit(callDesc);
+                resultList.put(ALL_POSSIBLE_MOVES[i], futureDesc);
+            }
         }
 
         for (String s : resultList.keySet()){
@@ -53,14 +56,8 @@ public class FwmExecutor {
             }
         }
 
-        System.out.println("==========ENDING==========");
-        for (String slv : solves) {
-            System.out.println("Solve " + Algorithm.algLength(slv) + " " + slv);
-        }
-
-        long time = (System.currentTimeMillis()-start)/1000;
-        System.out.println("Time is " + time);
         executorService.shutdown();
-        return solves.stream().min(Comparator.comparingInt(Algorithm::algLength)).get();
+        final Optional<String> s = solves.stream().min(Comparator.comparingInt(Algorithm::algLength));
+        return s.orElse("Error");
     }
 }

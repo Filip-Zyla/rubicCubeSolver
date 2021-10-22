@@ -2,7 +2,6 @@ package solving2x2;
 
 import cubes.Cube2x2;
 import org.javatuples.Pair;
-
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,7 +18,7 @@ public class FwmAsc implements Callable {
     private HashMap<Integer, HashSet<String>> movesDone;
     private AtomicInteger expectedLength; // of whole alg, with initial move
 
-    public FwmAsc(Cube2x2 cube, AtomicInteger expectedLength) {
+    FwmAsc(Cube2x2 cube, AtomicInteger expectedLength) {
         this.tempCube = new Cube2x2(cube);
         this.initialCube = cube;
         currentLength = 0;
@@ -43,8 +42,6 @@ public class FwmAsc implements Callable {
         }
         if (alg!=null)
             expectedLength.set(godsNumber--);
-
-        System.out.println("ASC "+Thread.currentThread().getName()+" "+alg);
         return Objects.requireNonNullElse(alg, "Error");
     }
 
@@ -59,7 +56,8 @@ public class FwmAsc implements Callable {
                 return null;
             }
             else if ((currentLength>0 && godsNumber-currentLength<=3 && !finalEntropy.contains(calculateEntropy())) || currentLength == godsNumber) {
-                //if god's number reached and movesDone(GOD_NUM) is not-full just try another move
+                // if next three moves won't end up in solved cube due to wrong entropy
+                // if god's number reached and movesDone(GOD_NUM) is not-full just try another move
                 deleteLatestMove(builder);
                 currentLength--;
             }
@@ -77,18 +75,14 @@ public class FwmAsc implements Callable {
                 String curMove = getMoveWitheBestEntropy(builder.toString());
                 tempCube.move(curMove);
                 builder.append(curMove);
-                if (curMove != null)
-                    currentLength++;
+                currentLength++;
                 movesDone.get(currentLength).add(curMove);
             }
 
             counter++;
-            if (counter % 1_000_000 == 0) {
-                // all combinations is 9 * 6^10 = 550mln combinations, period last ~2.2, maxTime = 550*2.2=1210sec
+            if (counter % 100_000 == 0) {
                 final double curTime = (System.currentTimeMillis() - start) / 1000.0;
-                System.out.println(curTime);
-                if (curTime > 30) {
-                    System.out.println("Took more than 30s, aborting...");
+                if (curTime > 2.0) {
                     return null;
                 }
             }
@@ -98,7 +92,7 @@ public class FwmAsc implements Callable {
 
     private void deleteLatestMove(StringBuilder builder) {
         final int lastIndex = builder.length() - 1;
-        if (!Character.isLetter(builder.charAt(lastIndex))) {
+        if (builder.charAt(lastIndex)==50 || builder.charAt(lastIndex)==39) {
             reverseMove(builder.substring(lastIndex - 1));
             builder.delete(lastIndex - 1, lastIndex + 1);
         }
@@ -128,11 +122,8 @@ public class FwmAsc implements Callable {
         String move = "";
         String end = getLastMove(alg);
         for (String m : ALL_POSSIBLE_MOVES) {
-            if (movesDone.get(currentLength + 1).contains(m)) {
-                // if move already done
-            }
-            else if (!end.equals("") && m.charAt(0) == end.charAt(0)) {
-                // if are like or R - R2 etc.
+            if (movesDone.get(currentLength + 1).contains(m) || (!end.equals("") && m.charAt(0) == end.charAt(0))) {
+                // if move already done  ||  if are like or R - R2 etc.
             }
             else {
                 tempCube.move(m);
@@ -178,7 +169,6 @@ public class FwmAsc implements Callable {
             int[] wall = {array[x][y], array[x][y + 1], array[x + 1][y + 1], array[x + 1][y]};
 
             for (Pair c : colors) {
-
                 int c0 = (int) c.getValue0();
                 int c1 = (int) c.getValue1();
                 int stickersC0 = 0;
