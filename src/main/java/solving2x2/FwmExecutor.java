@@ -8,18 +8,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class FwmExecutor {
 
+    /**
+     * more threads suits better when solution is faster (<1s?)
+     */
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
+    private final int nThreads = 4;
 
     private Cube2x2 cube;
     private ExecutorService executorService;
-    private final int nThreads;
     private AtomicInteger currentGodsNumber = new AtomicInteger(11);
     private Map<String, Future<String>> resultList;
     private Set<String> solves;
 
-    public FwmExecutor(Cube2x2 cube2x2, int threads) {
+    public FwmExecutor(Cube2x2 cube2x2) {
         this.cube = cube2x2;
-        this.nThreads = threads;
         executorService = Executors.newFixedThreadPool(nThreads);
         resultList = new HashMap<>();
         solves = new HashSet<>();

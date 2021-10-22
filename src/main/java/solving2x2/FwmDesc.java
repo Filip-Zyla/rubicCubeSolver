@@ -127,6 +127,11 @@ public class FwmDesc implements Callable {
     }
 
     private String getMoveWitheBestEntropy(String alg) {
+        /**
+         * if (curE > entropy) return m
+         * this is faster when solution is not straight forward,
+         * entropy is not returning best solutions
+         */
         int entropy = -1;
         String move = "";
         String end = getLastMove(alg);
@@ -159,14 +164,6 @@ public class FwmDesc implements Callable {
     }
 
     private int calculateEntropy() {
-        /**               1st     2nd
-         * fullWallUni  = 6       6
-         * fullWall     = 5       5
-         * threeWallUni = 4       3
-         * threeWall    = 3       2
-         * twoWallUni   = 2       4
-         * twoWall      = 1       1
-         */
         int entropy = 0;
         int[][] array = cube.getArray();
         List<Pair<Integer, Integer>> walls = Arrays.asList(new Pair<>(0, 2), new Pair<>(2, 0), new Pair<>(2, 2), new Pair<>(2, 4), new Pair<>(2, 6), new Pair<>(4, 2));
@@ -197,7 +194,14 @@ public class FwmDesc implements Callable {
                         stickersSumC+=i;
                     }
                 }
-
+                /**               1st     2nd
+                 * fullWallUni  = 6       6
+                 * fullWall     = 5       5
+                 * threeWallUni = 4       3
+                 * threeWall    = 3       2
+                 * twoWallUni   = 2       4
+                 * twoWall      = 1       1
+                 */
                 if (stickersC0 == 4 || stickersC1 == 4) {
                     entropy += 6; // fullWallUni
                 }
