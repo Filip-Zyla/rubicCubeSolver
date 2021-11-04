@@ -2,6 +2,8 @@ package cubes;
 
 import com.google.common.collect.HashBasedTable;
 import files.HistoryFile;
+import org.javatuples.Pair;
+
 import java.util.*;
 
 public class Algorithm {
@@ -151,22 +153,25 @@ public class Algorithm {
                 String combined = (cur + nex).replaceAll("[A-Za-z]", "");
                 String s = String.valueOf(movesList.get(i).charAt(0));
                 switch (combined) {
-                    case "", "''" -> {
+                    case "":
+                    case "''":
                         movesList.set(i, s + "2");
                         movesList.remove(i + 1);
-                    }
-                    case "'", "22" -> {
+                        break;
+                    case "'":
+                    case "22":
                         movesList.remove(i + 1);
                         movesList.remove(i);
-                    }
-                    case "2" -> {
+                        break;
+                    case "2":
                         movesList.set(i, s + "'");
                         movesList.remove(i + 1);
-                    }
-                    case "2'", "'2" -> {
+                        break;
+                    case "2'":
+                    case "'2":
                         movesList.set(i, s);
                         movesList.remove(i + 1);
-                    }
+                        break;
                 }
                 if (i > 0) {
                     i--;

@@ -103,9 +103,6 @@ public class FwmAsc implements Callable {
     }
 
     private void reverseMove(String rev) {
-        /**
-         * rev is move that have been done
-         */
         if (rev.contains("2")) {
         }
         else if (rev.contains("'")) {
