@@ -11,12 +11,12 @@ public class FwmDesc implements Callable {
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
     private final Set finalEntropy = new HashSet<>(Arrays.asList(4, 12, 14, 18, 20, 22, 26, 30, 32, 36, 42, 44));
 
-    private Cube2x2 cube;
+    private final Cube2x2 cube;
     private int godsNumber = 10;
     private int currentLength;
-    private HashMap<Integer, HashSet<String>> movesDone;
-    private AtomicInteger expectedLength; // of whole alg, with initial move
-    private StringBuilder builder = new StringBuilder();
+    private final HashMap<Integer, HashSet<String>> movesDone;
+    private final AtomicInteger expectedLength; // of whole alg, with initial move
+    private final StringBuilder builder = new StringBuilder();
 
     FwmDesc(Cube2x2 cube, AtomicInteger expectedLength) {
         this.cube = new Cube2x2(cube);
@@ -112,34 +112,30 @@ public class FwmDesc implements Callable {
     }
 
     private void reverseMove(String rev) {
-        /**
-         * rev is move that have been done
+        /*
+          rev is move that have been done
          */
-        if (rev.contains("2")) {
-        }
-        else if (rev.contains("'")) {
+        if (rev.contains("'")) {
             rev = rev.substring(0, 1);
         }
-        else {
+        else if (!rev.contains("2")) {
             rev += "'";
         }
         cube.move(rev);
     }
 
     private String getMoveWitheBestEntropy(String alg) {
-        /**
-         * if (curE > entropy) return m
-         * this is faster when solution is not straight forward,
-         * entropy is not returning best solutions
+        /*
+          if (curE > entropy) return m
+          this is faster when solution is not straight forward,
+          entropy is not returning best solutions
          */
         int entropy = -1;
         String move = "";
         String end = getLastMove(alg);
         for (String m : ALL_POSSIBLE_MOVES) {
-            if (movesDone.get(currentLength + 1).contains(m) || (!end.equals("") && m.charAt(0) == end.charAt(0))) {
-                // if move already done  ||  if are like or R - R2 etc.
-            }
-            else {
+            // if move already done  ||  are like or R - R2 etc. -> next move
+            if (!movesDone.get(currentLength + 1).contains(m) && (end.equals("") || m.charAt(0) != end.charAt(0))) {
                 cube.move(m);
                 int curE = calculateEntropy();
                 if (curE > entropy) {
@@ -194,13 +190,13 @@ public class FwmDesc implements Callable {
                         stickersSumC+=i;
                     }
                 }
-                /**               1st     2nd
-                 * fullWallUni  = 6       6
-                 * fullWall     = 5       5
-                 * threeWallUni = 4       3
-                 * threeWall    = 3       2
-                 * twoWallUni   = 2       4
-                 * twoWall      = 1       1
+                /*               1st     2nd
+                  fullWallUni  = 6       6
+                  fullWall     = 5       5
+                  threeWallUni = 4       3
+                  threeWall    = 3       2
+                  twoWallUni   = 2       4
+                  twoWall      = 1       1
                  */
                 if (stickersC0 == 4 || stickersC1 == 4) {
                     entropy += 6; // fullWallUni

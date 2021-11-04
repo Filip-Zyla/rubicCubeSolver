@@ -34,7 +34,7 @@ public class Cube2x2 extends Cube {
         if (o == null || getClass() != o.getClass())
             return false;
         Cube2x2 cube = (Cube2x2) o;
-        return Arrays.equals(this.array, cube.array);
+        return Arrays.deepEquals(this.array, cube.array);
     }
 
     @Override
@@ -43,16 +43,13 @@ public class Cube2x2 extends Cube {
             return false;
         if (array[2][4] != array[2][5] || array[3][4] != array[3][5] || array[2][4] != array[3][5])
             return false;
-        if (array[4][2] != array[4][3] || array[5][2] != array[5][3] || array[4][2] != array[5][3])
-            return false;
-        return true;
+        return array[4][2] == array[4][3] && array[5][2] == array[5][3] && array[4][2] == array[5][3];
     }
 
     @Override
-    public boolean move(String alg) {
-        if (!Algorithm.checkIfProper(alg)) {
-            return false;
-        }
+    public void move(String alg) {
+        if (!Algorithm.checkIfProper(alg))
+            return;
 
         char[] array = alg.toCharArray();
         int index = 0;
@@ -64,7 +61,7 @@ public class Cube2x2 extends Cube {
                 index += 2;
             }
             else if ( array[index + 1] == 39) {
-                // counter clockwise
+                // counterclockwise
                 moveOneWall(array[index], -1);
                 index += 2;
             }
@@ -78,7 +75,6 @@ public class Cube2x2 extends Cube {
             // avoid checking index of possible 2/' OutOfBound...
             moveOneWall(array[index], 1);
         }
-        return true;
     }
 
     private void moveOneWall(char wall, int rotate) {

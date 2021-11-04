@@ -7,14 +7,14 @@ import java.util.*;
 
 public class OrtegaMethod {
 
-    private Cube2x2 cube;
-    private StringBuilder stringBuilder;
+    private final Cube2x2 cube;
+    private final StringBuilder stringBuilder;
 
     // < wallsPair, colorsPair/colorInt >
-    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> fullWallUniColor = new ArrayList<>();
-    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> fullWall = new ArrayList<>();
-    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> threeWallAll = new ArrayList<>();
-    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> twoWallAll = new ArrayList<>();
+    private final List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> fullWallUniColor = new ArrayList<>();
+    private final List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> fullWall = new ArrayList<>();
+    private final List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> threeWallAll = new ArrayList<>();
+    private final List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> twoWallAll = new ArrayList<>();
 
     public OrtegaMethod(Cube2x2 cube2x2){
         this.cube=new Cube2x2(cube2x2);
@@ -30,7 +30,7 @@ public class OrtegaMethod {
         if (cube.isSolved())
             return Algorithm.optimizeAlg(stringBuilder.toString());
         else
-            return "Error: " + stringBuilder.toString();
+            return "Error: " + stringBuilder;
     }
 
     private void ortegaFirstStep() {
@@ -120,7 +120,8 @@ public class OrtegaMethod {
                 c1 = twoWallAll.get(0).getValue1().getValue1();
             }
             else {
-                Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> colors = twoWallAll.stream().filter(w -> w.getValue0().equals(new Pair<>(2, 0))).findFirst().get();
+                Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> colors =
+                        twoWallAll.stream().filter(w -> w.getValue0().equals(new Pair<>(2, 0))).findFirst().get();
                 c0 = colors.getValue1().getValue0();
                 c1 = colors.getValue1().getValue1();
             }
@@ -368,7 +369,7 @@ public class OrtegaMethod {
             if (colors.contains(cube.getArray()[3][7]) && colors.contains(cube.getArray()[3][6])){
                 cube.moveDoubleD();
                 stringBuilder.append("D2");
-                //so next if can be done
+                //so next if statement can be done
             }
             if (colors.contains(cube.getArray()[2][7]) && colors.contains(cube.getArray()[2][6])){
                 while (!colors.contains(cube.getArray()[4][2]) || !colors.contains(cube.getArray()[4][3])){
@@ -466,7 +467,7 @@ public class OrtegaMethod {
         final String OLL_UP_A_COUNTER = "RUR'URU2R'";   //up on front-left
         final String OLL_UP_A_CLOCK = "RU2R'U'RU'R'";   //up on back-right
 
-        Set s = new HashSet<Integer>();
+        HashSet<Integer> s = new HashSet();
         s.add(c0);
         s.add(c1);
         s.add(5-c0); //in case if two first are the same, what might result in infinite loop
@@ -477,7 +478,7 @@ public class OrtegaMethod {
         if (countUp == 4){
             return;
         }
-        else if (countUp == 0) {
+        if (countUp == 0) {
             while (true) {
                 if (s.contains(cube.getArray()[1][2]) && s.contains(cube.getArray()[1][3]) && s.contains(cube.getArray()[4][2]) && s.contains(cube.getArray()[4][3])) {
                     stringBuilder.append(OLL_UP_H);
@@ -609,7 +610,7 @@ public class OrtegaMethod {
             stringBuilder.append(OBL_ONE_UP);
         }
         else if (Math.abs(check) != 4) {
-            if (isOblCrossed(2, 2) && isOblCrossed(2, 6)) {
+            if (isOblCrossed(2) && isOblCrossed(6)) {
                 while (cube.getArray()[3][3] != cube.getArray()[3][6]) {
                     cube.moveNormalU();
                     stringBuilder.append("U");
@@ -617,7 +618,7 @@ public class OrtegaMethod {
                 cube.move(OBL_Y_BOTH);
                 stringBuilder.append(OBL_Y_BOTH);
             }
-            else if (isOblCrossed(2, 2) && !isOblCrossed(2, 6)) {
+            else if (isOblCrossed(2) && !isOblCrossed(6)) {
                 while (cube.getArray()[2][6] != cube.getArray()[3][6]) {
                     cube.moveNormalD();
                     stringBuilder.append("D");
@@ -631,7 +632,7 @@ public class OrtegaMethod {
                     stringBuilder.append(OBL_T_DOWN_Y_UP_OPP);
                 }
             }
-            else if (!isOblCrossed(2, 2) && isOblCrossed(2, 6)) {
+            else if (!isOblCrossed(2) && isOblCrossed(6)) {
                 while (cube.getArray()[2][3] != cube.getArray()[3][3]) {
                     cube.moveNormalU();
                     stringBuilder.append("U");
@@ -645,7 +646,7 @@ public class OrtegaMethod {
                     stringBuilder.append(OBL_Y_DOWN_T_UP_OPP);
                 }
             }
-            else if (!isOblCrossed(2, 2) && !isOblCrossed(2, 6)) {
+            else if (!isOblCrossed(2) && !isOblCrossed(6)) {
                 while (cube.getArray()[2][3] != cube.getArray()[3][3]) {
                     cube.moveNormalU();
                     stringBuilder.append("U");
@@ -661,8 +662,8 @@ public class OrtegaMethod {
         }
     }
 
-    private boolean isOblCrossed(int x, int y) {
-        return cube.getArray()[x][y] == cube.getArray()[x + 1][y + 1];
+    private boolean isOblCrossed(int y) {
+        return cube.getArray()[2][y] == cube.getArray()[2 + 1][y + 1];
     }
 
     private void permuteBothLayers() {
@@ -675,9 +676,8 @@ public class OrtegaMethod {
         final String PLL_Y_DOWN_T_UP = "RU'RF2R'UR'";    //T on back up, Y left-front to right-back down
         final String PLL_T_DOWN_Y_UP = "z2RU'RF2R'UR'";    //T on back up, Y right-front to left-back down
 
-        if (isWallPermute(2) && isWallPermute(6)) {
-        }
-        else if (isWallPermute(6)) {
+
+        if (isWallPermute(6) && !isWallPermute(2)) {
             if (isWall_Y_Perm(2)) {
                 cube.move(PLL_Y);
                 stringBuilder.append(PLL_Y);
@@ -691,7 +691,7 @@ public class OrtegaMethod {
                 stringBuilder.append(PLL_T);
             }
         }
-        else if (isWallPermute(2)) {
+        else if (isWallPermute(2) && !isWallPermute(6)) {
             if (isWall_Y_Perm(6)) {
                 cube.move(PLL_Y_DOWN);
                 stringBuilder.append(PLL_Y_DOWN);
@@ -705,7 +705,7 @@ public class OrtegaMethod {
                 stringBuilder.append(PLL_T_DOWN);
             }
         }
-        else {
+        else if (!isWallPermute(6) && !isWallPermute(2)){
             if (isWall_Y_Perm(2) && !isWall_Y_Perm(6)) {
                 while (cube.getArray()[5][2] != cube.getArray()[5][3]) {
                     cube.moveNormalD();

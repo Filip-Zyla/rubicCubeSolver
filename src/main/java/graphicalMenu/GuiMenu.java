@@ -17,12 +17,11 @@ import java.util.concurrent.ExecutionException;
 public class GuiMenu extends JComponent implements ActionListener {
 
     private Cube2x2 cube;
-    private JButton b1, b2, b3, b4, b5, b6, b7, b0;
-    private JTextArea jta2, jta3, jta4, jta5, jta6, historyArea;
-    private JFrame window, history;
-    private JCheckBox cb6;
-    private JSpinner spinner;
-    private JLabel jl1;
+    private final JButton b1, b2, b3, b4, b5, b6, b7, b0;
+    private final JTextArea jta2, jta3, jta4, jta5, jta6;
+    private final JFrame window;
+    private final JCheckBox cb6;
+    private final JSpinner spinner;
     private ArrayList<JPanel> jp = new ArrayList<>();
 
     private volatile boolean animationFlag = true;
@@ -45,7 +44,7 @@ public class GuiMenu extends JComponent implements ActionListener {
         spinner.setBounds(950, 30, 50, 40);
         window.add(spinner);
 
-        jl1 = new JLabel("Duration of moves");
+        JLabel jl1 = new JLabel("Duration of moves");
         jl1.setBounds(1005, 30, 110, 40);
         window.add(jl1);
 
@@ -228,12 +227,12 @@ public class GuiMenu extends JComponent implements ActionListener {
             }
         }
         else if (e.getSource() == b7){
-            history = new JFrame();
+            JFrame history = new JFrame();
             history.setSize(400, 500);
             history.setLocation(500,100);
             history.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             history.setVisible(true);
-            historyArea = new JTextArea();
+            JTextArea historyArea = new JTextArea();
             historyArea.setLineWrap(true);
             historyArea.setVisible(true);
             history.add(historyArea);
@@ -245,6 +244,8 @@ public class GuiMenu extends JComponent implements ActionListener {
     }
 
     private void animation(String alg) {
+        if (alg.length()<1)
+            return;
         int T = 100;
         try {
             spinner.commitEdit();

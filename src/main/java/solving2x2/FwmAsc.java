@@ -15,8 +15,8 @@ public class FwmAsc implements Callable {
     private Cube2x2 tempCube;
     private int godsNumber = 1;
     private int currentLength;
-    private HashMap<Integer, HashSet<String>> movesDone;
-    private AtomicInteger expectedLength; // of whole alg, with initial move
+    private final HashMap<Integer, HashSet<String>> movesDone;
+    private final AtomicInteger expectedLength; // of whole alg, with initial move
 
     FwmAsc(Cube2x2 cube, AtomicInteger expectedLength) {
         this.tempCube = new Cube2x2(cube);
@@ -103,31 +103,27 @@ public class FwmAsc implements Callable {
     }
 
     private void reverseMove(String rev) {
-        if (rev.contains("2")) {
-        }
-        else if (rev.contains("'")) {
+        if (rev.contains("'")) {
             rev = rev.substring(0, 1);
         }
-        else {
+        else if (!rev.contains("2")){
             rev += "'";
         }
         tempCube.move(rev);
     }
 
     private String getMoveWitheBestEntropy(String alg) {
-        /**
-         * if (curE > entropy) return m
-         * this is faster when solution is not straight forward,
-         * entropy is not returning best solutions
+        /*
+          if (curE > entropy) return m
+          this is faster when solution is not straight forward,
+          entropy is not returning best solutions
          */
         int entropy = -1;
         String move = "";
         String end = getLastMove(alg);
         for (String m : ALL_POSSIBLE_MOVES) {
-            if (movesDone.get(currentLength + 1).contains(m) || (!end.equals("") && m.charAt(0) == end.charAt(0))) {
-                // if move already done  ||  if are like or R - R2 etc.
-            }
-            else {
+            // if move already done  || are like or R - R2 etc. -> next move
+            if (!movesDone.get(currentLength + 1).contains(m) && (end.equals("") || m.charAt(0) != end.charAt(0))) {
                 tempCube.move(m);
                 int curE = calculateEntropy();
                 if (curE > entropy) {
@@ -182,13 +178,13 @@ public class FwmAsc implements Callable {
                         stickersSumC+=i;
                     }
                 }
-                /**               1st     2nd
-                 * fullWallUni  = 6       6
-                 * fullWall     = 5       5
-                 * threeWallUni = 4       3
-                 * threeWall    = 3       2
-                 * twoWallUni   = 2       4
-                 * twoWall      = 1       1
+                /*               1st     2nd
+                  fullWallUni  = 6       6
+                  fullWall     = 5       5
+                  threeWallUni = 4       3
+                  threeWall    = 3       2
+                  twoWallUni   = 2       4
+                  twoWall      = 1       1
                  */
                 if (stickersC0 == 4 || stickersC1 == 4) {
                     entropy += 6; // fullWallUni

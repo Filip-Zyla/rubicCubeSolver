@@ -2,7 +2,6 @@ package cubes;
 
 import com.google.common.collect.HashBasedTable;
 import files.HistoryFile;
-import org.javatuples.Pair;
 
 import java.util.*;
 
@@ -125,12 +124,11 @@ public class Algorithm {
             }
             if (alg.charAt(i+1)=='2' || alg.charAt(i+1)=='\''){
                 i=i+2;
-                counter++;
             }
             else {
                 i++;
-                counter++;
             }
+            counter++;
         }
         return counter;
     }
@@ -235,7 +233,7 @@ public class Algorithm {
             movesList.remove(i + 1);
         }
         if (i > 0 && size > movesList.size()) {
-            i--;
+            --i;
         }
     }
 
@@ -247,20 +245,20 @@ public class Algorithm {
         return String.join("", skipRotation(algToHandle));
     }
 
-    private static LinkedList skipRotation(LinkedList<String> alg) {
-        /**
-         *      y   y'   x   x'   z   z'
-         *
-         * R    B   F    R   R    U   D
-         * L    F   B    L   L    D   U
-         *
-         * U    U   U    F   B    L   R
-         * D    D   D    B   F    R   L
-         *
-         * F    R   L    D   U    F   F
-         * B    L   R    U   D    B   B
-         *
-         * if ' or 2 then add it
+    private static LinkedList<String> skipRotation(LinkedList<String> alg) {
+        /*
+               y   y'   x   x'   z   z'
+
+          R    B   F    R   R    U   D
+          L    F   B    L   L    D   U
+
+          U    U   U    F   B    L   R
+          D    D   D    B   F    R   L
+
+          F    R   L    D   U    F   F
+          B    L   R    U   D    B   B
+
+          if ' or 2 then add it
          */
         Set rotations = new HashSet<>(Arrays.asList('x', 'y', 'z'));
         LinkedList<String> xyz = new LinkedList<>();
@@ -287,7 +285,7 @@ public class Algorithm {
         return alg;
     }
 
-    private static HashBasedTable<String, String, String> rotationsTable = createTable();
+    private static final HashBasedTable<String, String, String> rotationsTable = createTable();
 
     private static HashBasedTable<String, String, String> createTable() {
         HashBasedTable<String, String, String> rotationsTable = HashBasedTable.create(6, 6);
