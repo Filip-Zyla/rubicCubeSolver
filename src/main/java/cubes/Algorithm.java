@@ -66,7 +66,7 @@ public class Algorithm {
     }
 
     public static boolean checkIfProper(String alg) {
-        if (alg.isEmpty()) {
+        if (alg==null || alg.isEmpty()) {
             return false;
         }
         String poll = "xyzUDRLFB";
