@@ -12,18 +12,19 @@ public class FwmDesc implements Callable {
     private final Set finalEntropy = new HashSet<>(Arrays.asList(4, 12, 14, 18, 20, 22, 26, 30, 32, 36, 42, 44));
 
     private final Cube2x2 cube;
+    private final StringBuilder builder = new StringBuilder();
     private int godsNumber = 10;
     private int currentLength;
     private final HashMap<Integer, HashSet<String>> movesDone;
     private final AtomicInteger expectedLength; // of whole alg, with initial move
-    private final StringBuilder builder = new StringBuilder();
 
     FwmDesc(Cube2x2 cube, AtomicInteger expectedLength) {
         this.cube = new Cube2x2(cube);
         currentLength = 0;
         movesDone = new HashMap<>();
-        for (int i = 1; i <= godsNumber; i++)
+        for (int i = 1; i <= godsNumber; i++) {
             movesDone.put(i, new HashSet<>());
+        }
         this.expectedLength = expectedLength;
     }
 
@@ -191,12 +192,12 @@ public class FwmDesc implements Callable {
                     }
                 }
                 /*               1st     2nd
-                  fullWallUni  = 6       6
-                  fullWall     = 5       5
+                  fullWallUni  =         6
+                  fullWall     =         5
                   threeWallUni = 4       3
                   threeWall    = 3       2
                   twoWallUni   = 2       4
-                  twoWall      = 1       1
+                  twoWall      =         1
                  */
                 if (stickersC0 == 4 || stickersC1 == 4) {
                     entropy += 6; // fullWallUni

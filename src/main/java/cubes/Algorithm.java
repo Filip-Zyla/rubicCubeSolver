@@ -80,7 +80,9 @@ public class Algorithm {
             else if (i + 1 < array.length && (array[i + 1] == 39 || array[i + 1] == 50)) {
                 i = i + 2;
             }
-            else i++;
+            else {
+                i++;
+            }
         }
         return true;
     }
@@ -110,7 +112,7 @@ public class Algorithm {
     }
 
     public static int algLength(String alg){
-        // simpler but ~4x slower: Algorithm.toList(alg).size()
+        // simpler but ~4x slower is Algorithm.toList(alg).size()
         if (!checkIfProper(alg)){
             return -1;
         }
