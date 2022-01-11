@@ -19,7 +19,7 @@ It's a desktop app that allows user to play with cubes.
 Program is write in JAVA version 12, with help of libraries: AWT, swing, GUAVA, Lombok, JavaTuples. <br />
 Build using Maven. Test are written in JUnit5.
 
-## Implementing of cube
+## Implementation of cube
 Regular NxNxN cube is implemented using 2x2 matrix of integers. <br />
 Example for 2x2x2 cube: <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     4 4 <br />
@@ -73,43 +73,97 @@ uses HashBasedTable, which consist all possible permutation of rotation and move
 FWM methods are the most interesting part of application. <br />
 God's number for 2x2x2 it is 11, but generally it will be about 7-9. <br />
 The most straight forward solution of finding god's number is checking all possible situation and choosing quickest, but it would take days using normal computer since there are 3,674,160 possible positions!!! <br />
+
 What about multithreading? It will be definitely useful, but still, you don't want to wait hours for solution.
 After many hours of testing and thinking I end up with my own method.
 ### Description
-Firstly it starts with list all possible moves of U, R and F walls,
-so left-back-down element is the one that will be not moved cause is already solved.
-Using that approach makes the method twice faster!
-Next there is executorService of 4 threads, on my computer that was the limit where more threads would end up in same or longer computainon time.
-Then executor accepts two ascending and two descending approach callable objects.
-They are responsible for finding solution. They are initialized with pre-move from available moves
-which reduce God's number to 10, therefore number of permutations. Generally 9 objects will be created.
-All threads observe AtomicInteger which indicates current shortest solutions (11 if no solution yet)
-and if solution is found it is changed, then all threads can check if their solution is worse, so they can abort
-and program can proceed with another thread without unnecessary computations.
-Another trick to fasten solution is finalEntropy. It contains all possible entropies of cube that is shuffled with at most 3 moves.
-Program don't need to waste time checking solutions if its current state is not in set and godsNumber - currentLength <= 3.
-For bot ascending and descending approach HashMap of HashSet of moves already done is stored.
-It helps track which moves have been done, so algorithm won't use them again. In case of full moves used in one position previous move is v
-changed and rest in front is erased. <br />
-Ascending starts from the shortest algorithms and goes up, so works similar to brute force solution. In some cases in super efficient
-because can find short solutions in blink's of eye. Downgrade si that mvoesDone is cleared after each iteration, 
-so moves when godsNumber was 2 won't be used with 3.
-On the other hand descending approach finds optimal solution up to length of 11, and if there is no solution checks other solid
-by changing current solution. <br />
-Every thread is meant to be fast, but in case of lacking of solutions after 2 seconds solutions is aborted.
+In general algoritm works by finding best possible move for current state, which changes cube to be closer to be soolved. <br />
+To find the best move, entropy has to be caltulated every move which is currently possible.
+But some moves can be ommited <br />
+e.g. when last move is R' next move cannot be of R wall.
+```
+R'R2 can be shorten to R and R'R dosen't cahnge anything <br />
+Even though L wall moves don't exist in algorithm, they alos would be inneficient.
+Consecutive moves cannot be parallel!
+```
+Algorithm will choose the best move from list of all possible moves of U, R and F walls. <br />
+In that case left-back-down element is the one that will be not moved cause is already solved. <br />
+```
+ALL_POSSIBLE_MOVES = {U, U', U2, R, R', R2, F, F', F2} 
+instead {U, U', U2, R, R', R2, F, F', F2, D, D', D2, L, L', L2, F, F', F2}
+Using that approach makes the method twice faster wihout losese in solution!
+```
+Calculating entropy is the most expensive part of algorithm.
+To do it cube has to be moved and then mvoe has to be reversed to proceed with another calculations. <br />
+
+Every entropy is compared to entopy of current state of cube. If no entropy is better than current, no move is returned, 
+otherwise the best move is returned and then cube is moved. Entropy is calculated by checking every wall and adding potions if there is pattern. <br />
+Current points ranking, for white and yellow in that example:
+  - fullWallUni  = 6 <br />
+![image](https://user-images.githubusercontent.com/53094328/148950650-1a19198a-eaa1-476b-ad87-63ba153aa68b.png)
+  - fullWall     = 5 <br />
+![image](https://user-images.githubusercontent.com/53094328/148950837-1b6a07c8-3a00-49a1-a5b4-36880c0103e2.png)
+  - threeWallUni = 3 <br />
+![image](https://user-images.githubusercontent.com/53094328/148951133-4c2281a2-40d8-40db-9e4a-503bbc17f622.png)
+  - threeWall    = 2 <br />
+![image](https://user-images.githubusercontent.com/53094328/148951214-27a7c084-9e45-4e30-9071-bfe873064eb6.png)
+  - twoWallUni   = 4 <br />
+![image](https://user-images.githubusercontent.com/53094328/148951321-dc0e3962-e2b2-4e6a-ba78-902c97d3906e.png)
+  - twoWall      = 1 <br />
+![image](https://user-images.githubusercontent.com/53094328/148951652-cf546dd7-d413-4b9c-8b37-9bf0f48458d8.png)
+<br />
+For now max entropy, therefore cube is solved, is 60. <br />
+Entropy can be use to skip some cases. Final entropy contains all possible valuse of entropies of cube that is shuffled with at most 3 moves.
+Program don't need to waste time checking solutions if its current entropy is not in set and godsNumber - currentLength <= 3. <br />
+
+> Even though god's number is constant, in code it indicates current best solution so starts with 11 and can change.
+```
+For current points ranking FINAL_ENTROPIES = {4, 12, 14, 18, 20, 22, 26, 30, 32, 36, 42, 44}
+```
+To keep track of mvoes that have been done, HashMap of HashSets of that moves is stored, so algorithm won't use them again. <br />
+Alorithm automatically cleares necessary moves and and whole map between iterations.
+```
+movesDone = { 
+              1 -> (R, U),
+              2 -> (U2, F, F'),
+              3 -> (R, R', R2. U),
+              4 -> (R, R', R2. U, U', U2, F, F', F2) 
+              }
+Curretn solution is UF'UF' (with some premove)
+If algorithm needs another move it sees that 4th move is full so previous move has to be changed.
+4th is cleared and another 3rd move is meant to be find, then addes.
+movesDone = { 
+              1 -> (R, U),
+              2 -> (U2, F, F'),
+              3 -> (R, R', R2. U, U2),
+              4 -> () 
+              }
+Curretn solution is UF'U2
+```
+#### Multithreading
+Even though number of permutation and time is significanlty lower single threaded solution still would be too long. <br />
+Progmra creates 4 threads, which on my computer that was the limit where more threads would end up in same or longer computainon time. <br />
+> Other computers could be faster using more thread, or even going through more cases <br/>
+
+There are tow types of threads, first with ascending and secong with descending approach.
+Both are initialized with pre-move from all available moves so 9 threads will be created.
+Pre-moves allows algoritm to reduce number of moves to 10, therefore number of permutations.
+
+All threads observe shared god's number (apart from their own) which indicates current shortest solution.
+If a better solution is found value will change. Threads are checking if their solution is worse, so they can aborted
+and program can proceed with another thread without unnecessary computations. Descending thread will set their god's number with that value when they are created and ascending would work unitil their god's number is lower.
+
+Every thread is meant to be fast, but in case of duration > 2 seconds solutions is aborted.
 For now there is no premises that could indicate any problems with that. <br />
-When algorithm need to add move to solutions, it goes through all_possible_moves, minus moves done and minus moves that are parallel to previous move,
-so if previous move was R, moves R, R' and R2 are omitted.
-To find the best move, for every possible move it has to calculate entropy, do the move and reverse it.
-It's the most expensive part of algorithm but using previous remarks it is much quicker.
-If no move makes entropy better than current, no move is returned. <br />
-Entropy is calculated by checking every wall and adding potions if there is patter on it, like all pieces are same color, all are of two parallel color
-or only two pieces are next to each other and are of the same color. <br />
-Current points:
-    - fullWallUni  = 6 
-    - fullWall     = 5
-    - threeWallUni = 3
-    - threeWall    = 2
-    - twoWallUni   = 4
-    - twoWall      = 1
-For now max entropy, therefore cube is solved, is 60.
+
+##### Ascending vs Descending
+
+In general they use all mentioned features. Finding best solution
+
+Ascending starts from the shortest algorithms and goes up, so works similar to brute force solution. In some cases in super efficient
+because can find short solutions in the blink of an eye. Downgrade si that mvoesDone is cleared after each iteration, 
+so moves when godsNumber is 2, it won't be used with 3.
+
+On the other hand descending approach finds optimal solution up to length of 11 (actually 10, pre-move!), and if there is no solution checks other solves
+by changing current solution. <br />
+
