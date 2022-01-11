@@ -1,5 +1,5 @@
 # rubicCubeSolver
-As a rubic cube's enthusiast sooner or later I would come up with some app about it. <br />
+As a Rubic cube's enthusiast sooner or later I would come up with some app about it. <br />
 My goal is to learn and play with code combine with my passion.
 
 It's a desktop app that allows user to play with cubes.
@@ -69,7 +69,7 @@ uses HashBasedTable, which consist all possible permutation of rotation and move
 | Entropy      | Benchmark of how cube is solved/scrambled |
 | Notation | Well explained https://www.iberorubik.com/tutoriales/2x2x2/notation/ |
 
-### Intorduction
+### Introduction
 FWM methods are the most interesting part of application. <br />
 God's number for 2x2x2 it is 11, but generally it will be about 7-9. <br />
 The most straight forward solution of finding god's number is checking all possible situation and choosing quickest, but it would take days using normal computer since there are 3,674,160 possible positions!!! <br />
@@ -77,9 +77,9 @@ The most straight forward solution of finding god's number is checking all possi
 What about multithreading? It will be definitely useful, but still, you don't want to wait hours for solution.
 After many hours of testing and thinking I end up with my own method.
 ### Description
-In general algoritm works by finding best possible move for current state, which changes cube to be closer to be soolved. <br />
-To find the best move, entropy has to be caltulated every move which is currently possible.
-But some moves can be ommited <br />
+In general algorithm works by finding the best possible move for current state, which changes cube to be closer to be solved. <br />
+To find the best move, entropy has to be calculated every move which is currently possible.
+But some moves can be omitted <br />
 e.g. when last move is R' next move cannot be of R wall.
 ```
 R'R2 can be shorten to R and R'R dosen't cahnge anything <br />
@@ -94,9 +94,9 @@ instead {U, U', U2, R, R', R2, F, F', F2, D, D', D2, L, L', L2, F, F', F2}
 Using that approach makes the method twice faster wihout losese in solution!
 ```
 Calculating entropy is the most expensive part of algorithm.
-To do it cube has to be moved and then mvoe has to be reversed to proceed with another calculations. <br />
+To do it cube has to be moved and then move has to be reversed to proceed with another calculations. <br />
 
-Every entropy is compared to entopy of current state of cube. If no entropy is better than current, no move is returned, 
+Every entropy is compared to entropy of current state of cube. If no entropy is better than current, no move is returned, 
 otherwise the best move is returned and then cube is moved. Entropy is calculated by checking every wall and adding potions if there is pattern. <br />
 Current points ranking, for white and yellow in that example:
   - fullWallUni  = 6 <br />
@@ -113,15 +113,15 @@ Current points ranking, for white and yellow in that example:
 ![image](https://user-images.githubusercontent.com/53094328/148951652-cf546dd7-d413-4b9c-8b37-9bf0f48458d8.png)
 <br />
 For now max entropy, therefore cube is solved, is 60. <br />
-Entropy can be use to skip some cases. Final entropy contains all possible valuse of entropies of cube that is shuffled with at most 3 moves.
+Entropy can be used to skip some cases. Final entropy contains all possible values of entropies of cube that is shuffled with at most 3 moves.
 Program don't need to waste time checking solutions if its current entropy is not in set and godsNumber - currentLength <= 3. <br />
 
 > Even though god's number is constant, in code it indicates current best solution so starts with 11 and can change.
 ```
 For current points ranking FINAL_ENTROPIES = {4, 12, 14, 18, 20, 22, 26, 30, 32, 36, 42, 44}
 ```
-To keep track of mvoes that have been done, HashMap of HashSets of that moves is stored, so algorithm won't use them again. <br />
-Alorithm automatically cleares necessary moves and and whole map between iterations.
+To keep track of moves that have been done, HashMap of HashSets of that moves is stored, so algorithm won't use them again. <br />
+Algorithm automatically clears necessary moves and whole map between iterations.
 ```
 movesDone = { 
               1 -> (R, U),
@@ -141,24 +141,24 @@ movesDone = {
 Curretn solution is UF'U2
 ```
 #### Multithreading
-Even though number of permutation and time is significanlty lower single threaded solution still would be too long. <br />
-Progmra creates 4 threads, which on my computer that was the limit where more threads would end up in same or longer computainon time. <br />
+Even though number of permutation and time is significantly lower single threaded solution still would be too long. <br />
+Program creates 4 threads, which on my computer that was the limit where more threads would end up in same or longer computation time. <br />
 > Other computers could be faster using more thread, or even going through more cases <br/>
 
-There are tow types of threads, first with ascending and secong with descending approach.
+There are two types of threads, first with ascending and second with descending approach.
 Both are initialized with pre-move from all available moves so 9 threads will be created.
-Pre-moves allows algoritm to reduce number of moves to 10, therefore number of permutations.
+Pre-moves allows algorithm to reduce number of moves to 10, therefore number of permutations.
 
 All threads observe shared god's number (apart from their own) which indicates current shortest solution.
-If a better solution is found value will change. Threads are checking if their solution is worse, so they can aborted
-and program can proceed with another thread without unnecessary computations. Descending thread will set their god's number with that value when they are created and ascending would work unitil their god's number is lower.
+If a better solution is found value will change. Threads are checking if their solution is worse, so they can abort
+and program can proceed with another thread without unnecessary computations. Descending thread will set their god's number with that value when they are created and ascending would work until their god's number is lower.
 
 Every thread is meant to be fast, but in case of duration > 2 seconds solutions is aborted.
 For now there is no premises that could indicate any problems with that. <br />
 
 ##### Ascending vs Descending
 
-In general they use all mentioned features. Finding best solution
+In general, they use all mentioned features. Finding best solution
 
 Ascending starts from the shortest algorithms and goes up, so works similar to brute force solution. In some cases in super efficient
 because can find short solutions in the blink of an eye. Downgrade si that mvoesDone is cleared after each iteration, 

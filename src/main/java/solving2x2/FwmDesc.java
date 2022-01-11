@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FwmDesc implements Callable {
 
     private final String[] ALL_POSSIBLE_MOVES = {"U", "U2", "U'", "R", "R2", "R'", "F", "F2", "F'"};
-    private final Set finalEntropy = new HashSet<>(Arrays.asList(4, 12, 14, 18, 20, 22, 26, 30, 32, 36, 42, 44));
+    private final Set FINAL_ENTROPIES = new HashSet<>(Arrays.asList(4, 12, 14, 18, 20, 22, 26, 30, 32, 36, 42, 44));
 
     private final Cube2x2 cube;
     private final StringBuilder builder = new StringBuilder();
@@ -65,7 +65,7 @@ public class FwmDesc implements Callable {
                 // faster solution already found or all combinations checked
                 return null;
             }
-            else if ((godsNumber-currentLength<=3 && !finalEntropy.contains(calculateEntropy())) || currentLength == godsNumber) {
+            else if ((godsNumber-currentLength<=3 && !FINAL_ENTROPIES.contains(calculateEntropy())) || currentLength == godsNumber) {
                 // if next three moves won't end up in solved cube due to wrong entropy
                 // if god's number reached and movesDone(GOD_NUM) is not-full just try another move
                 deleteLatestMove(builder);
