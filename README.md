@@ -3,6 +3,9 @@ As a Rubic cube's enthusiast sooner or later I would come up with some app about
 My goal is to learn and play with code combine with my passion.
 
 It's a desktop app that allows user to play with cubes.
+  
+Program is write in JAVA version 12, with help of libraries: AWT, swing, GUAVA, Lombok, JavaTuples. <br />
+Build using Maven. Test are written in JUnit5.
 
 ## Functionalities:
   - scramble cube with randomly generated algorithm
@@ -15,9 +18,6 @@ It's a desktop app that allows user to play with cubes.
 
 ## Current type of cubes available:
   - 2x2x2 full functionality
-  
-Program is write in JAVA version 12, with help of libraries: AWT, swing, GUAVA, Lombok, JavaTuples. <br />
-Build using Maven. Test are written in JUnit5.
 
 ## Implementation of cube
 Regular NxNxN cube is implemented using 2x2 matrix of integers. <br />
